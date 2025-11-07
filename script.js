@@ -257,3 +257,79 @@ window.addEventListener('load',()=>{
     document.getElementById('saveAds').click();
   }
 });
+
+// Simple calculator
+function press(value) {
+    document.getElementById("display").value += value;
+}
+function clearDisplay() {
+    document.getElementById("display").value = "";
+}
+function calculate() {
+    try {
+        document.getElementById("display").value = eval(document.getElementById("display").value);
+    } catch {
+        alert("Invalid Input");
+    }
+}
+
+// Scientific calculator
+function pressSci(value) {
+    document.getElementById("displaySci").value += value;
+}
+function clearSci() {
+    document.getElementById("displaySci").value = "";
+}
+function calculateSci() {
+    try {
+        document.getElementById("displaySci").value = eval(document.getElementById("displaySci").value);
+    } catch {
+        alert("Invalid Input");
+    }
+}
+
+// Calculator Toggle
+document.getElementById("toggleSci").onclick = () => {
+    document.getElementById("simpleCalc").classList.toggle("hidden");
+    document.getElementById("scientificCalc").classList.toggle("hidden");
+};
+
+
+// BMI Calculator
+function calculateBMI() {
+    let w = document.getElementById("weight").value;
+    let h = document.getElementById("height").value / 100;
+
+    let bmi = w / (h * h);
+    document.getElementById("bmiResult").innerText = `Your BMI is: ${bmi.toFixed(2)}`;
+}
+
+
+// Graphical Calculator
+function plotGraph() {
+    let eq = document.getElementById("equation").value;
+    let xValues = [];
+    let yValues = [];
+
+    for (let x = -10; x <= 10; x += 0.1) {
+        xValues.push(x);
+        yValues.push(eval(eq));
+    }
+
+    new Chart(document.getElementById("myChart"), {
+        type: "line",
+        data: {
+            labels: xValues,
+            datasets: [{
+                data: yValues,
+                borderWidth: 2
+            }]
+        }
+    });
+}
+
+
+// Dark / Light Mode
+document.getElementById("themeToggle").onclick = () => {
+    document.body.classList.toggle("dark");
+};
