@@ -1,850 +1,203 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>EasyCalc Pro — Full Scientific + BMI</title>
-<meta name="description" content="EasyCalc Pro: Full scientific calculator with BMI, PWA, voice, themes, ads placeholders, affiliate products, history, memory and advanced functions." />
-<meta name="keywords" content="scientific calculator, BMI, PWA, calculator, EasyCalc, trig, ln, log, factorial, pi, e" />
-<meta name="author" content="Umair / EasyCalc" />
-<link rel="icon" href="data:;base64,iVBORw0KGgo=">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EasyCalc Pro — Scientific + BMI</title>
 <style>
-  /* ---------------- theme variables ---------------- */
-  :root{
-    --page-bg: #f3f6fa;
-    --bg: linear-gradient(180deg,#f4f7fb,#e8eef8);
-    --panel: #ffffff;
-    --text: #0b1220;
-    --muted: #556;
-    --accent: #ff6b35;
-    --glass: rgba(255,255,255,0.6);
-    --radius: 14px;
-    --shadow: 0 8px 28px rgba(18,25,40,0.08);
-
-    /* default button contrast (light theme -> dark buttons) */
-    --btn-bg: rgba(10,12,18,0.95); /* when page is light, buttons dark */
-    --btn-text: #fff;
-    --btn-ghost: rgba(255,255,255,0.06);
-
-    --op-grad: linear-gradient(90deg,#ff6b35,#e95b2b);
-    --sc-grad: linear-gradient(90deg,#3b82f6,#06b6d4);
-    --ok-grad: linear-gradient(90deg,#10b981,#059669);
-  }
-
-  body.dark{
-    --page-bg: #071025;
-    --bg: linear-gradient(180deg,#061022,#07102a);
-    --panel: rgba(20,24,36,0.9);
-    --text: #e6eef8;
-    --muted: #9aa7bf;
-    --accent: #60a5fa;
-    --glass: rgba(12,16,28,0.6);
-    --shadow: 0 10px 40px rgba(0,0,0,0.6);
-
-    /* inverted button contrast: dark page -> light buttons */
-    --btn-bg: rgba(255,255,255,0.9); /* buttons light on dark body */
-    --btn-text: #071025;
-    --btn-ghost: rgba(0,0,0,0.06);
-
-    --op-grad: linear-gradient(90deg,#60a5fa,#2074f0);
-    --sc-grad: linear-gradient(90deg,#7cffb2,#3be6b8);
-    --ok-grad: linear-gradient(90deg,#34d399,#059669);
-  }
-
-  /* alt themes */
-  body.theme-neon { --accent: #7cffb2; --op-grad: linear-gradient(90deg,#7cffb2,#06b6d4); }
-  body.theme-classic { --accent:#ff6b35; }
-
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;transition:background .45s,color .45s}
-  .page{max-width:1200px;margin:18px auto;padding:18px; background:transparent;}
-  header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
-  .brand{font-weight:900;font-size:20px;color:var(--accent);letter-spacing:0.6px}
-  .controls{display:flex;gap:8px;align-items:center}
-  button.btn{background:var(--panel);border:none;padding:8px 10px;border-radius:10px;cursor:pointer;box-shadow:var(--shadow);color:var(--text);font-weight:700}
-  button.btn.small{padding:6px 8px;font-size:14px}
-  .bg-anim{position:fixed;left:0;top:0;right:0;bottom:0;z-index:-1;overflow:hidden}
-  .bg-grad{width:220%;height:220%;background:radial-gradient(circle at 20% 20%, rgba(255,107,53,0.06), transparent 8%),radial-gradient(circle at 80% 80%, rgba(59,130,246,0.04), transparent 8%);animation:move 20s linear infinite;filter:blur(28px);transform:scale(1.05)}
-  @keyframes move{0%{transform:translate(0,0) scale(1.05)}50%{transform:translate(-10%,5%) scale(1.05)}100%{transform:translate(0,0) scale(1.05)}}
-
-  .grid{
-    display:grid;
-    grid-template-columns: 1fr 420px;
-    gap:18px;
-    align-items:start;
-  }
-
-  .card{background:var(--panel);border-radius:14px;padding:14px;box-shadow:var(--shadow);margin-bottom:18px;backdrop-filter:blur(6px)}
-  /* calculator container */
-  .calc-wrap{display:flex;gap:12px;flex-direction:column}
-
-  .calc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-  .calc-title{font-weight:800}
-  .display-small{width:100%;height:44px;background:var(--btn-ghost);border-radius:10px;padding:8px 10px;display:flex;align-items:center;justify-content:flex-end;font-size:16px;color:var(--muted);margin-bottom:8px}
-  .display-big{width:100%;height:96px;background:var(--btn-ghost);border-radius:12px;padding:12px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;font-size:34px;font-weight:800}
-  .expr{font-size:14px;color:var(--muted);width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .val{font-weight:900}
-
-  /* keys layout: 6 columns for advanced layout */
-  .keys{display:grid;grid-template-columns: repeat(6,1fr); gap:8px; margin-top:12px}
-  .key{
-    padding:12px;border-radius:10px;border:none;cursor:pointer;
-    font-weight:800;
-    background: var(--btn-bg);
-    color: var(--btn-text);
-    box-shadow: 0 4px 12px rgba(2,6,12,0.08);
-    min-height:44px;
-    display:flex;align-items:center;justify-content:center;font-size:15px;
-    user-select:none;
-  }
-  .key.ghost{background:transparent;border:1px solid rgba(0,0,0,0.06); color:var(--muted); font-weight:700}
-  .key.op{background:var(--op-grad); color:#fff}
-  .key.sc{background:var(--sc-grad); color:#fff}
-  .key.ok{background:var(--ok-grad); color:#fff}
-  .key.wide{grid-column: span 2}
-  .key.xwide{grid-column: span 3}
-  .small-muted{font-size:13px;color:var(--muted);margin-top:8px}
-
-  /* history */
-  .history{max-height:220px;overflow:auto;padding-top:8px}
-  .hist-item{padding:8px;border-bottom:1px dashed rgba(0,0,0,0.04);font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
-  .hist-item .expr{max-width:70%}
-
-  /* BMI */
-  .bmi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-  input,select{width:100%;padding:10px;border-radius:8px;border:none;background:var(--btn-ghost);color:var(--text)}
-  .muted{color:var(--muted)}
-  .bmi-bar{height:14px;background:var(--btn-ghost);border-radius:10px;margin-top:8px;overflow:hidden}
-  .bmi-fill{height:100%;width:0%;background:linear-gradient(90deg,#34d399,#f59e0b);transition:width .9s ease}
-
-  /* affiliate boxes */
-  .aff-list{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-  .aff-item{flex:1 1 30%;background:var(--btn-ghost);padding:8px;border-radius:8px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center}
-  .aff-item img{max-width:100%;height:90px;object-fit:contain;border-radius:6px}
-
-  /* layout responsive */
-  @media (max-width:1100px){ .grid{grid-template-columns:1fr} .calc-right{order:2} }
-  @media (max-width:780px){ .keys{grid-template-columns:repeat(4,1fr)} .display-big{font-size:24px;height:72px} .card{padding:12px} }
-  @media (max-width:480px){ .keys{grid-template-columns:repeat(3,1fr)} .display-big{font-size:20px} .aff-item img{height:64px} }
-
-  footer{opacity:.9;text-align:center;margin-top:20px;color:var(--muted);font-size:13px}
-
-  /* small helper */
-  .kbd { font-size:12px; padding:6px 8px; border-radius:6px; background:var(--btn-ghost); color:var(--muted); display:inline-block}
+:root{
+  --bg: linear-gradient(180deg,#f4f7fb,#e8eef8);
+  --panel: #fff;
+  --text:#0b1220;
+  --accent:#ff6b35;
+  --muted:#556;
+}
+body.dark{
+  --bg: linear-gradient(180deg,#061022,#07102a);
+  --panel: rgba(20,24,36,0.9);
+  --text: #e6eef8;
+  --accent:#60a5fa;
+  --muted:#9aa7bf;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:sans-serif;background:var(--bg);color:var(--text);}
+.page{max-width:600px;margin:auto;padding:10px;}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.brand{font-weight:800;font-size:22px;color:var(--accent);}
+button{padding:10px;border:none;border-radius:8px;cursor:pointer;font-weight:700;}
+button.small{padding:5px;font-size:14px;}
+.display-small, .display-big{width:100%;border-radius:10px;margin-bottom:8px;padding:8px;display:flex;justify-content:flex-end;align-items:center;}
+.display-small{height:40px;background:rgba(0,0,0,0.05);}
+.display-big{height:70px;background:rgba(0,0,0,0.08);font-size:26px;font-weight:700;}
+.keys{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:10px;}
+.key{background:var(--panel);color:var(--text);}
+.key.op{background:var(--accent);color:#fff;}
+.key.sc{background:#3b82f6;color:#fff;}
+.key.wide{grid-column:span 2;}
+.history{max-height:120px;overflow:auto;font-size:13px;color:var(--muted);}
+.bmi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+input,select{width:100%;padding:8px;border-radius:6px;border:none;background:rgba(255,255,255,0.1);color:var(--text);}
+.bmi-bar{height:14px;background:rgba(0,0,0,0.06);border-radius:10px;overflow:hidden;margin-top:8px;}
+.bmi-fill{height:100%;width:0%;background:linear-gradient(90deg,#34d399,#f59e0b);transition:width 0.8s;}
+footer{text-align:center;font-size:13px;color:var(--muted);margin-top:15px;}
+@media(max-width:780px){.keys{grid-template-columns:repeat(4,1fr);}.display-big{font-size:22px;height:60px;}.bmi-grid{grid-template-columns:1fr;}}
+@media(max-width:480px){.keys{grid-template-columns:repeat(3,1fr);}.display-big{font-size:20px;height:50px;}}
 </style>
 </head>
 <body>
-  <div class="bg-anim"><div class="bg-grad"></div></div>
-
-  <div class="page">
-    <header>
-      <div class="brand">EasyCalc Pro — Ultimate Scientific</div>
-      <div class="controls">
-        <select id="themeSelect" class="btn small">
-          <option value="default">Classic</option>
-          <option value="neon">Neon</option>
-          <option value="glass">Glass</option>
-        </select>
-        <button id="voiceBtn" class="btn small">🎙️ Voice</button>
-        <button id="langBtn" class="btn small">EN</button>
-        <button id="installBtn" class="btn small" style="display:none">Install App</button>
-        <button id="themeToggle" class="btn small">🌙</button>
-      </div>
-    </header>
-
-    <div class="grid">
-      <!-- left: main calculator -->
-      <div class="card calc-wrap" aria-label="Scientific calculator">
-        <div class="calc-top">
-          <div>
-            <div class="calc-title" id="calcTitle">Scientific Calculator</div>
-            <div class="small-muted" id="angleLabel">Mode: <strong id="angleMode">Degrees</strong></div>
-          </div>
-          <div style="text-align:right">
-            <div class="muted">Memory: <span id="memLabel">0</span></div>
-            <div style="margin-top:6px;display:flex;gap:6px;justify-content:flex-end">
-              <button class="btn small" id="copyBtn">Copy</button>
-              <button class="btn small" id="soundBtn">🔔</button>
-              <button class="btn small" id="vibBtn">📳</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="display-small" id="smallInput"><span id="smallExpr" class="expr">&nbsp;</span></div>
-        <div class="display-big" id="bigOutput"><span id="bigVal" class="val">0</span><div style="font-size:12px;color:var(--muted);margin-top:6px" id="formatHint">Normal</div></div>
-
-        <!-- keys: big, arranged: left numeric cluster, right op cluster, top scientific -->
-        <div class="keys" id="keys">
-
-          <!-- Row 1: memory and power & modes -->
-          <button class="key ghost" data-key="MC">MC</button>
-          <button class="key ghost" data-key="MR">MR</button>
-          <button class="key ghost" data-key="M+">M+</button>
-          <button class="key ghost" data-key="M-">M-</button>
-          <button class="key ghost" data-key="MS">MS</button>
-          <button class="key ghost" data-key="ON">ON/C</button>
-
-          <!-- Row 2: trig, inverse, log, sqrt, paren -->
-          <button class="key sc" data-key="sin">sin</button>
-          <button class="key sc" data-key="cos">cos</button>
-          <button class="key sc" data-key="tan">tan</button>
-          <button class="key sc" data-key="asin">sin⁻¹</button>
-          <button class="key sc" data-key="acos">cos⁻¹</button>
-          <button class="key sc" data-key="atan">tan⁻¹</button>
-
-          <!-- Row 3: powers, exp -->
-          <button class="key sc" data-key="x2">x²</button>
-          <button class="key sc" data-key="x3">x³</button>
-          <button class="key sc" data-key="pow">xʸ</button>
-          <button class="key sc" data-key="pi">π</button>
-          <button class="key sc" data-key="e">e</button>
-          <button class="key sc" data-key="exp">exp</button>
-
-          <!-- Row 4: 10^x, 1/x, factorial, percent, parentheses -->
-          <button class="key sc" data-key="10x">10^x</button>
-          <button class="key sc" data-key="inv">1/x</button>
-          <button class="key sc" data-key="fact">n!</button>
-          <button class="key" data-key="%">%</button>
-          <button class="key" data-key="(">(</button>
-          <button class="key" data-key=")">)</button>
-
-          <!-- Row 5: numeric row 7-9 and divide & multiply -->
-          <button class="key" data-key="7">7</button>
-          <button class="key" data-key="8">8</button>
-          <button class="key" data-key="9">9</button>
-          <button class="key op" data-key="/">÷</button>
-          <button class="key op" data-key="*">×</button>
-          <button class="key op" data-key="^">^</button>
-
-          <!-- Row 6: 4-6 and minus -->
-          <button class="key" data-key="4">4</button>
-          <button class="key" data-key="5">5</button>
-          <button class="key" data-key="6">6</button>
-          <button class="key op" data-key="-">−</button>
-          <button class="key sc" data-key="rand">Rand</button>
-          <button class="key sc" data-key="mod">mod</button>
-
-          <!-- Row 7: 1-3 and plus -->
-          <button class="key" data-key="1">1</button>
-          <button class="key" data-key="2">2</button>
-          <button class="key" data-key="3">3</button>
-          <button class="key op wide" data-key="+">+</button>
-          <button class="key sc" data-key="ANS">ANS</button>
-          <button class="key" data-key="C">C</button>
-
-          <!-- Row 8: 0, ., ±, equals, DEL -->
-          <button class="key wide" data-key="0">0</button>
-          <button class="key" data-key=".">.</button>
-          <button class="key" data-key="+/-">±</button>
-          <button class="key ok xwide" data-key="=">=</button>
-          <button class="key" data-key="DEL">⌫</button>
-
-          <!-- Row 9: Modes, formatting, FE, ANS, F-E, MODE -->
-          <button class="key ghost" data-key="DEG">DEG</button>
-          <button class="key ghost" data-key="RAD">RAD</button>
-          <button class="key ghost" data-key="GRAD">GRAD</button>
-          <button class="key ghost" data-key="F-E">F-E</button>
-          <button class="key ghost" data-key="MODE">MODE</button>
-          <button class="key ghost" data-key="ANSCLEAR">ANS CLR</button>
-
-        </div>
-
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
-          <div class="small-muted">Tip: Use keyboard or voice. Themes & sound/vibration available.</div>
-          <div>
-            <button class="btn small" id="histClear">Clear History</button>
-          </div>
-        </div>
-
-        <div class="history card" id="history" style="margin-top:12px;"></div>
-      </div>
-
-      <!-- right: BMI + ads + affiliates -->
-      <div class="calc-right">
-        <section class="card" id="bmiCard">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <h3 style="margin:0">BMI & Health</h3>
-            <div>
-              <label class="muted" style="font-size:13px">Units:</label>
-              <select id="unitSel" class="btn small">
-                <option value="metric">kg / cm</option>
-                <option value="imperial">lb / in</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="bmi-grid" style="margin-top:8px">
-            <div>
-              <label>Age</label>
-              <input id="age" type="number" min="1" placeholder="years">
-            </div>
-            <div>
-              <label>Gender</label>
-              <select id="gender"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option><option value="other">Other</option></select>
-            </div>
-            <div>
-              <label id="wLabel">Weight (kg)</label>
-              <input id="weight" type="number" step="0.1">
-            </div>
-            <div>
-              <label id="hLabel">Height (cm)</label>
-              <input id="height" type="number" step="0.1">
-            </div>
-          </div>
-
-          <div style="display:flex;gap:8px;margin-top:10px">
-            <button class="btn" id="calcBmiBtn">Check BMI</button>
-            <button class="btn" id="shareBmi">Share</button>
-            <button class="btn" id="copyBmi">Copy</button>
-          </div>
-
-          <div style="margin-top:10px">
-            <div id="bmiResult" class="small-muted">Your BMI will appear here</div>
-            <div class="bmi-bar"><div id="bmiFill" class="bmi-fill" style="width:0%"></div></div>
-            <div id="bmiAdvice" class="muted" style="margin-top:8px"></div>
-          </div>
-        </section>
-
-        <section class="card" id="adsCard" style="margin-top:12px">
-          <h4 style="margin:0 0 8px 0">Sponsored</h4>
-          <!-- AdSense placeholder - replace with your publisher ad code -->
-          <div id="adTop" style="border-radius:10px;overflow:hidden;background:var(--btn-ghost);padding:10px;text-align:center;color:var(--muted)">
-            <!-- Replace the content below with your AdSense code or image -->
-            Top Ad Placeholder (AdSense slot)
-            <!-- Example: paste AdSense <ins> tag here -->
-          </div>
-
-          <div style="margin-top:10px">
-            <video controls width="100%" style="border-radius:10px;background:#000">
-              <source src="" type="video/mp4">
-              Video Placeholder
-            </video>
-          </div>
-
-        </section>
-
-        <section class="card" id="affiliates" style="margin-top:12px">
-          <h4 style="margin:0 0 8px 0">Recommended / Affiliate</h4>
-          <div class="aff-list">
-            <div class="aff-item">
-              <img src="https://via.placeholder.com/240x90?text=Smart+Scale" alt="Smart Scale">
-              <div class="muted">Smart Scale — Accurate readings</div>
-              <a href="#" class="btn small">Buy</a>
-            </div>
-            <div class="aff-item">
-              <img src="https://via.placeholder.com/240x90?text=Home+Gym" alt="Home Gym">
-              <div class="muted">Home Gym Set — Compact</div>
-              <a href="#" class="btn small">Buy</a>
-            </div>
-            <div class="aff-item">
-              <img src="https://via.placeholder.com/240x90?text=Nutrition+Pack" alt="Nutrition">
-              <div class="muted">Nutrition Pack — For weight goals</div>
-              <a href="#" class="btn small">Buy</a>
-            </div>
-          </div>
-        </section>
-
-        <section class="card" id="adsBottom" style="margin-top:12px">
-          <h4 style="margin:0 0 8px 0">Ads / Affiliates</h4>
-          <div id="adBottom1" class="small-muted" style="padding:8px;border-radius:8px;background:var(--btn-ghost)">Bottom Ad 1 — Affiliate</div>
-          <div id="adBottom2" class="small-muted" style="margin-top:8px;padding:8px;border-radius:8px;background:var(--btn-ghost)">Bottom Ad 2 — Affiliate</div>
-        </section>
-
-        <footer style="margin-top:12px">
-          <div class="muted">EasyCalc Pro — Offline capable (PWA). Voice input supported. Theme & language saved locally.</div>
-        </footer>
-      </div>
-    </div>
+<div class="page">
+<header>
+  <div class="brand">EasyCalc Pro</div>
+  <div>
+    <button id="themeToggle" class="small">🌙</button>
   </div>
+</header>
+
+<!-- Small & Big display -->
+<div class="display-small" id="smallInput"><span id="smallExpr">&nbsp;</span></div>
+<div class="display-big" id="bigOutput"><span id="bigVal">0</span></div>
+
+<!-- Calculator keys -->
+<div class="keys">
+  <button class="key" data-key="MC">MC</button>
+  <button class="key" data-key="MR">MR</button>
+  <button class="key" data-key="M+">M+</button>
+  <button class="key" data-key="M-">M-</button>
+  <button class="key sc" data-key="sqrt">√</button>
+  <button class="key" data-key="(">(</button>
+
+  <button class="key" data-key=")">)</button>
+  <button class="key sc" data-key="pi">π</button>
+  <button class="key sc" data-key="e">e</button>
+  <button class="key op" data-key="/">÷</button>
+  <button class="key" data-key="7">7</button>
+  <button class="key" data-key="8">8</button>
+
+  <button class="key" data-key="9">9</button>
+  <button class="key op" data-key="*">×</button>
+  <button class="key sc" data-key="pow">xʸ</button>
+  <button class="key" data-key="4">4</button>
+  <button class="key" data-key="5">5</button>
+  <button class="key" data-key="6">6</button>
+
+  <button class="key op" data-key="-">−</button>
+  <button class="key" data-key="1">1</button>
+  <button class="key" data-key="2">2</button>
+  <button class="key" data-key="3">3</button>
+  <button class="key sc" data-key="fact">n!</button>
+  <button class="key" data-key="0">0</button>
+
+  <button class="key" data-key=".">.</button>
+  <button class="key wide op" data-key="+">+</button>
+  <button class="key wide" data-key="=" style="background:linear-gradient(90deg,#10b981,#059669);color:#fff">=</button>
+  <button class="key" data-key="C">C</button>
+  <button class="key" data-key="DEL">⌫</button>
+  <button class="key sc" data-key="inv">1/x</button>
+
+  <!-- Scientific extra -->
+  <button class="key sc" data-key="sin">sin</button>
+  <button class="key sc" data-key="cos">cos</button>
+  <button class="key sc" data-key="tan">tan</button>
+  <button class="key sc" data-key="ln">ln</button>
+  <button class="key sc" data-key="log">log</button>
+  <button class="key" data-key="%">%</button>
+</div>
+
+<div class="history" id="history"></div>
+
+<!-- BMI Calculator -->
+<section class="bmi-card">
+<h3>BMI Calculator</h3>
+<div class="bmi-grid">
+  <div><label>Age</label><input type="number" id="age" min="1"></div>
+  <div><label>Gender</label><select id="gender"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select></div>
+  <div><label id="wLabel">Weight (kg)</label><input type="number" id="weight" step="0.1"></div>
+  <div><label id="hLabel">Height (cm)</label><input type="number" id="height" step="0.1"></div>
+</div>
+<div style="margin-top:8px;">
+  <button id="calcBmiBtn">Check BMI</button>
+  <button id="copyBmi">Copy BMI</button>
+</div>
+<div class="bmi-bar"><div id="bmiFill" class="bmi-fill"></div></div>
+<div id="bmiResult" class="small-muted" style="margin-top:4px;">Your BMI will appear here</div>
+<div id="bmiAdvice" class="small-muted"></div>
+</section>
+
+<footer>EasyCalc Pro — Offline & Mobile-friendly.</footer>
+</div>
 
 <script>
-/* ---------------- State & storage ---------------- */
-const state = {
-  expr: '',
-  display: '0',
-  mem: 0,
-  ans: 0,
-  history: JSON.parse(localStorage.getItem('easycalc_history')||'[]'),
-  theme: localStorage.getItem('easycalc_theme')||'light',
-  themeVariant: localStorage.getItem('easycalc_variant')||'default',
-  lang: localStorage.getItem('easycalc_lang')||'en',
-  angleMode: localStorage.getItem('easycalc_angle')||'DEG',
-  feMode: false, // F-E display toggle
-  soundOn: true,
-  vibOn: false
-};
+// state
+const state={expr:'',display:'0',mem:0,history:[],theme:'light'};
 
-/* ---------------- Utilities ---------------- */
-const $ = sel => document.querySelector(sel);
-const $$ = sel => Array.from(document.querySelectorAll(sel));
-function saveState(){ 
-  localStorage.setItem('easycalc_history', JSON.stringify(state.history)); 
-  localStorage.setItem('easycalc_theme', state.theme); 
-  localStorage.setItem('easycalc_variant', state.themeVariant); 
-  localStorage.setItem('easycalc_lang', state.lang);
-  localStorage.setItem('easycalc_angle', state.angleMode);
-}
-
-/* ------------- UI update -------------- */
+// update displays
 function updateDisplays(){
-  $('#smallExpr').textContent = state.expr || ' ';
-  $('#bigVal').textContent = state.display;
-  $('#memLabel').textContent = state.mem;
-  $('#angleMode').textContent = state.angleMode;
-  $('#formatHint').textContent = state.feMode? 'F-E (scientific)': 'Normal';
+  document.getElementById('smallExpr').textContent=state.expr||' ';
+  document.getElementById('bigVal').textContent=state.display;
   renderHistory();
 }
 function renderHistory(){
-  const h = $('#history'); h.innerHTML = '';
-  state.history.slice(0,200).forEach((it, idx)=>{
-    const div = document.createElement('div'); div.className='hist-item';
-    const left = document.createElement('div'); left.className='expr'; left.textContent = it.expr;
-    const right = document.createElement('div'); right.textContent = it.res;
-    const clearBtn = document.createElement('button'); clearBtn.className='btn small'; clearBtn.textContent='Use';
-    clearBtn.style.marginLeft='8px';
-    clearBtn.onclick = ()=>{ state.expr = it.res; state.display = it.res; updateDisplays(); };
-    div.appendChild(left);
-    const wrap = document.createElement('div'); wrap.style.display='flex'; wrap.style.alignItems='center';
-    wrap.appendChild(document.createTextNode(it.res));
-    wrap.appendChild(clearBtn);
-    div.appendChild(wrap);
-    h.appendChild(div);
-  });
+  const h=document.getElementById('history');h.innerHTML='';
+  state.history.slice(0,50).forEach(it=>{const d=document.createElement('div');d.textContent=it;h.appendChild(d);});
 }
 
-/* ------------- Mathematical helpers & evaluator -------------- */
-/* We'll create safe mappings to Math functions, constants, and implement degree handling and other helpers. */
-function toNumber(x){ return typeof x === 'number' ? x : Number(x); }
-
-function factorial(n){
-  n = Math.floor(n);
-  if(n < 0) throw 'Factorial of negative';
-  if(n <= 1) return 1;
-  let r = 1;
-  for(let i=2;i<=n;i++) r *= i;
-  return r;
-}
-
-/* We'll implement a parser that replaces tokens to Math.* safely.
-   We avoid direct eval of arbitrary JS by building a Function with carefully controlled helpers.
-*/
-function buildEvalExpression(s){
-  if(!s) return '0';
-  // normalize
-  s = s.replace(/×/g,'*').replace(/÷/g,'/').replace(/–/g,'-').replace(/−/g,'-');
-  s = s.replace(/ANS\b/g, `(${state.ans})`);
-  s = s.replace(/\bpi\b/gi, '('+Math.PI+')').replace(/\be\b/gi,'('+Math.E+')');
-
-  // percent
-  s = s.replace(/(\d+(\.\d+)?)%/g, '($1/100)');
-
-  // factorial: replace n! occurrences with fact(n)
-  s = s.replace(/(\d+(\.\d+)?)\s*!/g, 'fact($1)');
-
-  // custom functions mapping
-  // support sin, cos, tan, asin, acos, atan, ln, log, log10, sqrt, exp, pow, 10^x, x^y, mod, rand
-  // replace function notations like sin( => FUNC(
-  s = s.replace(/\bsin\(/gi, 'sin(');
-  s = s.replace(/\bcos\(/gi, 'cos(');
-  s = s.replace(/\btan\(/gi, 'tan(');
-  s = s.replace(/\basin\(/gi, 'asin(');
-  s = s.replace(/\bacos\(/gi, 'acos(');
-  s = s.replace(/\batan\(/gi, 'atan(');
-  s = s.replace(/\bln\(/gi, 'ln(');
-  s = s.replace(/\blog10\(/gi, 'log10(');
-  s = s.replace(/\blog\(/gi, 'log10('); // log => log10
-  s = s.replace(/\bsqrt\(/gi, 'sqrt(');
-  s = s.replace(/\bexp\(/gi, 'exp(');
-  s = s.replace(/\b10\^/gi, '10**'); // basic caret mapping will also be handled
-
-  // caret ^ -> ** for exponent
-  s = s.replace(/\^/g, '**');
-
-  // replace x² and x³ notations in expression (if present as functions like x2 -> ^2)
-  s = s.replace(/\b(\d+(\.\d+)?)x2\b/g, '($1**2)');
-  s = s.replace(/\b(\d+(\.\d+)?)x3\b/g, '($1**3)');
-
-  // allow trig functions to be converted to radians if DEG mode
-  if(state.angleMode === 'DEG'){
-    // transform sin(expr) => sin_deg(expr)
-    s = s.replace(/sin\(/g, 'sin_deg(');
-    s = s.replace(/cos\(/g, 'cos_deg(');
-    s = s.replace(/tan\(/g, 'tan_deg(');
-    s = s.replace(/asin\(/g, 'asin_deg(');
-    s = s.replace(/acos\(/g, 'acos_deg(');
-    s = s.replace(/atan\(/g, 'atan_deg(');
-  }
-
-  // mod function text
-  s = s.replace(/\bmod\b/gi, '%');
-
-  return s;
-}
-
+// calculator evaluation
 function safeEval(s){
-  if(!s) return 0;
-  const expr = buildEvalExpression(s);
-
-  // build function body with helpers
-  const body = `
-    const fact = (${factorial.toString()});
-    const ln = Math.log;
-    const log10 = Math.log10 || ((x)=>Math.log(x)/Math.LN10);
-    const sqrt = Math.sqrt;
-    const exp = Math.exp;
-    const rand = Math.random;
-    // degree-handling wrappers
-    const toRad = (d)=>d * Math.PI/180;
-    const toDeg = (r)=>r * 180/Math.PI;
-    const sin = Math.sin;
-    const cos = Math.cos;
-    const tan = Math.tan;
-    const asin = Math.asin;
-    const acos = Math.acos;
-    const atan = Math.atan;
-    const sin_deg = (x) => Math.sin(toRad(x));
-    const cos_deg = (x) => Math.cos(toRad(x));
-    const tan_deg = (x) => Math.tan(toRad(x));
-    const asin_deg = (x) => toDeg(Math.asin(x));
-    const acos_deg = (x) => toDeg(Math.acos(x));
-    const atan_deg = (x) => toDeg(Math.atan(x));
-    const Math_log10 = Math.log10 || ((x)=>Math.log(x)/Math.LN10);
-    const log = Math_log10;
-    const pow = Math.pow;
-    const PI = Math.PI;
-    const E = Math.E;
-    return (${expr});
-  `;
-  try{
-    const f = new Function(body);
-    const res = f();
-    if(typeof res === 'number' && !isFinite(res)) throw 'Math error';
-    return res;
-  } catch(e){
-    throw e;
-  }
+  if(!s)return 0;
+  s=s.replace(/×/g,'*').replace(/÷/g,'/').replace(/–|−/g,'-').replace(/\^/g,'**');
+  s=s.replace(/\bpi\b/gi,Math.PI).replace(/\be\b/gi,Math.E);
+  s=s.replace(/(\d+(\.\d+)?)!/g,'fact($1)').replace(/(\d+(\.\d+)?)%/g,'($1/100)');
+  const func=`const fact=n=>{n=Math.floor(n);if(n<=1)return 1;let r=1;for(let i=2;i<=n;i++)r*=i;return r};return (${s});`;
+  try{return Function(func)();}catch{return 'Error';}
 }
 
-/* ------------- Key handling -------------- */
+// key press
 function pressKey(k){
-  // special keys handlers
-  if(k === 'ON' || k === 'C'){ state.expr=''; state.display='0'; updateDisplays(); return; }
-  if(k === 'DEL'){ state.expr = state.expr.slice(0,-1); if(state.expr==='') state.display='0'; updateDisplays(); return; }
-  if(k === 'MC'){ state.mem = 0; updateDisplays(); return; }
-  if(k === 'MR'){ state.expr = String(state.mem); state.display = String(state.mem); updateDisplays(); return; }
-  if(k === 'MS'){ // store current display to memory
-    state.mem = Number(state.display) || 0; updateDisplays(); return;
-  }
-  if(k === 'M+'){ state.mem = Number(state.mem) + Number(state.display||0); updateDisplays(); return; }
-  if(k === 'M-'){ state.mem = Number(state.mem) - Number(state.display||0); updateDisplays(); return; }
-
-  if(k === 'DEG' || k === 'RAD' || k === 'GRAD'){ state.angleMode = k; saveState(); updateDisplays(); return; }
-  if(k === 'F-E'){ state.feMode = !state.feMode; updateDisplays(); return; }
-  if(k === 'ANSCLEAR'){ state.ans = 0; alert('ANS cleared'); return; }
-
-  if(k === 'ANS'){ state.expr += 'ANS'; updateDisplays(); return; }
-
-  if(k === 'C'){ state.expr=''; state.display='0'; updateDisplays(); return; }
-
-  if(k === 'rand'){ state.expr += (Math.random()).toFixed(6); updateDisplays(); return; }
-  if(k === 'mod'){ state.expr += '%'; updateDisplays(); return; }
-
-  if(k === 'x2'){ state.expr += '**2'; updateDisplays(); return; }
-  if(k === 'x3'){ state.expr += '**3'; updateDisplays(); return; }
-  if(k === 'pow'){ state.expr += '^'; updateDisplays(); return; }
-  if(k === '10x'){ state.expr += '10**'; updateDisplays(); return; }
-  if(k === 'inv'){ state.expr += '1/('; updateDisplays(); return; }
-  if(k === 'fact'){ state.expr += '!'; updateDisplays(); return; }
-
-  if(k === '+/-'){ // toggle sign for current number at end
-    if(state.expr === '') { state.expr = '-'; updateDisplays(); return; }
-    // find last number
-    const m = state.expr.match(/(-?\d+(\.\d+)?)$/);
-    if(m){
-      const v = m[1];
-      const neg = v.startsWith('-') ? v.slice(1) : '-' + v;
-      state.expr = state.expr.slice(0, -v.length) + neg;
-    } else {
-      // if not, just append - sign
-      state.expr += '-';
-    }
-    updateDisplays();
-    return;
-  }
-
-  if(k === '='){
-    try{
-      const res = safeEval(state.expr);
-      const displayVal = formatDisplay(res);
-      state.display = displayVal;
-      state.ans = (typeof res === 'number') ? res : state.ans;
-      state.history.unshift({expr: state.expr, res: displayVal, time: Date.now()});
-      saveState();
-      updateDisplays();
-      playClick();
-    } catch(e){
-      state.display = 'Error';
-      updateDisplays();
-      playClick();
-    }
-    return;
-  }
-
-  // default number/operator input
-  state.expr += k;
-  updateDisplays();
+  if(k==='C'){state.expr='';state.display='0';updateDisplays();return;}
+  if(k==='DEL'){state.expr=state.expr.slice(0,-1);updateDisplays();return;}
+  if(k==='MC'){state.mem=0;updateDisplays();return;}
+  if(k==='MR'){state.expr=state.mem;state.display=state.mem;updateDisplays();return;}
+  if(k==='M+'){state.mem+=Number(state.display||0);updateDisplays();return;}
+  if(k==='M-'){state.mem-=Number(state.display||0);updateDisplays();return;}
+  if(k==='='){try{const r=safeEval(state.expr);state.display=r;state.history.unshift(`${state.expr}=${r}`);state.expr=String(r);updateDisplays();}catch{state.display='Error';updateDisplays();}return;}
+  const funcs=['sin','cos','tan','ln','log','sqrt','pow','fact','inv','pi','e','%'];
+  if(funcs.includes(k)){if(k==='pow')state.expr+='^';else if(k==='fact')state.expr+='!';else if(k==='inv')state.expr+='1/(';else if(k==='pi'||k==='e')state.expr+=k;else state.expr+=k+'(';updateDisplays();return;}
+  state.expr+=k;updateDisplays();
 }
 
-/* format display accounting for F-E (scientific) toggle and precision */
-function formatDisplay(v){
-  if(typeof v !== 'number') return String(v);
-  if(state.feMode){
-    // use scientific notation with 10 significant digits
-    return v.toExponential(10).replace(/e\+?/, 'e');
-  } else {
-    // normal formatting: round to reasonable digits
-    const abs = Math.abs(v);
-    if((abs !== 0 && (abs < 1e-6 || abs >= 1e12)) || Math.abs(v) < 0.000001){
-      return v.toExponential(10).replace(/e\+?/, 'e');
-    }
-    // otherwise show up to 12 significant digits trimming trailing zeros
-    let s = Number.isInteger(v) ? v.toString() : v.toFixed(10);
-    // strip trailing zeros and possible trailing dot
-    s = s.replace(/(?:\.0+|(\.\d+?)0+)$/, '$1');
-    return s;
-  }
-}
+// attach all keys
+document.querySelectorAll('.key').forEach(b=>b.addEventListener('click',()=>pressKey(b.dataset.key)));
 
-/* ------------- attach keys & keyboard -------------- */
-document.addEventListener('click', (e)=>{
-  const btn = e.target.closest('[data-key]');
-  if(btn){
-    const key = btn.getAttribute('data-key');
-    pressKey(key);
-    if(state.soundOn) playClick();
-    if(state.vibOn) navigator.vibrate?.(25);
-  }
+// theme toggle
+document.getElementById('themeToggle').addEventListener('click',()=>{
+  if(state.theme==='light'){state.theme='dark';document.body.classList.add('dark');}else{state.theme='light';document.body.classList.remove('dark');}
 });
 
-document.addEventListener('keydown',(e)=>{
-  const key = e.key;
-  const numKeys = '0123456789';
-  if(numKeys.includes(key)){ pressKey(key); e.preventDefault(); return; }
-  if(['+','-','*','/','(',')','.','%'].includes(key)){ pressKey(key); e.preventDefault(); return; }
-  if(key === 'Enter'){ pressKey('='); e.preventDefault(); return; }
-  if(key === 'Backspace'){ pressKey('DEL'); e.preventDefault(); return; }
-  if(key === 'Escape'){ pressKey('C'); e.preventDefault(); return; }
+// keyboard support
+document.addEventListener('keydown',e=>{
+  if((e.key>='0'&&e.key<='9')||['+','-','*','/','.','(',')','%'].includes(e.key)){pressKey(e.key);e.preventDefault();}
+  if(e.key==='Enter')pressKey('=');
+  if(e.key==='Backspace')pressKey('DEL');
 });
 
-/* ------------- sound & vibration -------------- */
-const audioCtx = typeof AudioContext !== 'undefined' ? new (window.AudioContext||window.webkitAudioContext)() : null;
-function playClick(){
-  if(!state.soundOn || !audioCtx) return;
-  const o = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
-  o.type = 'sine';
-  o.frequency.value = 700;
-  g.gain.value = 0.02;
-  o.connect(g); g.connect(audioCtx.destination);
-  o.start(); setTimeout(()=>{ try{o.stop()}catch(e){} },60);
-}
-$('#soundBtn').addEventListener('click', ()=>{
-  state.soundOn = !state.soundOn; $('#soundBtn').textContent = state.soundOn? '🔔' : '🔕';
-});
-$('#vibBtn').addEventListener('click', ()=>{
-  state.vibOn = !state.vibOn; $('#vibBtn').textContent = state.vibOn? '📳':'📴';
+// BMI logic
+document.getElementById('calcBmiBtn').addEventListener('click',()=>{
+  let w=Number(document.getElementById('weight').value),h=Number(document.getElementById('height').value),age=Number(document.getElementById('age').value);
+  let gender=document.getElementById('gender').value;
+  if(!w||!h||!age||!gender)return alert('Fill all fields');
+  const bmi=w/(h/100)**2;const rounded=Math.round(bmi*10)/10;
+  let cat='',advice='';
+  if(bmi<18.5){cat='Underweight';advice='Increase calories & nutrients';}
+  else if(bmi<25){cat='Healthy';advice='Maintain diet & exercise';}
+  else if(bmi<30){cat='Overweight';advice='Reduce calories & exercise';}
+  else{cat='Obese';advice='Consult professional';}
+  document.getElementById('bmiResult').textContent=`BMI: ${rounded} — ${cat}`;
+  document.getElementById('bmiAdvice').textContent=advice;
+  document.getElementById('bmiFill').style.width=Math.min(100,Math.max(0,(bmi-12)/(40-12)*100))+'%';
 });
 
-/* ------------- Copy result, copy BMI -------------- */
-$('#copyBtn').addEventListener('click', ()=>{ navigator.clipboard?.writeText(state.display).then(()=>alert('Result copied')).catch(()=>alert('Copy failed')); });
-$('#copyBmi').addEventListener('click', ()=>{ navigator.clipboard?.writeText($('#bmiResult').textContent).then(()=>alert('BMI copied')).catch(()=>alert('Copy failed')); });
-
-/* ------------- Voice input (SpeechRecognition) -------------- */
-let recognizing=false;
-let recognition=null;
-if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SR();
-  recognition.lang = state.lang==='en'?'en-US':'ur-PK';
-  recognition.interimResults = false;
-  recognition.onresult = (e)=>{ const text = e.results[0][0].transcript; handleVoiceCommand(text); };
-  recognition.onend = ()=>{ recognizing=false; $('#voiceBtn').textContent='🎙️ Voice'; };
-}
-$('#voiceBtn').addEventListener('click', ()=>{
-  if(!recognition) return alert('Voice not supported in this browser');
-  if(!recognizing){ recognition.lang = state.lang==='en'?'en-US':'ur-PK'; recognition.start(); recognizing=true; $('#voiceBtn').textContent='⏺️ Listening'; }
-  else { recognition.stop(); recognizing=false; $('#voiceBtn').textContent='🎙️ Voice'; }
-});
-function handleVoiceCommand(txt){
-  const clean = txt.toLowerCase();
-  // very simple map of words to symbols (can be improved)
-  const map = {'plus':'+','minus':'-','times':'*','multiplied':'*','x':'*','into':'*','divide':'/','divided':'/','over':'/','open bracket':'(','close bracket':')','point':'.','dot':'.','power':'^','square':'**2','cube':'**3','percent':'%','percent of':'%','pi':'pi','e':'e','factorial':'!','factor':'!','sin':'sin(','cos':'cos(','tan':'tan('};
-  let words = clean.split(/\s+/);
-  let expr = words.map(w => map[w] !== undefined ? map[w] : w).join(' ');
-  expr = expr.replace(/equals|equal|=|is/g, '=');
-  // if includes '=' evaluate
-  if(expr.includes('=')){
-    expr = expr.replace('=','').trim();
-    state.expr = expr;
-    pressKey('=');
-  } else {
-    state.expr = expr;
-    updateDisplays();
-  }
-}
-
-/* ------------- Theme, language & install -------------- */
-function applyTheme(){
-  document.body.classList.toggle('dark', state.theme==='dark');
-  document.body.classList.toggle('theme-neon', state.themeVariant==='neon');
-  document.body.classList.toggle('theme-glass', state.themeVariant==='glass');
-}
-$('#themeToggle').addEventListener('click', ()=>{
-  state.theme = state.theme==='dark'?'light':'dark'; applyTheme(); saveState();
-});
-$('#themeSelect').addEventListener('change', (e)=>{
-  const v = e.target.value;
-  state.themeVariant = v==='neon'?'neon': v==='glass'?'glass':'default';
-  applyTheme(); saveState();
-});
-$('#langBtn').addEventListener('click', ()=>{
-  state.lang = state.lang==='en'?'ur':'en';
-  $('#langBtn').textContent = state.lang==='en'?'EN':'UR';
-  saveState();
-});
-
-/* ------------- HISTORY load & controls -------------- */
-(function init(){
-  if(localStorage.getItem('easycalc_history')) state.history = JSON.parse(localStorage.getItem('easycalc_history'));
-  if(localStorage.getItem('easycalc_theme')) state.theme = localStorage.getItem('easycalc_theme');
-  if(localStorage.getItem('easycalc_variant')) state.themeVariant = localStorage.getItem('easycalc_variant');
-  if(localStorage.getItem('easycalc_lang')) state.lang = localStorage.getItem('easycalc_lang');
-  if(localStorage.getItem('easycalc_angle')) state.angleMode = localStorage.getItem('easycalc_angle');
-  applyTheme();
-  $('#langBtn').textContent = state.lang==='en'?'EN':'UR';
-  updateDisplays();
-  renderBmiUI();
-})();
-$('#histClear').addEventListener('click', ()=>{ if(confirm('Clear history?')){ state.history = []; saveState(); updateDisplays(); } });
-
-/* ------------- BMI logic -------------- */
-function renderBmiUI(){
-  $('#unitSel').addEventListener('change',(e)=>{
-    const unit = e.target.value;
-    if(unit==='metric'){ $('#wLabel').textContent='Weight (kg)'; $('#hLabel').textContent='Height (cm)'; }
-    else { $('#wLabel').textContent='Weight (lb)'; $('#hLabel').textContent='Height (in)'; }
-  });
-  $('#unitSel').value = 'metric';
-}
-$('#calcBmiBtn').addEventListener('click', ()=>{
-  const unit = $('#unitSel').value;
-  const age = Number($('#age').value);
-  const gender = $('#gender').value;
-  let w = Number($('#weight').value);
-  let h = Number($('#height').value);
-  if(!age || !gender || !w || !h) return alert('Fill all BMI fields');
-  if(unit==='imperial'){ w = w * 0.45359237; h = h * 2.54; }
-  const heightM = h/100;
-  const bmi = +(w/(heightM*heightM));
-  const rounded = Math.round(bmi*10)/10;
-  let category='', advice='';
-  if(bmi < 18.5){ category='Underweight'; advice='Increase calorie intake, nutrient-dense foods, strength training.'; }
-  else if(bmi <= 24.9){ category='Healthy'; advice='Maintain balanced diet, regular activity.'; }
-  else if(bmi <= 29.9){ category='Overweight'; advice='Reduce 300-500 kcal/day, increase cardio and strength.'; }
-  else { category='Obese'; advice='Consult professional; adopt supervised plan.'; }
-  const val = Math.min(100, Math.max(0, ((bmi-12)/(40-12))*100));
-  $('#bmiFill').style.width = val+'%';
-  $('#bmiResult').textContent = `BMI: ${rounded} — ${category}`;
-  $('#bmiAdvice').textContent = advice;
-  $('#shareBmi').onclick = ()=>{ const text = `My BMI is ${rounded} (${category}). ${advice}`; if(navigator.share){ navigator.share({title:'My BMI', text}).catch(()=>{}); } else { alert('Share not supported on this device.'); } };
-  $('#copyBmi').onclick = ()=>{ navigator.clipboard.writeText($('#bmiResult').textContent + ' | ' + $('#bmiAdvice').textContent).then(()=>alert('BMI copied')).catch(()=>alert('Copy failed')); };
-});
-
-/* ------------- Ads rotation & affiliate dynamic text -------------- */
-const adPool = {
-  top: ['Top Ad — Promo 1','Top Ad — Promo 2','Top Ad — Promo 3'],
-  bottom: ['Affiliate: Smart Scale','Affiliate: Home Gym','Affiliate: Nutrition Pack']
-};
-function rotateAds(){
-  $('#adTop').textContent = adPool.top[Math.floor(Math.random()*adPool.top.length)];
-  $('#adBottom1').textContent = adPool.bottom[0];
-  $('#adBottom2').textContent = adPool.bottom[1];
-}
-rotateAds();
-setInterval(()=>{ rotateAds(); }, 60000);
-
-/* ------------- PWA manifest & service worker (simple) -------------- */
-(function createAndRegisterSW(){
-  const manifest = {
-    name: "EasyCalc Pro",
-    short_name: "EasyCalc",
-    start_url: ".",
-    display: "standalone",
-    background_color: "#ffffff",
-    icons: [] CTT
-  };
-  const manifestBlob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
-  const manifestURL = URL.createObjectURL(manifestBlob);
-  const link = document.createElement('link'); link.rel='manifest'; link.href = manifestURL; document.head.appendChild(link);
-
-  const swCode = `
-    const CACHE_NAME = 'easycalc-v1';
-    const toCache = ['.'];
-    self.addEventListener('install', e=>{ e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(toCache))); self.skipWaiting(); });
-    self.addEventListener('activate', e=>{ e.waitUntil(self.clients.claim()); });
-    self.addEventListener('fetch', function(event){ event.respondWith(caches.match(event.request).then(response=> response || fetch(event.request))); });
-  `;
-  try{
-    const swBlob = new Blob([swCode],{type:'application/javascript'});
-    const swURL = URL.createObjectURL(swBlob);
-    if('serviceWorker' in navigator){
-      navigator.serviceWorker.register(swURL).catch(()=>{/* ignore */});
-    }
-  }catch(e){ /* ignore sw errors */}
-})();
-
-/* ------------- Install prompt handling -------------- */
-let deferredPrompt = null;
-window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferredPrompt = e; $('#installBtn').style.display='inline-block'; });
-$('#installBtn').addEventListener('click', async ()=>{
-  if(!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const res = await deferredPrompt.userChoice;
-  deferredPrompt = null;
-  $('#installBtn').style.display='none';
-});
-
-/* ------------- Utility: simple analytics stub (privacy-friendly) -------------- */
-/* This is a small local analytics tracker. You can replace with external privacy-friendly analytics if desired. */
-const analytics = {
-  events: [],
-  track: function(ev, data){
-    this.events.push({ev, data, t: Date.now()});
-    // keep small
-    if(this.events.length > 200) this.events.shift();
-    // optionally send to server or save locally
-    localStorage.setItem('easycalc_analytics', JSON.stringify(this.events.slice(-100)));
-  }
-};
-analytics.track('page_view', {url: location.pathname});
-
-/* ------------- Additional features wiring -------------- */
-$('#histClear').addEventListener('click', ()=>{ if(confirm('Clear history?')){ state.history=[]; saveState(); updateDisplays(); } });
-
-/* expose for debugging */
-window.easycalc = { state, pressKey };
-
-/* ------------- Formatting helpers and extra features -------------- */
-/* Simple keyboard hints: allow clicking keys by pressing keyboard keys */
-document.addEventListener('keydown', (e) => {
-  // map common keys to friendly ones
-  if(e.key === 'p'){ /* pi */ pressKey('pi'); e.preventDefault(); }
-});
-
-/* ------------- End of main script -------------- */
-
+// initial update
+updateDisplays();
 </script>
-
 </body>
 </html>
