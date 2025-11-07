@@ -1,502 +1,58 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CalcLab — Scientific · BMI · Graph</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MyCalc - Modern Multi Calculator</title>
+<style>
+ /* ========== RESET & BASE ========== */
+ * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+ body { background: #f5f5f5; transition: background 0.3s ease, color 0.3s ease; }
+ header { width: 100%; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+ h1 { font-size: 22px; font-weight: bold; letter-spacing: 1px; }/* Dark / Light Toggle */ .theme-toggle { padding: 6px 12px; border-radius: 8px; cursor: pointer; background: #222; color: #fff; } body.dark { background: #121212; color: #fff; } body.dark header { background: #1e1e1e; } body.dark .theme-toggle { background: #fff; color: #000; }
 
-  <!-- Tailwind (CDN) -->
-  <script src="https://cdn.tailwindcss.com"></script>
+/* ------- Ad placeholder ------- */ .ad-box { width: 100%; height: 120px; background: #e9e9e9; margin: 20px 0; border-radius: 8px; text-align: center; display: flex; justify-content: center; align-items: center; border: 2px dashed #bbb; } body.dark .ad-box { background: #1b1b1b; border-color: #444; }
 
-  <!-- Math.js for scientific eval -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
+/* ----- Calculator Container ----- */ .calc-wrapper { max-width: 390px; margin: auto; background: rgba(255,255,255,0.4); backdrop-filter: blur(12px); padding: 20px; border-radius: 16px; box-shadow: 0 0 18px rgba(0,0,0,0.08); transition: background 0.3s; } body.dark .calc-wrapper { background: rgba(40,40,40,0.6); }
 
-  <!-- Plotly for graphs -->
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+/* Simple/Scientific switch */ #switchModeBtn { margin-bottom: 12px; width: 100%; padding: 10px; background: #0078ff; border: none; color: white; border-radius: 8px; cursor: pointer; font-size: 16px; }
 
-  <style>
-    :root{
-      --bg:#081124; --card:#0b1b2b; --muted:#9fb0c8; --accent:#2563eb;
-    }
-    body{background:linear-gradient(180deg,#071022 0%, #081124 100%); color:#e6f0fb; font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
-    .glass{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04); border-radius:12px}
-    .btn{background:var(--accent); color:white; padding:.5rem .9rem; border-radius:8px; font-weight:600}
-    .smallmuted{color:var(--muted); font-size:.9rem}
-    input, textarea{background:transparent;border:1px solid rgba(255,255,255,0.06); padding:.6rem .8rem; border-radius:8px; color:inherit}
-    .key{background:#07182a;padding:.6rem;border-radius:8px;text-align:center;cursor:pointer;border:1px solid rgba(255,255,255,0.02)}
-    .key:hover{transform:translateY(-3px); transition:.12s}
-    a{color:inherit}
-    .tab-active{background:linear-gradient(90deg,var(--accent),#7c3aed); color:white}
-    .hidden{display:none}
-    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,monospace}
-  </style>
+/* Display */ #display { width: 100%; height: 50px; font-size: 20px; padding: 10px; border-radius: 8px; border: none; margin-bottom: 12px; text-align: right; background: #fff; } body.dark #display { background: #333; color: #fff; }
+
+/* Buttons */ .btn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; } button { padding: 16px; font-size: 18px; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; background: #ececec; } button:hover { background: #d6d6d6; } body.dark button { background: #444; color: #fff; } body.dark button:hover { background: #555; }
+
+/* BMI & Graphical Calc headings */ h2 { font-size: 20px; margin: 25px 0 10px; font-weight: bold; text-align: center; }
+
+.input-box { width: 100%; padding: 12px; margin: 6px 0; border-radius: 8px; border: none; background: #fff; } body.dark .input-box { background: #333; color: #fff; }
+
+</style>
 </head>
-<body class="p-6">
+<body><!-- HEADER --><header>
+  <h1>MyCalc</h1>
+  <div class="theme-toggle" onclick="toggleTheme()">Dark / Light</div>
+</header><!-- ✅ AD BLOCK (Adsense paste here) --><div class="ad-box">Your Google AdSense Code Here</div><!-- ========== CALCULATOR #1 (Simple + Scientific Switch) ========== --><div class="calc-wrapper"><button id="switchModeBtn" onclick="toggleSci()">Switch: Scientific Mode</button> <input type="text" id="display" readonly />
 
-  <!-- Header / Login -->
-  <div class="max-w-6xl mx-auto flex items-center justify-between mb-6">
-    <div class="flex items-center gap-4">
-      <div style="width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#7c3aed)"></div>
-      <div>
-        <div class="text-xl font-semibold">CalcLab</div>
-        <div class="smallmuted">Scientific · BMI · Graph — Local history</div>
-      </div>
-    </div>
+  <!-- SIMPLE CALCULATOR KEYS -->  <div class="btn-grid" id="simpleCalc">
+    <button onclick="press('7')">7</button>
+    <button onclick="press('8')">8</button>
+    <button onclick="press('9')">9</button>
+    <button onclick="press('/')">÷</button><button onclick="press('4')">4</button>
+<button onclick="press('5')">5</button>
+<button onclick="press('6')">6</button>
+<button onclick="press('*')">×</button>
 
-    <div id="authArea" class="flex items-center gap-3">
-      <!-- login UI injected by JS -->
-    </div>
-  </div>
+<button onclick="press('1')">1</button>
+<button onclick="press('2')">2</button>
+<button onclick="press('3')">3</button>
+<button onclick="press('-')">−</button>
 
-  <!-- Main layout -->
-  <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-    <!-- Left: calculators (span 2 cols on md) -->
-    <div class="md:col-span-2 space-y-6">
+<button onclick="press('0')">0</button>
+<button onclick="press('.')">.</button>
+<button onclick="calculate()">=</button>
+<button onclick="press('+')">+</button>
 
-      <!-- Tabs -->
-      <div class="flex gap-2">
-        <button id="tabSci" class="px-4 py-2 tab-active rounded">Scientific</button>
-        <button id="tabBMI" class="px-4 py-2 rounded">BMI</button>
-        <button id="tabGraph" class="px-4 py-2 rounded">Graph</button>
-        <button id="tabHist" class="px-4 py-2 rounded ml-auto">My History</button>
-      </div>
-
-      <!-- Scientific -->
-      <section id="scientific" class="glass p-4">
-        <div class="flex justify-between items-center">
-          <h2 class="text-lg font-semibold">Scientific Calculator</h2>
-          <div class="smallmuted">Use math functions: sin(x), cos(x), log(x), sqrt(x), pi</div>
-        </div>
-
-        <input id="scDisplay" class="w-full mt-3 p-3 text-right text-2xl rounded bg-transparent mono" readonly placeholder="0" />
-
-        <!-- keypad -->
-        <div class="grid grid-cols-5 gap-3 mt-4">
-          <!-- Row 1 -->
-          <div class="key" onclick="scKey('7')">7</div>
-          <div class="key" onclick="scKey('8')">8</div>
-          <div class="key" onclick="scKey('9')">9</div>
-          <div class="key" onclick="scKey('/')">÷</div>
-          <div class="key" onclick="scKey('pi')">π</div>
-
-          <!-- Row2 -->
-          <div class="key" onclick="scKey('4')">4</div>
-          <div class="key" onclick="scKey('5')">5</div>
-          <div class="key" onclick="scKey('6')">6</div>
-          <div class="key" onclick="scKey('*')">×</div>
-          <div class="key" onclick="scKey('e')">e</div>
-
-          <!-- Row3 -->
-          <div class="key" onclick="scKey('1')">1</div>
-          <div class="key" onclick="scKey('2')">2</div>
-          <div class="key" onclick="scKey('3')">3</div>
-          <div class="key" onclick="scKey('-')">−</div>
-          <div class="key" onclick="scKey('^')">^</div>
-
-          <!-- Row4 -->
-          <div class="key" onclick="scKey('0')">0</div>
-          <div class="key" onclick="scKey('.')">.</div>
-          <div class="key bg-gradient-to-r from-blue-500 to-indigo-600 text-white" onclick="scEval()">=</div>
-          <div class="key" onclick="scKey('+')">+</div>
-          <div class="key" onclick="scKey('%')">%</div>
-
-          <!-- Row5 -->
-          <div class="key" onclick="scKey('(')">(</div>
-          <div class="key" onclick="scKey(')')">)</div>
-          <div class="key" onclick="scKey('sin(')">sin</div>
-          <div class="key" onclick="scKey('cos(')">cos</div>
-          <div class="key" onclick="scKey('tan(')">tan</div>
-
-          <!-- Row6 -->
-          <div class="key" onclick="scKey('log(')">log</div>
-          <div class="key" onclick="scKey('ln(')">ln</div>
-          <div class="key" onclick="scKey('sqrt(')">√</div>
-          <div class="key" onclick="scClear()">C</div>
-          <div class="key" onclick="scBack()">←</div>
-        </div>
-      </section>
-
-      <!-- BMI -->
-      <section id="bmi" class="glass p-4 hidden">
-        <div class="flex justify-between items-center">
-          <h2 class="text-lg font-semibold">BMI Calculator</h2>
-          <div class="smallmuted">Metric (cm / kg)</div>
-        </div>
-        <div class="mt-3 grid grid-cols-2 gap-3">
-          <input id="heightCm" type="number" placeholder="Height (cm)" />
-          <input id="weightKg" type="number" placeholder="Weight (kg)" />
-        </div>
-        <div class="flex gap-3 mt-3">
-          <button class="btn" onclick="calcBMI()">Calculate</button>
-          <button class="px-3 py-2 rounded border" onclick="clearBMI()">Reset</button>
-          <div class="ml-auto smallmuted self-center">Auto-save to history</div>
-        </div>
-        <div id="bmiRes" class="mt-3 font-semibold"></div>
-      </section>
-
-      <!-- Graph -->
-      <section id="graph" class="glass p-4 hidden">
-        <div class="flex justify-between items-center">
-          <h2 class="text-lg font-semibold">Graphical Calculator</h2>
-          <div class="smallmuted">Use variable x, e.g. x^2, sin(x), Math.sin(x)</div>
-        </div>
-        <input id="graphExpr" class="mt-3 w-full" placeholder="Example: x^2 + 2*x - 3" />
-        <div class="flex gap-3 mt-3">
-          <button class="btn" onclick="plotGraph()">Plot</button>
-          <button class="px-3 py-2 rounded border" onclick="clearPlot()">Clear</button>
-          <button class="px-3 py-2 rounded border" onclick="savePlot()">Save Graph</button>
-        </div>
-        <div id="graphDiv" style="height:360px;margin-top:12px;"></div>
-      </section>
-
-    </div>
-
-    <!-- Right column: account + quick history + notes -->
-    <aside class="space-y-4">
-      <div class="glass p-4">
-        <h3 class="font-semibold">Account</h3>
-        <div id="accountBox" class="mt-3">
-          <!-- JS injects login -->
-        </div>
-      </div>
-
-      <div class="glass p-4">
-        <h3 class="font-semibold">Quick History</h3>
-        <div id="quickList" class="mt-3 smallmuted">No history yet</div>
-        <div class="mt-3 flex gap-2">
-          <button class="px-3 py-2 border rounded" onclick="downloadLocal()">Download</button>
-          <button class="px-3 py-2 border rounded" onclick="clearLocal()">Clear</button>
-        </div>
-      </div>
-
-      <div class="glass p-4 smallmuted">
-        <div class="font-semibold">Notes</div>
-        <div class="mt-2">History stored locally per username. Use "Sync" to keep on same device.</div>
-      </div>
-    </aside>
-  </div>
-
-  <!-- Full history modal / section -->
-  <div id="historyFull" class="max-w-6xl mx-auto mt-6 glass p-4 hidden">
-    <div class="flex justify-between items-center">
-      <h3 class="font-semibold">Saved History for <span id="histUser"></span></h3>
-      <div class="flex gap-2">
-        <button class="px-3 py-2 border rounded" onclick="exportHistory()">Export JSON</button>
-        <button class="px-3 py-2 border rounded" onclick="deleteAllHistory()">Delete All</button>
-        <button class="px-3 py-2 border rounded" onclick="closeHistory()">Close</button>
-      </div>
-    </div>
-    <div id="historyItems" class="mt-3 space-y-3"></div>
-  </div>
-
-  <!-- Login overlay -->
-  <div id="loginOverlay" class="fixed inset-0 flex items-center justify-center hidden z-50" style="background:rgba(2,6,23,0.6)">
-    <div class="bg-[#071827] p-6 rounded-lg w-full max-w-md">
-      <h3 class="text-lg font-semibold">Sign in (Local)</h3>
-      <p class="smallmuted mt-1">Enter a username — history will be stored separately for each username on this device.</p>
-      <input id="userInput" class="mt-3 w-full" placeholder="Choose a username (example: ali)" />
-      <div class="flex gap-3 mt-4">
-        <button class="btn" onclick="doLogin()">Sign in</button>
-        <button class="px-3 py-2 border rounded" onclick="closeLogin()">Cancel</button>
-      </div>
-      <div class="smallmuted mt-2">No password — this is local-only auth for quick testing.</div>
-    </div>
-  </div>
-
-<script>
-/* ---------- Utilities & LocalStorage schema ----------
- localStorage key: calc_users_v1  --> stores array of usernames (for quick list)
- per-user history key: calc_history_{username}
- each history item:
- { id, type: 'scientific'|'bmi'|'graph', ts, summary, data }
-*/
-
-// helpers
-const uid = () => 'h'+Math.random().toString(36).slice(2,9);
-const now = ()=> Date.now();
-
-// UI elements
-const accountBox = document.getElementById('accountBox');
-const authArea = document.getElementById('authArea');
-const quickList = document.getElementById('quickList');
-const historyFull = document.getElementById('historyFull');
-
-let currentUser = null; // username string
-
-// ----- Auth (Local) -----
-function openLogin(){ document.getElementById('loginOverlay').classList.remove('hidden'); }
-function closeLogin(){ document.getElementById('loginOverlay').classList.add('hidden'); }
-function doLogin(){
-  const u = (document.getElementById('userInput').value||'').trim();
-  if(!u){ alert('Enter a username'); return; }
-  currentUser = u;
-  // register user list
-  const users = JSON.parse(localStorage.getItem('calc_users_v1')||'[]');
-  if(!users.includes(u)) users.push(u);
-  localStorage.setItem('calc_users_v1', JSON.stringify(users));
-  localStorage.setItem('calc_current_user', u);
-  renderAccount();
-  renderQuick();
-  closeLogin();
-  alert('Logged in as: '+u);
-}
-function logout(){
-  currentUser = null;
-  localStorage.removeItem('calc_current_user');
-  renderAccount();
-  renderQuick();
-}
-
-// on load check
-(function initAuth(){
-  const stored = localStorage.getItem('calc_current_user');
-  if(stored) currentUser = stored;
-  renderAccount();
-  renderQuick();
-})();
-
-function renderAccount(){
-  if(currentUser){
-    accountBox.innerHTML = `
-      <div class="font-semibold">${currentUser}</div>
-      <div class="smallmuted mt-2">Local user (history saved per username)</div>
-      <div class="mt-3 flex gap-2">
-        <button class="px-3 py-2 border rounded" onclick="openHistoryFull()">Open History</button>
-        <button class="px-3 py-2 border rounded" onclick="logout()">Logout</button>
-      </div>
-    `;
-  } else {
-    accountBox.innerHTML = `
-      <div class="smallmuted">Not signed in</div>
-      <div class="mt-3 flex gap-2">
-        <button class="px-3 py-2 border rounded" onclick="openLogin()">Sign in</button>
-        <button class="px-3 py-2 border rounded" onclick="chooseGuest()">Continue as Guest</button>
-      </div>
-    `;
-  }
-}
-
-// guest quick
-function chooseGuest(){
-  const g = 'guest_' + uid().slice(1,6);
-  currentUser = g;
-  localStorage.setItem('calc_current_user', g);
-  // push to users if not present
-  const users = JSON.parse(localStorage.getItem('calc_users_v1')||'[]');
-  if(!users.includes(g)) { users.push(g); localStorage.setItem('calc_users_v1', JSON.stringify(users)); }
-  renderAccount();
-  renderQuick();
-  alert('Continuing as guest: ' + g);
-}
-
-/* ---------- History storage helpers ---------- */
-function historyKey(user){ return 'calc_history_' + user; }
-function loadHistory(user){
-  try { return JSON.parse(localStorage.getItem(historyKey(user))||'[]'); } catch(e){ return []; }
-}
-function saveHistory(user, arr){ localStorage.setItem(historyKey(user), JSON.stringify(arr)); }
-function addHistory(item){
-  const user = currentUser || 'anonymous';
-  const arr = loadHistory(user);
-  arr.unshift(item);
-  if(arr.length>200) arr.pop();
-  saveHistory(user, arr);
-  renderQuick();
-}
-
-/* ---------- Quick list UI ---------- */
-function renderQuick(){
-  const user = currentUser || 'anonymous';
-  const arr = loadHistory(user);
-  if(!arr.length){ quickList.innerHTML = '<div class="smallmuted">No history yet</div>'; return; }
-  quickList.innerHTML = '';
-  arr.slice(0,6).forEach(it=>{
-    const el = document.createElement('div');
-    el.className = 'mb-2';
-    el.innerHTML = `<div class="font-semibold">${it.type} • <span class="smallmuted">${new Date(it.ts).toLocaleString()}</span></div><div class="smallmuted">${it.summary}</div>`;
-    quickList.appendChild(el);
-  });
-}
-
-/* download & clear */
-function downloadLocal(){
-  const user = currentUser || 'anonymous';
-  const arr = loadHistory(user);
-  const blob = new Blob([JSON.stringify(arr, null, 2)], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = `${user}_history.json`; a.click();
-  URL.revokeObjectURL(url);
-}
-function clearLocal(){
-  const user = currentUser || 'anonymous';
-  if(!confirm('Clear local history for '+user+'?')) return;
-  saveHistory(user, []);
-  renderQuick();
-  alert('Cleared history for ' + user);
-}
-
-/* ---------- Full history view ---------- */
-function openHistoryFull(){
-  const user = currentUser || 'anonymous';
-  document.getElementById('histUser').innerText = user;
-  historyFull.classList.remove('hidden');
-  const items = loadHistory(user);
-  const container = document.getElementById('historyItems');
-  container.innerHTML = '';
-  if(!items.length){ container.innerHTML = '<div class="smallmuted">No items</div>'; return; }
-  items.forEach((it, idx)=>{
-    const row = document.createElement('div');
-    row.className = 'p-3 rounded border';
-    row.innerHTML = `<div class="flex justify-between"><div><b>${it.type}</b><div class="smallmuted">${new Date(it.ts).toLocaleString()}</div></div>
-      <div class="flex gap-2"><button class="px-2 py-1 border rounded" onclick='downloadItem(${idx})'>Download</button>
-      <button class="px-2 py-1 border rounded" onclick='deleteItem(${idx})'>Delete</button></div></div>
-      <div class="mt-2 smallmuted">${it.summary || JSON.stringify(it.data)}</div>`;
-    container.appendChild(row);
-  });
-}
-function closeHistory(){ historyFull.classList.add('hidden'); }
-function downloadItem(idx){
-  const user = currentUser || 'anonymous';
-  const arr = loadHistory(user);
-  const blob = new Blob([JSON.stringify(arr[idx], null, 2)], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = `item_${idx}.json`; a.click();
-  URL.revokeObjectURL(url);
-}
-function deleteItem(idx){
-  const user = currentUser || 'anonymous';
-  if(!confirm('Delete this item?')) return;
-  const arr = loadHistory(user);
-  arr.splice(idx,1);
-  saveHistory(user, arr);
-  openHistoryFull();
-}
-function exportHistory(){ downloadLocal(); }
-function deleteAllHistory(){
-  const user = currentUser || 'anonymous';
-  if(!confirm('Delete all history for ' + user + '?')) return;
-  saveHistory(user, []);
-  openHistoryFull();
-  renderQuick();
-}
-
-/* ---------- Calculator logic ---------- */
-
-/* Scientific */
-function scKey(v){
-  const d = document.getElementById('scDisplay');
-  d.value = (d.value || '') + v;
-}
-function scBack(){
-  const d = document.getElementById('scDisplay');
-  d.value = d.value.slice(0,-1);
-}
-function scClear(){ document.getElementById('scDisplay').value = ''; }
-function scEval(){
-  const expr = (document.getElementById('scDisplay').value||'').trim();
-  if(!expr){ alert('Enter expression'); return; }
-  try{
-    const res = math.evaluate(expr);
-    document.getElementById('scDisplay').value = res;
-    const item = { id: uid(), type:'scientific', ts: now(), summary: `${expr} = ${res}`, data:{expr, result:res} };
-    addHistory(item);
-  }catch(err){
-    alert('Evaluation error: ' + (err.message||err));
-  }
-}
-
-/* BMI */
-function calcBMI(){
-  const h = parseFloat(document.getElementById('heightCm').value);
-  const w = parseFloat(document.getElementById('weightKg').value);
-  if(!h || !w){ alert('Enter height and weight'); return; }
-  const m = h/100;
-  const bmi = Math.round((w/(m*m))*100)/100;
-  let cat = 'Normal';
-  if(bmi < 18.5) cat = 'Underweight';
-  else if(bmi >= 25 && bmi < 30) cat = 'Overweight';
-  else if(bmi >= 30) cat = 'Obese';
-  document.getElementById('bmiRes').innerHTML = `BMI: <span class="font-semibold">${bmi}</span> — <span class="smallmuted">${cat}</span>`;
-  const item = { id: uid(), type:'bmi', ts: now(), summary:`BMI ${bmi} (${cat})`, data:{height_cm:h, weight_kg:w, bmi, category:cat} };
-  addHistory(item);
-}
-function clearBMI(){ document.getElementById('heightCm').value=''; document.getElementById('weightKg').value=''; document.getElementById('bmiRes').innerHTML=''; }
-
-/* Graph */
-let lastPlotExpr = null;
-function plotGraph(){
-  const expr = (document.getElementById('graphExpr').value||'').trim();
-  if(!expr){ alert('Enter expression using x'); return; }
-  // use mathjs evaluate with scope x
-  const xs = []; const ys = [];
-  for(let i=-100;i<=100;i+=1){
-    const x = i/10;
-    xs.push(x);
-    try{
-      // math.evaluate with scope
-      const y = math.evaluate(expr, {x});
-      ys.push((y===null||y===undefined||Number.isNaN(y))? null : Number(y));
-    }catch(e){
-      // try JS function fallback
-      try{
-        const fn = new Function('x','return ' + expr);
-        const y2 = fn(x);
-        ys.push((y2===null||y2===undefined||Number.isNaN(y2))? null : Number(y2));
-      }catch(e2){
-        ys.push(null);
-      }
-    }
-  }
-  const data = [{ x: xs, y: ys, mode:'lines', line:{color:'#60a5fa'}, name:expr }];
-  const layout = { paper_bgcolor: 'transparent', plot_bgcolor: '#071022', margin:{t:30}, xaxis:{title:'x'}, yaxis:{title:'y'}, font:{color:'#e6f0fb'} };
-  Plotly.newPlot('graphDiv', data, layout, {responsive:true});
-  lastPlotExpr = expr;
-  const item = { id: uid(), type:'graph', ts: now(), summary:`Graph(${expr})`, data:{expr, sample:xs.length} };
-  addHistory(item);
-}
-function clearPlot(){ document.getElementById('graphExpr').value=''; Plotly.purge('graphDiv'); lastPlotExpr=null; }
-function savePlot(){
-  if(!lastPlotExpr){ alert('Plot first'); return; }
-  // Save only metadata (image saving may be heavy for localStorage)
-  const item = { id: uid(), type:'graph_saved', ts: now(), summary:`Saved Graph (${lastPlotExpr})`, data:{expr:lastPlotExpr} };
-  addHistory(item);
-  alert('Graph metadata saved to history');
-}
-
-/* ---------- Tabs behavior ---------- */
-function showTab(name){
-  ['scientific','bmi','graph','historyFull'].forEach(k=> document.getElementById(k).classList.add('hidden'));
-  document.getElementById(name).classList.remove('hidden');
-  // activate tab button styling
-  ['tabSci','tabBMI','tabGraph','tabHist'].forEach(id=> document.getElementById(id).classList.remove('tab-active'));
-  if(name==='scientific') document.getElementById('tabSci').classList.add('tab-active');
-  if(name==='bmi') document.getElementById('tabBMI').classList.add('tab-active');
-  if(name==='graph') document.getElementById('tabGraph').classList.add('tab-active');
-  if(name==='historyFull') document.getElementById('tabHist').classList.add('tab-active');
-}
-document.getElementById('tabSci').onclick = ()=> showTab('scientific');
-document.getElementById('tabBMI').onclick = ()=> showTab('bmi');
-document.getElementById('tabGraph').onclick = ()=> showTab('graph');
-document.getElementById('tabHist').onclick = ()=> { showTab('historyFull'); openHistoryFull(); };
-
-/* ---------- Helper small functions ---------- */
-function uid(){ return 'id_' + Math.random().toString(36).slice(2,9); }
-function now(){ return Date.now(); }
-
-/* ---------- initial render ---------- */
-renderQuick();
-
-/* expose some functions to global for buttons created in innerHTML */
-window.openLogin = openLogin;
-window.closeLogin = closeLogin;
-window.doLogin = doLogin;
-window.logout = logout;
-window.openHistoryFull = openHistoryFull;
-window.downloadLocal = downloadLocal;
-window.clearLocal = clearLocal;
-
-</script>
-
-<!-- End -->
-</body>
-</html>
+  </div>  <!-- SCIENTIFIC KEYS -->  <div class="btn-grid" id="sciCalc" style="display: none; margin-top: 12px;">
+    <button onclick="sci('sin')">sin</button>
+    <button onclick="sci('cos')">cos</button>
+    <button onclick="sci('tan')">tan</button>
+    <button onclick="press('^')">x^y</button><button onclick="sci('sqrt')">√</button>
+<button onclick="sci('log
