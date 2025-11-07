@@ -70,3 +70,71 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--text);direction:
   .big-display{font-size:1.4rem}
   .site-title{font-size:1.1rem}
 }
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+}
+
+:root {
+    --bg: #ffffff;
+    --text: #000;
+    --box: #f1f1f1;
+}
+
+.dark {
+    --bg: #121212;
+    --text: #fff;
+    --box: #1e1e1e;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--box);
+    padding: 12px;
+}
+
+.ads-box {
+    margin: 10px auto;
+    background: #ddd;
+    height: 90px;
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.calc-section {
+    margin: 20px auto;
+    width: 90%;
+    background: var(--box);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.calculator input {
+    width: 100%;
+    padding: 10px;
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.buttons button {
+    width: 23%;
+    padding: 12px;
+    margin: 3px;
+    font-size: 20px;
+}
+
+.clear {
+    background: red;
+    color: white;
+}
+
+.hidden {
+    display: none;
+}
