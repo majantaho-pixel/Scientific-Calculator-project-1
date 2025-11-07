@@ -1,287 +1,169 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="CalcLab — Powerful online calculators: Scientific, BMI and Graphical. Save history, export graphs, premium features coming soon." />
-  <meta name="keywords" content="online calculator, scientific calculator, BMI calculator, graph plotter, calculate online" />
-  <meta name="author" content="CalcLab" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Multi Calculator | Scientific • BMI • Graph</title>
 
-  <!-- OpenGraph -->
-  <meta property="og:title" content="CalcLab — Advanced Online Calculators" />
-  <meta property="og:description" content="Scientific, BMI and Graphical calculators with save-history and export features." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://yourdomain.com/" />
-  <meta property="og:image" content="https://yourdomain.com/og-image.png" />
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
 
-  <title>CalcLab — Scientific · BMI · Graph</title>
+<!-- Math.js (Scientific calculator logic) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
 
-  <!-- Structured data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "CalcLab",
-    "url": "https://yourdomain.com",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://yourdomain.com/?s={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
-  }
-  </script>
+<!-- Plotly.js (Graph Calculator) -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-
-  <!-- Basic styles (tailored, no external frameworks required) -->
-  <style>
-    :root{
-      --bg: #0f172a;           /* dark background base for gradient */
-      --surface: #ffffff;
-      --muted: #6b7280;
-      --primary: #2563eb;      /* royal blue */
-      --accent: #7c3aed;       /* purple */
-      --success: #16a34a;
-      --danger: #ef4444;
-      --card-radius: 14px;
-      --glass: rgba(255,255,255,0.06);
-      --max-w: 1100px;
-      --container-padding: 20px;
-      color-scheme: light dark;
-    }
-
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
-    body{background: linear-gradient(180deg,#f8fafc 0%, #eef2ff 100%); color:#0f172a; -webkit-font-smoothing:antialiased;}
-    .dark body{background: linear-gradient(180deg, #071025 0%, #071a2b 100%); color:#e6eef8;}
-
-    .container{max-width:var(--max-w);margin:0 auto;padding:var(--container-padding);}
-
-    header{display:flex;align-items:center;justify-content:space-between;padding:18px 0;}
-    .logo{display:flex;align-items:center;gap:12px;font-weight:700;font-size:1.15rem}
-    .logo .mark{width:38px;height:38px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--accent));display:inline-block;box-shadow:0 6px 20px rgba(37,99,235,0.15)}
-    nav{display:flex;gap:14px;align-items:center}
-    a.btn{background:var(--primary);color:#fff;padding:9px 14px;border-radius:10px;text-decoration:none;font-weight:600}
-    a.ghost{background: transparent;border:1px solid rgba(15,23,42,0.06);padding:8px 12px;border-radius:10px;color:inherit;text-decoration:none}
-
-    /* Hero */
-    .hero{display:flex;gap:28px;align-items:center;padding:40px 0}
-    .hero-left{flex:1}
-    .eyebrow{display:inline-block;background:linear-gradient(90deg,#eef2ff,#f3e8ff);color:var(--muted);padding:6px 10px;border-radius:999px;font-weight:600;font-size:13px;margin-bottom:12px}
-    h1{font-size:2.25rem;margin:0 0 12px;line-height:1.05}
-    .lead{color:var(--muted);margin-bottom:18px;max-width:48ch}
-    .hero-ctas{display:flex;gap:12px;margin-top:8px}
-    .hero-preview{flex:0.9;background:linear-gradient(180deg,#fff,#f8fafc);border-radius:16px;padding:16px;box-shadow:0 8px 30px rgba(2,6,23,0.06);min-height:220px;display:flex;align-items:center;justify-content:center}
-
-    /* Features grid */
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
-    .card{background:var(--surface);border-radius:var(--card-radius);padding:18px;box-shadow:0 8px 24px rgba(2,6,23,0.04)}
-    .card h4{margin:0 0 8px}
-    .muted{color:var(--muted)}
-
-    /* Ad placeholders */
-    .ad-rect{background:#f1f5f9;border:1px dashed #cbd5e1;padding:14px;border-radius:10px;text-align:center;color:#475569}
-    .ad-rect.small{padding:10px;font-size:13px}
-
-    /* Footer */
-    footer{margin-top:40px;padding:28px 0;color:var(--muted);font-size:14px;text-align:center}
-
-    /* Responsive */
-    @media (max-width:980px){
-      .grid{grid-template-columns:1fr; }
-      .hero{flex-direction:column;align-items:stretch}
-      .hero-preview{order:-1}
-      nav{display:none}
-    }
-
-    /* Theme toggle */
-    .toggle{cursor:pointer;padding:8px;border-radius:8px;border:1px solid rgba(15,23,42,0.06);display:inline-flex;align-items:center;gap:8px}
-    .small{font-size:0.9rem;color:var(--muted)}
-    .feature-list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
-    .pill{display:inline-block;background:linear-gradient(90deg,#eef2ff,#fff);padding:6px 10px;border-radius:999px;font-weight:600;font-size:13px}
-  </style>
-
-  <!-- NOTE: Replace this comment with your AdSense script when ready:
-       <script data-ad-client="ca-pub-XXXXXXXXXXXX" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-  -->
-
+<style>
+.tab-active {
+  background: #2563eb;
+  color: white;
+}
+.calc-btn {
+  background: #e2e8f0;
+  padding: 14px;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 600;
+}
+.calc-btn:hover {
+  background: #cbd5e1;
+}
+</style>
 </head>
-<body>
-  <div class="container" id="page">
-    <header>
-      <div class="logo" aria-label="CalcLab - logo">
-        <span class="mark" aria-hidden="true"></span>
-        <span>CalcLab</span>
-      </div>
 
-      <div style="display:flex;gap:12px;align-items:center">
-        <nav aria-label="Primary navigation">
-          <a href="#scientific" class="ghost">Scientific</a>
-          <a href="#bmi" class="ghost">BMI</a>
-          <a href="#graph" class="ghost">Graph</a>
-        </nav>
+<body class="bg-gray-100 text-gray-900">
+<!-- HEADER -->
+<header class="bg-white shadow p-4 text-center text-xl font-bold">
+  Multi Calculator — Scientific • BMI • Graph
+</header>
 
-        <button id="themeToggle" class="toggle small" aria-pressed="false" title="Toggle theme">🌗 Theme</button>
-        <a href="#signup" class="btn" style="margin-left:8px">Get Started</a>
-      </div>
-    </header>
+<!-- MAIN CONTAINER -->
+<div class="max-w-4xl mx-auto mt-6 p-4 bg-white rounded-xl shadow">
 
-    <!-- HERO -->
-    <section class="hero" role="region" aria-labelledby="hero-heading">
-      <div class="hero-left">
-        <div class="eyebrow">Online · Fast · Accurate</div>
-        <h1 id="hero-heading">Professional calculators for students, developers and fitness</h1>
-        <p class="lead">Scientific, BMI and Graph calculators — modern interface, save your history, export graphs and scale to premium features. Mobile-first, SEO friendly and ready for AdSense/monetization.</p>
-        <div class="hero-ctas">
-          <a class="btn" href="#scientific">Open Scientific</a>
-          <a class="ghost" href="#graph">Try Graph Plotter</a>
-          <a class="ghost" href="#features" style="margin-left:8px">See Features</a>
-        </div>
-
-        <div class="feature-list">
-          <span class="pill">Multi-equation Graphs</span>
-          <span class="pill">Login & Save History</span>
-          <span class="pill">Export PNG / PDF (Premium)</span>
-        </div>
-
-        <!-- small ad placeholder (desktop) -->
-        <div style="margin-top:16px;max-width:320px;">
-          <div class="ad-rect small" role="region" aria-label="Ad placeholder (top)">
-            Ad placeholder — Top banner
-            <!-- Replace this div with AdSense ad slot -->
-          </div>
-        </div>
-      </div>
-
-      <div class="hero-preview" aria-hidden="true">
-        <!-- simple visual preview of calculators -->
-        <div style="width:240px;">
-          <div style="background:#0b1220;color:#fff;padding:12px;border-radius:10px;text-align:center;font-weight:700">Scientific</div>
-          <div style="margin-top:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
-            <div style="background:#fff;padding:10px;border-radius:8px;text-align:center">sin</div>
-            <div style="background:#fff;padding:10px;border-radius:8px;text-align:center">cos</div>
-            <div style="background:#fff;padding:10px;border-radius:8px;text-align:center">tan</div>
-            <div style="background:#fff;padding:10px;border-radius:8px;text-align:center">log</div>
-            <div style="background:#fff;padding:10px;border-radius:8px;text-align:center">7</div>
-            <div style="background:#fff;padding:10px;border-radius:8px;text-align:center">8</div>
-            <div style="background:#fff;padding:10px;border-radius:8px;text-align:center">9</div>
-            <div style="background:#fff;padding:10px;border-radius:8px;text-align:center">/</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Features / Cards -->
-    <section id="features" aria-label="Features" style="margin-top:20px;">
-      <div class="grid">
-        <article class="card" id="scientific">
-          <h4>Scientific Calculator</h4>
-          <p class="muted">Full keyboard support, trig/log functions, expression parser, history and cloud save for logged-in users.</p>
-          <ul class="muted" style="margin-top:10px">
-            <li>sin/cos/tan, ln, log, pow, sqrt</li>
-            <li>Parentheses, operator precedence</li>
-            <li>Keyboard shortcuts & history</li>
-          </ul>
-          <div style="margin-top:12px;display:flex;gap:8px">
-            <a class="btn" href="/scientific">Open</a>
-            <a class="ghost" href="#signup">Sign up</a>
-          </div>
-        </article>
-
-        <article class="card" id="bmi">
-          <h4>BMI Calculator</h4>
-          <p class="muted">Metric / Imperial support, visual meter and health tips, save records to your account.</p>
-          <div style="margin-top:12px;display:flex;gap:8px">
-            <a class="btn" href="/bmi">Open</a>
-            <a class="ghost" href="#signup">Save records</a>
-          </div>
-        </article>
-
-        <article class="card" id="graph">
-          <h4>Graphical Calculator</h4>
-          <p class="muted">Multi-equation plotting, zoom & pan, legend, export to PNG/SVG and advanced tracing (premium).</p>
-          <div style="margin-top:12px;display:flex;gap:8px">
-            <a class="btn" href="/graph">Plot Now</a>
-            <a class="ghost" href="#pricing">Pricing</a>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <!-- Analytics / Ads / Signup strip -->
-    <section style="margin-top:28px;display:flex;flex-direction:column;gap:12px;">
-      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-        <div style="flex:1">
-          <h3 style="margin:0 0 6px">Monetization & Premium</h3>
-          <p class="muted" style="margin:0">Ad-free subscriptions, advanced graphing and export APIs. Integrate Stripe for billing and Firebase for account management.</p>
-        </div>
-        <div style="min-width:320px;">
-          <div class="ad-rect">
-            Sidebar / Content ad placeholder — (replace with AdSense slot)
-          </div>
-        </div>
-      </div>
-
-      <div style="display:flex;gap:12px;align-items:center;justify-content:space-between">
-        <div>
-          <strong>Join our beta</strong>
-          <p class="muted" style="margin:4px 0 0">Get early access to premium features & API keys.</p>
-        </div>
-        <div>
-          <a id="signup" class="btn" href="/signup">Request Beta</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- Lightweight footer + small ad -->
-    <footer>
-      <div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;">
-        <div>© <span id="year"></span> CalcLab</div>
-        <div style="width:160px">
-          <div class="ad-rect small">Mobile sticky ad placeholder</div>
-        </div>
-      </div>
-      <div style="margin-top:10px" class="muted">Privacy · Terms · Contact</div>
-    </footer>
+  <!-- TABS -->
+  <div class="flex gap-2 mb-4">
+    <button id="tabScientific" class="tab-active px-4 py-2 rounded">Scientific</button>
+    <button id="tabBMI" class="px-4 py-2 rounded">BMI</button>
+    <button id="tabGraph" class="px-4 py-2 rounded">Graph</button>
   </div>
 
-  <!-- Simple scripts: theme toggle + year -->
-  <script>
-    (function(){
-      const root = document.documentElement;
-      const page = document.getElementById('page');
-      const toggle = document.getElementById('themeToggle');
-      const yearEl = document.getElementById('year');
+<!-- ✅ SCIENTIFIC CALCULATOR -->
+<div id="scientificCalc">
+  <input id="scDisplay" class="w-full p-4 text-right text-2xl border rounded mb-4" readonly />
 
-      // init year
-      if(yearEl) yearEl.textContent = new Date().getFullYear();
+  <div class="grid grid-cols-4 gap-3">
+    <div class="calc-btn" onclick="addToCalc('7')">7</div>
+    <div class="calc-btn" onclick="addToCalc('8')">8</div>
+    <div class="calc-btn" onclick="addToCalc('9')">9</div>
+    <div class="calc-btn bg-red-400 text-white" onclick="clearCalc()">C</div>
 
-      // load theme from localStorage
-      const stored = localStorage.getItem('calc-theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-      if(stored === 'dark') document.documentElement.classList.add('dark');
+    <div class="calc-btn" onclick="addToCalc('4')">4</div>
+    <div class="calc-btn" onclick="addToCalc('5')">5</div>
+    <div class="calc-btn" onclick="addToCalc('6')">6</div>
+    <div class="calc-btn" onclick="addToCalc('*')">×</div>
 
-      toggle.addEventListener('click', () => {
-        const isDark = document.documentElement.classList.toggle('dark');
-        localStorage.setItem('calc-theme', isDark ? 'dark' : 'light');
-        toggle.setAttribute('aria-pressed', String(isDark));
-      });
+    <div class="calc-btn" onclick="addToCalc('1')">1</div>
+    <div class="calc-btn" onclick="addToCalc('2')">2</div>
+    <div class="calc-btn" onclick="addToCalc('3')">3</div>
+    <div class="calc-btn" onclick="addToCalc('-')">-</div>
 
-      // Accessibility: focus outline only when keyboard used
-      function handleFirstTab(e) {
-        if (e.key === 'Tab') document.documentElement.classList.add('user-is-tabbing');
-        window.removeEventListener('keydown', handleFirstTab);
-      }
-      window.addEventListener('keydown', handleFirstTab);
-    })();
-  </script>
+    <div class="calc-btn" onclick="addToCalc('0')">0</div>
+    <div class="calc-btn" onclick="addToCalc('.')">.</div>
+    <div class="calc-btn" onclick="evaluateCalc()">=</div>
+    <div class="calc-btn" onclick="addToCalc('+')">+</div>
 
-  <!-- NOTES for developer (remove before production):
-       - Replace internal links (/scientific, /bmi, /graph, /signup) with your routes.
-       - Insert Google AdSense script in head and ad unit divs where placeholders exist.
-       - Add analytics script (GA4) and server-side SEO as required.
-       - For GitHub Pages, place this file at the repo root as index.html.
-       - For Next.js or other frameworks, convert hero / cards to components and reuse styles.
-  -->
+    <div class="calc-btn" onclick="addToCalc('(')"> ( </div>
+    <div class="calc-btn" onclick="addToCalc(')')"> ) </div>
+    <div class="calc-btn" onclick="addToCalc('pi')">π</div>
+    <div class="calc-btn" onclick="addToCalc('/')">÷</div>
+
+    <div class="calc-btn" onclick="addToCalc('sin(')">sin</div>
+    <div class="calc-btn" onclick="addToCalc('cos(')">cos</div>
+    <div class="calc-btn" onclick="addToCalc('tan(')">tan</div>
+    <div class="calc-btn" onclick="addToCalc('log(')">log</div>
+  </div>
+</div>
+
+<!-- ✅ BMI CALCULATOR -->
+<div id="bmiCalc" class="hidden">
+  <div class="mt-6">
+    <label class="font-semibold">Height (cm)</label>
+    <input id="bmiHeight" type="number" class="w-full p-2 border rounded mb-3"/>
+    
+    <label class="font-semibold">Weight (kg)</label>
+    <input id="bmiWeight" type="number" class="w-full p-2 border rounded mb-3"/>
+
+    <button onclick="calcBMI()" class="w-full bg-blue-600 text-white p-3 rounded">Calculate BMI</button>
+
+    <p id="bmiResult" class="mt-4 text-xl font-bold"></p>
+  </div>
+</div>
+
+<!-- ✅ GRAPH CALCULATOR -->
+<div id="graphCalc" class="hidden">
+  <label class="font-semibold">Enter Equation (ex: x^2 + 2)</label>
+  <input id="graphEq" class="w-full p-2 border rounded mb-3" placeholder="y = ..."/>
+
+  <button onclick="drawGraph()" class="w-full bg-green-600 text-white p-3 rounded">Plot</button>
+
+  <div id="graphBox" class="mt-4" style="height:350px;"></div>
+</div>
+
+</div>
+
+<script>
+// ********* SCIENTIFIC CALCULATOR LOGIC *********
+function addToCalc(val) {
+  document.getElementById("scDisplay").value += val;
+}
+function clearCalc() {
+  document.getElementById("scDisplay").value = "";
+}
+function evaluateCalc() {
+  try {
+    let result = math.evaluate(document.getElementById("scDisplay").value);
+    document.getElementById("scDisplay").value = result;
+  } catch {
+    document.getElementById("scDisplay").value = "Error";
+  }
+}
+
+// ********* BMI CALCULATOR *********
+function calcBMI() {
+  let h = parseFloat(document.getElementById("bmiHeight").value) / 100;
+  let w = parseFloat(document.getElementById("bmiWeight").value);
+  let bmi = (w / (h * h)).toFixed(2);
+
+  let category =
+    bmi < 18.5 ? "Underweight" :
+    bmi < 25 ? "Normal" :
+    bmi < 30 ? "Overweight" : "Obese";
+
+  document.getElementById("bmiResult").innerText = `BMI: ${bmi} (${category})`;
+}
+
+// ********* GRAPH CALCULATOR (Plotly) *********
+function drawGraph() {
+  let eq = document.getElementById("graphEq").value;
+  let x = [...Array(200).keys()].map(i => i / 10 - 10);
+  let y = x.map(v => math.evaluate(eq, { x: v }));
+
+  Plotly.newPlot("graphBox", [{ x, y, mode: "lines" }]);
+}
+
+// ********* TABS *********
+function swapTab(active, hide1, hide2) {
+  document.getElementById(active).classList.remove("hidden");
+  document.getElementById(hide1).classList.add("hidden");
+  document.getElementById(hide2).classList.add("hidden");
+}
+
+document.getElementById("tabScientific").onclick = () => swapTab("scientificCalc", "bmiCalc", "graphCalc");
+document.getElementById("tabBMI").onclick = () => swapTab("bmiCalc", "scientificCalc", "graphCalc");
+document.getElementById("tabGraph").onclick = () => swapTab("graphCalc", "scientificCalc", "bmiCalc");
+</script>
 
 </body>
 </html>
