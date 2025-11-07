@@ -1,210 +1,539 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>EasyCalc — Scientific + BMI</title>
-<meta name="description" content="EasyCalc: futuristic scientific calculator with BMI checker, glass UI, dark/light mode and ads layout.">
+<title>EasyCalc Pro — Scientific + BMI</title>
+<meta name="description" content="EasyCalc Pro: Advanced scientific calculator, BMI, themes, PWA, voice input, multilingual (English/Urdu), ads & more." />
+<meta name="keywords" content="scientific calculator, BMI, PWA, calculator, EasyCalc" />
+<meta name="author" content="Umair / EasyCalc" />
+<link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
 <style>
-  /* ----------- Theme variables ----------- */
-  :root {
-    --bg:#e8ecf4;
-    --text:#111827;
-    --muted:#6b7280;
-    --accent:#3b82f6;
-    --panel:rgba(255,255,255,0.65);
-    --blur:14px;
-    --shadow:0 8px 25px rgba(0,0,0,0.1);
-    --radius:18px;
+  /* ---------------- Theme & variables ---------------- */
+  :root{
+    --bg:linear-gradient(180deg,#f4f7fb,#e8eef8);
+    --page-bg:#f3f6fa;
+    --panel:#fff;
+    --text:#0b1220;
+    --muted:#556;
+    --accent:#ff6b35;
+    --glass:rgba(255,255,255,0.6);
+    --radius:14px;
+    --shadow:0 8px 28px rgba(18,25,40,0.08);
   }
-  body.dark {
-    --bg:#060b1b;
-    --text:#e2e8f0;
-    --muted:#94a3b8;
+  body.dark{
+    --bg:linear-gradient(180deg,#061022,#07102a);
+    --page-bg:#071025;
+    --panel:rgba(20,24,36,0.6);
+    --text:#e6eef8;
+    --muted:#9aa7bf;
     --accent:#60a5fa;
-    --panel:rgba(20,25,40,0.6);
-    --shadow:0 8px 30px rgba(0,0,0,0.6);
+    --glass:rgba(12,16,28,0.6);
+    --shadow:0 10px 40px rgba(0,0,0,0.6);
   }
+  /* Alternative themes */
+  body.theme-neon { --accent: #7cffb2; --panel: rgba(10,10,20,0.6); }
+  body.theme-classic { --accent:#ff6b35; }
+  body.theme-glass { --panel: rgba(255,255,255,0.35); }
 
-  /* ----------- Base styles ----------- */
-  html,body{margin:0;padding:0;height:100%;
-    font-family:"Poppins",system-ui,Arial,sans-serif;
-    background:var(--bg);color:var(--text);
-    transition:background 0.6s ease,color 0.6s ease;}
-  .container{max-width:900px;margin:0 auto;padding:20px;}
-  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
-  .brand{font-size:24px;font-weight:800;color:var(--accent);}
-  .theme-btn{background:var(--panel);backdrop-filter:blur(var(--blur));
-    color:var(--text);border:none;padding:10px 16px;
-    border-radius:var(--radius);font-size:20px;cursor:pointer;
-    box-shadow:var(--shadow);transition:0.4s;}
-  .theme-btn:hover{transform:scale(1.1);}
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;transition:background .5s,color .5s}
+  .page{max-width:1100px;margin:18px auto;padding:18px;}
+  header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+  .brand{font-weight:800;font-size:20px;color:var(--accent)}
+  .controls{display:flex;gap:8px;align-items:center}
+  button.btn{background:var(--panel);border:none;padding:8px 10px;border-radius:10px;cursor:pointer;box-shadow:var(--shadow);color:var(--text)}
+  button.btn.small{padding:6px 8px;font-size:14px}
+  /* animated background */
+  .bg-anim{position:fixed;left:0;top:0;right:0;bottom:0;z-index:-1;overflow:hidden}
+  .bg-grad{width:200%;height:200%;background:radial-gradient(circle at 20% 20%, rgba(255,107,53,0.08), transparent 8%),radial-gradient(circle at 80% 80%, rgba(59,130,246,0.06), transparent 8%);animation:move 15s linear infinite;filter:blur(30px);transform:scale(1.1)}
+  @keyframes move{0%{transform:translate(0,0) scale(1.05)}50%{transform:translate(-10%,5%) scale(1.05)}100%{transform:translate(0,0) scale(1.05)}}
 
-  /* ----------- Glass panels ----------- */
-  .panel{background:var(--panel);backdrop-filter:blur(var(--blur));
-    padding:20px;border-radius:var(--radius);
-    box-shadow:var(--shadow);margin-bottom:24px;
-    transition:background 0.6s ease, box-shadow 0.6s ease;}
-  .panel:hover{box-shadow:0 8px 35px rgba(0,0,0,0.25);}
-  .calc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-  .calc-title{font-weight:700;font-size:18px;}
-  .mode{font-size:13px;color:var(--muted);}
-  .display{width:100%;height:70px;border-radius:12px;padding:10px 14px;
-    background:rgba(255,255,255,0.15);backdrop-filter:blur(6px);
-    display:flex;flex-direction:column;justify-content:center;align-items:flex-end;}
-  .expr{font-size:14px;color:var(--muted);}
-  .value{font-size:26px;font-weight:700;}
-  .keys{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px;}
-  .key{padding:14px;border:none;border-radius:10px;background:rgba(255,255,255,0.25);
-    color:var(--text);font-weight:600;cursor:pointer;transition:0.2s;}
-  .key:hover{background:rgba(255,255,255,0.4);}
-  .operator{background:linear-gradient(90deg,var(--accent),#2563eb);color:#fff;}
-  .scientific{background:linear-gradient(90deg,#10b981,#059669);color:#fff;}
-  .equal{grid-column:span 2;background:linear-gradient(90deg,#f97316,#ea580c);color:#fff;}
-  .small-muted{font-size:13px;color:var(--muted);margin-top:6px;text-align:right;}
-  .history{max-height:100px;overflow-y:auto;font-size:13px;color:var(--muted);margin-top:10px;}
+  /* layout: stacked calculators */
+  .ad{background:var(--panel);padding:14px;border-radius:12px;box-shadow:var(--shadow);text-align:center;margin:12px 0;color:var(--muted)}
+  .card{background:var(--panel);border-radius:14px;padding:14px;box-shadow:var(--shadow);margin-bottom:18px;backdrop-filter:blur(6px)}
+  /* Calculator styling */
+  .calc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .calc-title{font-weight:800}
+  .display-small{width:100%;height:44px;background:rgba(0,0,0,0.03);border-radius:10px;padding:8px 10px;display:flex;align-items:center;justify-content:flex-end;font-size:16px;color:var(--muted);margin-bottom:8px}
+  .display-big{width:100%;height:86px;background:rgba(0,0,0,0.06);border-radius:12px;padding:12px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;font-size:28px;font-weight:700}
+  .expr{font-size:14px;color:var(--muted);width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .val{font-weight:800}
+  .keys{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:12px}
+  .key{padding:12px;border-radius:10px;border:none;background:rgba(255,255,255,0.06);cursor:pointer;color:var(--text);font-weight:700}
+  .key.op{background:linear-gradient(90deg,var(--accent),#e95b2b);color:#fff}
+  .key.sc{background:linear-gradient(90deg,#3b82f6,#06b6d4);color:#fff}
+  .key.wide{grid-column:span 2}
+  .small-muted{font-size:13px;color:var(--muted);margin-top:8px}
 
-  /* ----------- BMI Panel ----------- */
-  .bmi-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-  @media(max-width:600px){.bmi-grid{grid-template-columns:1fr;}}
-  label{font-size:13px;color:var(--muted);}
-  input[type="number"],select{width:100%;padding:10px;border-radius:8px;
-    border:none;background:rgba(255,255,255,0.25);color:var(--text);
-    backdrop-filter:blur(4px);}
-  .calc-btn{width:100%;margin-top:10px;padding:12px;border-radius:10px;
-    border:none;background:var(--accent);color:#fff;font-weight:700;cursor:pointer;}
-  .result-line{margin-top:12px;padding:10px;border-radius:10px;
-    background:rgba(255,255,255,0.15);}
-  .muted{color:var(--muted);font-size:13px;}
-  .ad{background:var(--panel);backdrop-filter:blur(var(--blur));border-radius:var(--radius);
-    padding:18px;margin:16px 0;text-align:center;color:var(--muted);
-    box-shadow:var(--shadow);font-weight:600;}
+  /* History panel */
+  .history{max-height:140px;overflow:auto;padding-top:8px}
+  .hist-item{padding:6px;border-bottom:1px dashed rgba(0,0,0,0.04);font-size:13px;color:var(--muted)}
+
+  /* BMI */
+  .bmi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  @media (max-width:780px){.keys{grid-template-columns:repeat(4,1fr)} .bmi-grid{grid-template-columns:1fr} .display-big{font-size:22px;height:72px}}
+  input,select{width:100%;padding:10px;border-radius:8px;border:none;background:rgba(255,255,255,0.06);color:var(--text)}
+  .muted{color:var(--muted)}
+  .bmi-bar{height:14px;background:rgba(0,0,0,0.06);border-radius:10px;margin-top:8px;overflow:hidden}
+  .bmi-fill{height:100%;width:0%;background:linear-gradient(90deg,#34d399,#f59e0b);transition:width .9s ease}
+
+  /* footer */
+  footer{opacity:.9;text-align:center;margin-top:20px;color:var(--muted);font-size:13px}
+
+  /* tiny responsive */
+  @media (max-width:480px){
+    body{padding-bottom:30px}
+    .keys{grid-template-columns:repeat(3,1fr)}
+    .display-big{font-size:20px}
+  }
 </style>
 </head>
 <body>
-<div class="container">
-  <header>
-    <div class="brand">EasyCalc</div>
-    <button id="themeToggle" class="theme-btn">🌙</button>
-  </header>
+  <div class="bg-anim"><div class="bg-grad"></div></div>
 
-  <div class="ad">🎬 AdSense Top Banner</div>
-
-  <!-- Scientific Calculator -->
-  <div class="panel">
-    <div class="calc-top">
-      <div>
-        <div class="calc-title">Scientific Calculator</div>
-        <div class="mode" id="angleModeLabel">Mode: <strong>Degrees</strong></div>
+  <div class="page">
+    <header>
+      <div class="brand">EasyCalc Pro</div>
+      <div class="controls">
+        <select id="themeSelect" class="btn small">
+          <option value="default">Classic</option>
+          <option value="neon">Neon</option>
+          <option value="glass">Glass</option>
+        </select>
+        <button id="voiceBtn" class="btn small">🎙️ Voice</button>
+        <button id="langBtn" class="btn small">EN</button>
+        <button id="installBtn" class="btn small" style="display:none">Install App</button>
+        <button id="themeToggle" class="btn small">🌙</button>
       </div>
-      <div class="muted">Mem: <span id="memLabel">0</span></div>
+    </header>
+
+    <!-- Top ad -->
+    <div id="adTop" class="ad">Top Ad Placeholder (rotating)</div>
+
+    <!-- Scientific calculator card -->
+    <section class="card" id="calcCard" aria-label="Scientific calculator">
+      <div class="calc-top">
+        <div>
+          <div class="calc-title" id="calcTitle">Scientific Calculator</div>
+          <div class="small-muted" id="angleLabel">Mode: <strong>Degrees</strong></div>
+        </div>
+        <div style="text-align:right">
+          <div class="muted">Memory: <span id="memLabel">0</span></div>
+          <div style="margin-top:6px">
+            <button class="btn small" id="copyBtn">Copy</button>
+            <button class="btn small" id="soundBtn">🔔</button>
+            <button class="btn small" id="vibBtn">📳</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- small input -->
+      <div class="display-small" id="smallInput"><span id="smallExpr" class="expr">&nbsp;</span></div>
+
+      <!-- big result -->
+      <div class="display-big" id="bigOutput"><span id="bigVal" class="val">0</span></div>
+
+      <!-- keys -->
+      <div class="keys" id="keys">
+        <!-- row1 -->
+        <button class="key" data-key="MC">MC</button>
+        <button class="key" data-key="MR">MR</button>
+        <button class="key" data-key="M+">M+</button>
+        <button class="key" data-key="M-">M-</button>
+        <button class="key sc" data-key="sqrt">√</button>
+        <button class="key" data-key="(">(</button>
+
+        <!-- row2 -->
+        <button class="key" data-key=")">)</button>
+        <button class="key" data-key="pi">π</button>
+        <button class="key" data-key="e">e</button>
+        <button class="key op" data-key="/">÷</button>
+        <button class="key" data-key="7">7</button>
+        <button class="key" data-key="8">8</button>
+
+        <!-- row3 -->
+        <button class="key" data-key="9">9</button>
+        <button class="key op" data-key="*">×</button>
+        <button class="key sc" data-key="pow">xʸ</button>
+        <button class="key" data-key="4">4</button>
+        <button class="key" data-key="5">5</button>
+        <button class="key" data-key="6">6</button>
+
+        <!-- row4 -->
+        <button class="key op" data-key="-">−</button>
+        <button class="key" data-key="1">1</button>
+        <button class="key" data-key="2">2</button>
+        <button class="key" data-key="3">3</button>
+        <button class="key sc" data-key="fact">n!</button>
+        <button class="key" data-key="0">0</button>
+
+        <!-- row5 -->
+        <button class="key" data-key=".">.</button>
+        <button class="key wide op" data-key="+">+</button>
+        <button class="key wide" data-key="=" style="background:linear-gradient(90deg,#10b981,#059669);color:#fff">=</button>
+        <button class="key" data-key="C">C</button>
+        <button class="key" data-key="DEL">⌫</button>
+        <button class="key sc" data-key="inv">1/x</button>
+
+        <!-- row6 extra -->
+        <button class="key sc" data-key="sin">sin</button>
+        <button class="key sc" data-key="cos">cos</button>
+        <button class="key sc" data-key="tan">tan</button>
+        <button class="key sc" data-key="ln">ln</button>
+        <button class="key sc" data-key="log">log₁₀</button>
+        <button class="key" data-key="%">%</button>
+      </div>
+
+      <div class="small-muted">Tip: Use voice or keyboard. Themes and sound/vibration available.</div>
+      <div class="history" id="history"></div>
+    </section>
+
+    <!-- Mid ad + video embed -->
+    <div class="ad" id="adMid">Mid Ad / Video Placeholder
+      <div style="margin-top:8px">
+        <video controls width="100%" style="border-radius:10px;background:#000">
+          <source src="" type="video/mp4">
+          Video Placeholder
+        </video>
+      </div>
     </div>
-    <div class="display">
-      <div id="expr" class="expr"></div>
-      <div id="value" class="value">0</div>
-    </div>
-    <div class="keys">
-      <button class="key" onclick="press('MC')">MC</button>
-      <button class="key" onclick="press('MR')">MR</button>
-      <button class="key" onclick="press('M+')">M+</button>
-      <button class="key" onclick="press('M-')">M-</button>
-      <button class="key scientific" onclick="press('sqrt')">√</button>
 
-      <button class="key" onclick="press('(')">(</button>
-      <button class="key" onclick="press(')')">)</button>
-      <button class="key" onclick="press('pi')">π</button>
-      <button class="key" onclick="press('e')">e</button>
-      <button class="key operator" onclick="press('/')">÷</button>
+    <!-- BMI card -->
+    <section class="card" id="bmiCard">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0">BMI & Health</h3>
+        <div>
+          <label class="muted" style="font-size:13px">Units:</label>
+          <select id="unitSel" class="btn small">
+            <option value="metric">kg / cm</option>
+            <option value="imperial">lb / in</option>
+          </select>
+        </div>
+      </div>
 
-      <button class="key" onclick="press('7')">7</button>
-      <button class="key" onclick="press('8')">8</button>
-      <button class="key" onclick="press('9')">9</button>
-      <button class="key operator" onclick="press('*')">×</button>
-      <button class="key scientific" onclick="press('pow')">xʸ</button>
+      <div class="bmi-grid" style="margin-top:8px">
+        <div>
+          <label>Age</label>
+          <input id="age" type="number" min="1" placeholder="years">
+        </div>
+        <div>
+          <label>Gender</label>
+          <select id="gender"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option><option value="other">Other</option></select>
+        </div>
+        <div>
+          <label id="wLabel">Weight (kg)</label>
+          <input id="weight" type="number" step="0.1">
+        </div>
+        <div>
+          <label id="hLabel">Height (cm)</label>
+          <input id="height" type="number" step="0.1">
+        </div>
+      </div>
 
-      <button class="key" onclick="press('4')">4</button>
-      <button class="key" onclick="press('5')">5</button>
-      <button class="key" onclick="press('6')">6</button>
-      <button class="key operator" onclick="press('-')">−</button>
-      <button class="key scientific" onclick="press('fact')">n!</button>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn" id="calcBmiBtn">Check BMI</button>
+        <button class="btn" id="shareBmi">Share</button>
+        <button class="btn" id="copyBmi">Copy</button>
+      </div>
 
-      <button class="key" onclick="press('1')">1</button>
-      <button class="key" onclick="press('2')">2</button>
-      <button class="key" onclick="press('3')">3</button>
-      <button class="key operator" onclick="press('+')">+</button>
-      <button class="key scientific" onclick="press('inv')">1/x</button>
+      <div style="margin-top:10px">
+        <div id="bmiResult" class="small-muted">Your BMI will appear here</div>
+        <div class="bmi-bar"><div id="bmiFill" class="bmi-fill" style="width:0%"></div></div>
+        <div id="bmiAdvice" class="muted" style="margin-top:8px"></div>
+      </div>
+    </section>
 
-      <button class="key" onclick="press('0')">0</button>
-      <button class="key" onclick="press('.')">.</button>
-      <button class="key equal" onclick="press('=')">=</button>
-      <button class="key" onclick="press('C')">C</button>
-      <button class="key" onclick="press('DEL')">⌫</button>
+    <!-- bottom ads / affiliates -->
+    <div class="ad" id="adBottom1">Bottom Ad 1 — Affiliate / High CPM</div>
+    <div class="ad" id="adBottom2">Bottom Ad 2 — Affiliate / High CPM</div>
+    <div class="ad" id="adBottom3">Bottom Ad 3 — Affiliate / High CPM</div>
 
-      <button class="key scientific" onclick="press('sin')">sin</button>
-      <button class="key scientific" onclick="press('cos')">cos</button>
-      <button class="key scientific" onclick="press('tan')">tan</button>
-      <button class="key scientific" onclick="press('ln')">ln</button>
-      <button class="key scientific" onclick="press('log')">log₁₀</button>
-    </div>
-    <div class="small-muted">Keyboard supported — numbers, + - * / . Enter</div>
-    <div class="history" id="history"></div>
+    <footer>
+      <div class="muted">EasyCalc Pro — Offline capable (PWA). Voice input supported. Theme & language saved locally.</div>
+    </footer>
   </div>
-
-  <div class="ad">💰 AdSense Middle Banner</div>
-
-  <!-- BMI -->
-  <div class="panel">
-    <h3>BMI & Health Checker</h3>
-    <div class="bmi-grid">
-      <div><label>Age</label><input id="age" type="number" min="1"></div>
-      <div><label>Gender</label><select id="gender"><option value="">Select</option><option>Male</option><option>Female</option></select></div>
-      <div><label>Weight (kg)</label><input id="weight" type="number" step="0.1"></div>
-      <div><label>Height (cm)</label><input id="height" type="number" step="0.1"></div>
-    </div>
-    <button class="calc-btn" onclick="runBMI()">Check BMI</button>
-    <div class="result-line"><div id="bmiResult">Your BMI will appear here</div></div>
-  </div>
-
-  <div class="ad">🩺 Health Ad</div>
-  <div class="ad">🏋️ Fitness Ad</div>
-  <div class="ad">🥗 Nutrition Ad</div>
-</div>
 
 <script>
-let expr='',displayValue='0',mem=0,historyArr=[];
-function updateDisplay(){expr=expr;document.getElementById('expr').textContent=expr;document.getElementById('value').textContent=displayValue;}
-function pushHistory(line){historyArr.unshift(line);document.getElementById('history').innerHTML=historyArr.slice(0,10).map(h=>`<div>${h}</div>`).join('');}
-function safeEvaluate(s){s=s.replace(/×/g,'*').replace(/÷/g,'/').replace(/\^/g,'**')
- .replace(/\bsin\(/g,'Math.sin(').replace(/\bcos\(/g,'Math.cos(').replace(/\btan\(/g,'Math.tan(')
- .replace(/\blog\(/g,'Math.log10(').replace(/\bln\(/g,'Math.log(')
- .replace(/\bsqrt\(/g,'Math.sqrt(').replace(/\bpi\b/g,'('+Math.PI+')').replace(/\be\b/g,'('+Math.E+')');
- return Function('return '+s)();}
-function press(k){if(k==='C'){expr='';displayValue='0';updateDisplay();return;}
-if(k==='DEL'){expr=expr.slice(0,-1);updateDisplay();return;}
-if(k==='='){try{let r=safeEvaluate(expr);displayValue=String(r);pushHistory(expr+' = '+r);expr=String(r);}catch{displayValue='Error';}updateDisplay();return;}
-if(k==='M+'){mem+=Number(displayValue);document.getElementById('memLabel').textContent=mem;return;}
-if(k==='M-'){mem-=Number(displayValue);document.getElementById('memLabel').textContent=mem;return;}
-if(k==='MR'){expr=String(mem);displayValue=String(mem);updateDisplay();return;}
-if(k==='MC'){mem=0;document.getElementById('memLabel').textContent=mem;return;}
-if(['pi','e'].includes(k)){expr+=k;updateDisplay();return;}
-if(['sin','cos','tan','ln','log','sqrt'].includes(k)){expr+=k+'(';updateDisplay();return;}
-if(k==='pow'){expr+='^';updateDisplay();return;}
-if(k==='fact'){expr+='!';updateDisplay();return;}
-if(k==='inv'){expr='1/('+expr+')';updateDisplay();return;}
-expr+=String(k);updateDisplay();}
-function runBMI(){const w=+weight.value,h=+height.value/100;
-if(!w||!h){bmiResult.textContent='Fill all fields';return;}
-const bmi=(w/(h*h)).toFixed(1);
-let msg='';if(bmi<18.5)msg='Underweight 🥛 Eat more balanced foods!';
-else if(bmi<=24.9)msg='Perfect! Stay healthy 🌿';
-else if(bmi<=29.9)msg='Overweight ⚠️ Add more activity!';
-else msg='Obese 🚨 Consult nutrition expert!';
-bmiResult.textContent=`BMI: ${bmi} — ${msg}`;}
-const themeToggle=document.getElementById('themeToggle');
-themeToggle.onclick=()=>{document.body.classList.toggle('dark');
-themeToggle.textContent=document.body.classList.contains('dark')?'☀️':'🌙';
-localStorage.setItem('theme',document.body.classList.contains('dark')?'dark':'light');};
-if(localStorage.getItem('theme')==='dark'){document.body.classList.add('dark');themeToggle.textContent='☀️';}
+/* ---------------- State & storage ---------------- */
+const state = {
+  expr: '',
+  display: '0',
+  mem: 0,
+  history: JSON.parse(localStorage.getItem('easycalc_history')||'[]'),
+  theme: localStorage.getItem('easycalc_theme')||'light',
+  themeVariant: localStorage.getItem('easycalc_variant')||'default',
+  lang: localStorage.getItem('easycalc_lang')||'en',
+};
+
+/* ---------------- Utilities ---------------- */
+const $ = (sel)=>document.querySelector(sel);
+const $$ = (sel)=>Array.from(document.querySelectorAll(sel));
+function saveState(){ localStorage.setItem('easycalc_history', JSON.stringify(state.history)); localStorage.setItem('easycalc_theme', state.theme); localStorage.setItem('easycalc_variant', state.themeVariant); localStorage.setItem('easycalc_lang', state.lang); }
+
+/* ------------- UI update -------------- */
+function updateDisplays(){
+  $('#smallExpr').textContent = state.expr||' ';
+  $('#bigVal').textContent = state.display;
+  $('#memLabel').textContent = state.mem;
+  renderHistory();
+}
+function renderHistory(){
+  const h = $('#history'); h.innerHTML = '';
+  state.history.slice(0,50).forEach(it=>{
+    const div = document.createElement('div'); div.className='hist-item'; div.innerHTML=it; h.appendChild(div);
+  });
+}
+
+/* ------------- Calculator evaluator (safe-ish) -------------- */
+function safeEval(s){
+  if(!s) return 0;
+  s = s.replace(/×/g,'*').replace(/÷/g,'/').replace(/–/g,'-').replace(/−/g,'-');
+  s = s.replace(/\^/g,'**');
+  // replace constants
+  s = s.replace(/\bpi\b/gi, '('+Math.PI+')').replace(/\be\b/gi,'('+Math.E+')');
+  // functions
+  s = s.replace(/\bsin\(/gi,'Math.sin(').replace(/\bcos\(/gi,'Math.cos(').replace(/\btan\(/gi,'Math.tan(');
+  s = s.replace(/\bln\(/gi,'Math.log(').replace(/\blog\(/gi,'Math.log10(').replace(/\bsqrt\(/gi,'Math.sqrt(');
+  // factorial x! -> fact(x)
+  s = s.replace(/(\d+(\.\d+)?)\s*!/g,'fact($1)');
+  // percent
+  s = s.replace(/(\d+(\.\d+)?)%/g,'($1/100)');
+  // degree conversion if needed (wrap Math.sin(...) occurrences)
+  if($('#angleLabel').textContent.includes('Degrees')){
+    s = s.replace(/Math\.sin\(\s*([^\)]+)\)/g,'Math.sin(($1)*Math.PI/180)');
+    s = s.replace(/Math\.cos\(\s*([^\)]+)\)/g,'Math.cos(($1)*Math.PI/180)');
+    s = s.replace(/Math\.tan\(\s*([^\)]+)\)/g,'Math.tan(($1)*Math.PI/180)');
+  }
+  // helper functions
+  const func = `const fact=(n)=>{n=Math.floor(n);if(n<0)throw'err';if(n<=1)return 1;let r=1;for(let i=2;i<=n;i++)r*=i;return r};const Math_log10=Math.log10||((x)=>Math.log(x)/Math.LN10);return (${s});`;
+  try{
+    return Function(func)();
+  }catch(e){
+    throw e;
+  }
+}
+
+/* ------------- Key handling -------------- */
+function pressKey(k){
+  if(k==='C'){ state.expr=''; state.display='0'; updateDisplays(); return; }
+  if(k==='DEL'){ state.expr = state.expr.slice(0,-1); updateDisplays(); return; }
+  if(k==='MC'){ state.mem = 0; updateDisplays(); return; }
+  if(k==='MR'){ state.expr = String(state.mem); state.display = String(state.mem); updateDisplays(); return; }
+  if(k==='M+'){ state.mem = Number(state.mem) + Number(state.display||0); updateDisplays(); return; }
+  if(k==='M-'){ state.mem = Number(state.mem) - Number(state.display||0); updateDisplays(); return; }
+  if(k==='='){ try{ const res = safeEval(state.expr); state.display = (Number.isFinite(res)?String(res):'Error'); state.history.unshift(`${state.expr} = ${res}`); state.expr = String(res); saveState(); updateDisplays(); playClick(); }catch(e){ state.display='Error'; updateDisplays(); } return; }
+  if(['sin','cos','tan','ln','log','sqrt','pow','fact','inv','pi','e','%'].includes(k)){
+    if(k==='pow'){ state.expr += '^'; } else if(k==='fact'){ state.expr += '!'; } else if(k==='inv'){ state.expr += '1/('; } else if(k==='pi' || k==='e'){ state.expr += k; } else { state.expr += k + '('; }
+    updateDisplays(); return;
+  }
+  // default (number/operator)
+  state.expr += k;
+  updateDisplays();
+}
+
+/* ------------- attach keys -------------- */
+document.addEventListener('click', (e)=>{
+  const btn = e.target.closest('[data-key]');
+  if(btn){ const key = btn.getAttribute('data-key'); pressKey(key); if(soundOn) playClick(); if(vibOn) navigator.vibrate?.(20); }
+});
+document.addEventListener('keydown',(e)=>{
+  if((e.key>='0' && e.key<='9')||['+','-','*','/','.','(',')','%'].includes(e.key)){ pressKey(e.key); e.preventDefault(); }
+  if(e.key==='Enter'){ pressKey('='); e.preventDefault(); }
+  if(e.key==='Backspace'){ pressKey('DEL'); e.preventDefault(); }
+});
+
+/* ------------- sound & vibration -------------- */
+let soundOn = true, vibOn = false;
+const audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+function playClick(){
+  if(!soundOn) return;
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type='sine'; o.frequency.value=600;
+  g.gain.value=0.02;
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(); setTimeout(()=>{ o.stop(); },70);
+}
+$('#soundBtn').addEventListener('click', ()=>{ soundOn = !soundOn; $('#soundBtn').textContent = soundOn? '🔔' : '🔕'; });
+$('#vibBtn').addEventListener('click', ()=>{ vibOn = !vibOn; $('#vibBtn').textContent = vibOn? '📳':'📴'; });
+
+/* ------------- Copy result, copy BMI -------------- */
+$('#copyBtn').addEventListener('click', ()=>{ navigator.clipboard?.writeText(state.display).then(()=>alert('Result copied')); });
+$('#copyBmi').addEventListener('click', ()=>{ navigator.clipboard?.writeText($('#bmiResult').textContent).then(()=>alert('BMI copied')); });
+
+/* ------------- Voice input (SpeechRecognition) -------------- */
+let recognizing=false;
+let recognition=null;
+if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.lang = state.lang==='en'?'en-US':'ur-PK';
+  recognition.interimResults = false;
+  recognition.onresult = (e)=>{ const text = e.results[0][0].transcript; handleVoiceCommand(text); };
+  recognition.onend = ()=>{ recognizing=false; $('#voiceBtn').textContent='🎙️ Voice'; };
+}
+$('#voiceBtn').addEventListener('click', ()=>{
+  if(!recognition) return alert('Voice not supported in this browser');
+  if(!recognizing){ recognition.lang = state.lang==='en'?'en-US':'ur-PK'; recognition.start(); recognizing=true; $('#voiceBtn').textContent='⏺️ Listening'; }
+  else { recognition.stop(); recognizing=false; $('#voiceBtn').textContent='🎙️ Voice'; }
+});
+function handleVoiceCommand(txt){
+  // simple parser: "calculate five plus nine"
+  const clean = txt.toLowerCase().replace('calculate','').replace('equals','=').trim();
+  // convert words to numbers (small subset)
+  const wordsToNums = {'zero':0,'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,'nine':9,'ten':10,'plus':'+','minus':'-','times':'*','multiplied':'*','divided':'/','over':'/'};
+  const tokens = clean.split(/\s+/).map(w => wordsToNums[w]!==undefined? wordsToNums[w] : w);
+  const expr = tokens.join(' ');
+  state.expr = expr;
+  pressKey('=');
+}
+
+/* ------------- Theme, language & install -------------- */
+function applyTheme(){
+  document.body.classList.toggle('dark', state.theme==='dark');
+  document.body.classList.toggle('theme-neon', state.themeVariant==='neon');
+  document.body.classList.toggle('theme-glass', state.themeVariant==='glass');
+}
+$('#themeToggle').addEventListener('click', ()=>{
+  state.theme = state.theme==='dark'?'light':'dark'; applyTheme(); saveState();
+});
+$('#themeSelect').addEventListener('change', (e)=>{
+  const v = e.target.value;
+  state.themeVariant = v==='neon'?'neon': v==='glass'?'glass':'default';
+  applyTheme(); saveState();
+});
+$('#langBtn').addEventListener('click', ()=>{
+  state.lang = state.lang==='en'?'ur':'en';
+  $('#langBtn').textContent = state.lang==='en'?'EN':'UR';
+  saveState();
+});
+
+/* ------------- HISTORY load -------------- */
+(function init(){
+  if(localStorage.getItem('easycalc_history')) state.history = JSON.parse(localStorage.getItem('easycalc_history'));
+  if(localStorage.getItem('easycalc_theme')) state.theme = localStorage.getItem('easycalc_theme');
+  if(localStorage.getItem('easycalc_variant')) state.themeVariant = localStorage.getItem('easycalc_variant');
+  applyTheme();
+  updateDisplays();
+  renderBmiUI();
+})();
+
+/* ------------- BMI logic -------------- */
+function renderBmiUI(){
+  // adjust labels on unit change
+  $('#unitSel').addEventListener('change',(e)=>{
+    const unit = e.target.value;
+    if(unit==='metric'){ $('#wLabel').textContent='Weight (kg)'; $('#hLabel').textContent='Height (cm)'; }
+    else { $('#wLabel').textContent='Weight (lb)'; $('#hLabel').textContent='Height (in)'; }
+  });
+  // set initial
+  $('#unitSel').value = 'metric';
+}
+$('#calcBmiBtn').addEventListener('click', ()=>{
+  const unit = $('#unitSel').value;
+  const age = Number($('#age').value);
+  const gender = $('#gender').value;
+  let w = Number($('#weight').value);
+  let h = Number($('#height').value);
+  if(!age || !gender || !w || !h) return alert('Fill all BMI fields');
+  if(unit==='imperial'){ // convert to metric
+    w = w * 0.45359237; // lb -> kg
+    h = h * 2.54; // in -> cm
+  }
+  const heightM = h/100;
+  const bmi = +(w/(heightM*heightM));
+  const rounded = Math.round(bmi*10)/10;
+  let category='', advice='';
+  if(bmi < 18.5){ category='Underweight'; advice='Increase calorie intake, nutrient-dense foods, strength training.'; }
+  else if(bmi <= 24.9){ category='Healthy'; advice='Maintain balanced diet, regular activity.'; }
+  else if(bmi <= 29.9){ category='Overweight'; advice='Reduce 300-500 kcal/day, increase cardio and strength.'; }
+  else { category='Obese'; advice='Consult professional; adopt supervised plan.'; }
+  // animate bar: map bmi 12..40 to 0..100
+  const val = Math.min(100, Math.max(0, ((bmi-12)/(40-12))*100));
+  $('#bmiFill').style.width = val+'%';
+  $('#bmiResult').textContent = `BMI: ${rounded} — ${category}`;
+  $('#bmiAdvice').textContent = advice;
+  $('#shareBmi').onclick = ()=>{ const text = `My BMI is ${rounded} (${category}). ${advice}`; if(navigator.share){ navigator.share({title:'My BMI', text}).catch(()=>{}); } else { alert('Share not supported on this device.'); } };
+  $('#copyBmi').onclick = ()=>{ navigator.clipboard.writeText($('#bmiResult').textContent + ' | ' + $('#bmiAdvice').textContent).then(()=>alert('BMI copied')); };
+});
+
+/* ------------- Ads rotation & refresh -------------- */
+const adPool = {
+  top: ['Top Ad — Promo 1','Top Ad — Promo 2','Top Ad — Promo 3'],
+  mid: ['Mid Ad — Health','Mid Ad — Math-tool','Mid Ad — Sponsor'],
+  bottom: ['Affiliate: Smart Scale','Affiliate: Home Gym','Affiliate: Nutrition Pack']
+};
+function rotateAds(){
+  $('#adTop').textContent = adPool.top[Math.floor(Math.random()*adPool.top.length)];
+  $('#adMid').firstChild.nodeValue = adPool.mid[Math.floor(Math.random()*adPool.mid.length)];
+  $('#adBottom1').textContent = adPool.bottom[0];
+  $('#adBottom2').textContent = adPool.bottom[1];
+  $('#adBottom3').textContent = adPool.bottom[2];
+}
+// rotate on load & every 60s
+rotateAds();
+setInterval(()=>{ rotateAds(); }, 60000);
+
+/* ------------- Copy result button (alternate) -------------- */
+$('#copyBtn').addEventListener('click', ()=>{ navigator.clipboard.writeText(state.display).then(()=>alert('Copied result')); });
+
+/* ------------- install PWA (deferred) -------------- */
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferredPrompt = e; $('#installBtn').style.display='inline-block'; });
+$('#installBtn').addEventListener('click', async ()=>{
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const res = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  $('#installBtn').style.display='none';
+});
+
+/* ------------- Service worker & manifest (created as blob) -------------- */
+(function createAndRegisterSW(){
+  // manifest
+  const manifest = {
+    name: "EasyCalc Pro",
+    short_name: "EasyCalc",
+    start_url: ".",
+    display: "standalone",
+    background_color: "#ffffff",
+    icons: []
+  };
+  const manifestBlob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+  const manifestURL = URL.createObjectURL(manifestBlob);
+  const link = document.createElement('link'); link.rel='manifest'; link.href = manifestURL; document.head.appendChild(link);
+
+  // service worker code (simple cache)
+  const swCode = `
+    const CACHE_NAME = 'easycalc-v1';
+    const toCache = ['.'];
+    self.addEventListener('install', e=>{ e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(toCache))); self.skipWaiting(); });
+    self.addEventListener('activate', e=>{ e.waitUntil(self.clients.claim()); });
+    self.addEventListener('fetch', function(event){ event.respondWith(caches.match(event.request).then(response=> response || fetch(event.request))); });
+  `;
+  try{
+    const swBlob = new Blob([swCode],{type:'application/javascript'});
+    const swURL = URL.createObjectURL(swBlob);
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register(swURL).catch(()=>{/* ignore */});
+    }
+  }catch(e){ /* ignore sw errors in restricted env */ }
+})();
+
+/* ------------- Install theme & variant UI init -------------- */
+$('#themeSelect').value = state.themeVariant==='neon'?'neon':state.themeVariant==='glass'?'glass':'default';
+$('#langBtn').textContent = state.lang==='en'?'EN':'UR';
+if(state.theme==='dark') document.body.classList.add('dark');
+if(state.themeVariant==='neon') document.body.classList.add('theme-neon');
+if(state.themeVariant==='glass') document.body.classList.add('theme-glass');
+
+/* ------------- Simple calculator UI init -------------- */
+updateDisplays();
+
+/* ------------- Expose to global for debugging -------------- */
+window.easycalc = { state };
 </script>
 </body>
 </html>
