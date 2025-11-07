@@ -216,6 +216,141 @@
 
       <p class="small">نوٹ: AdSense code صحیح طریقے سے دکھنے کے لیے Google کی طرف سے approval ضروری ہے۔</p>
     </div>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyCalc - Online Calculators</title>
+
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Chart.js CDN (Graph calculator کیلئے) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<header>
+    <h1>MyCalc</h1>
+    <button id="themeToggle">🌙 Dark Mode</button>
+</header>
+
+<!-- ━━━━━━━ Ads Area ━━━━━━━ -->
+<div class="ads-box">
+    <!-- Paste Google AdSense code here -->
+    <p>Ads Placeholder</p>
+</div>
+
+<!-- ━━━━━━━ Simple/Scientific Calculator ━━━━━━━ -->
+<section class="calc-section">
+    <h2>Simple / Scientific Calculator</h2>
+    <button id="toggleSci">Switch to Scientific</button>
+
+    <div id="simpleCalc" class="calculator">
+        <input type="text" id="display" readonly>
+        <div class="buttons">
+            <button onclick="press('7')">7</button>
+            <button onclick="press('8')">8</button>
+            <button onclick="press('9')">9</button>
+            <button onclick="press('/')">÷</button>
+
+            <button onclick="press('4')">4</button>
+            <button onclick="press('5')">5</button>
+            <button onclick="press('6')">6</button>
+            <button onclick="press('*')">×</button>
+
+            <button onclick="press('1')">1</button>
+            <button onclick="press('2')">2</button>
+            <button onclick="press('3')">3</button>
+            <button onclick="press('-')">−</button>
+
+            <button onclick="press('0')">0</button>
+            <button onclick="press('.')">.</button>
+            <button onclick="calculate()">=</button>
+            <button onclick="press('+')">+</button>
+
+            <button onclick="clearDisplay()" class="clear">C</button>
+        </div>
+    </div>
+
+    <div id="scientificCalc" class="calculator hidden">
+        <input type="text" id="displaySci" readonly>
+        <div class="buttons">
+            <button onclick="pressSci('sin(')">sin</button>
+            <button onclick="pressSci('cos(')">cos</button>
+            <button onclick="pressSci('tan(')">tan</button>
+            <button onclick="pressSci('Math.PI')">π</button>
+
+            <button onclick="pressSci('7')">7</button>
+            <button onclick="pressSci('8')">8</button>
+            <button onclick="pressSci('9')">9</button>
+            <button onclick="pressSci('/')">÷</button>
+
+            <button onclick="pressSci('4')">4</button>
+            <button onclick="pressSci('5')">5</button>
+            <button onclick="pressSci('6')">6</button>
+            <button onclick="pressSci('*')">×</button>
+
+            <button onclick="pressSci('1')">1</button>
+            <button onclick="pressSci('2')">2</button>
+            <button onclick="pressSci('3')">3</button>
+            <button onclick="pressSci('-')">−</button>
+
+            <button onclick="pressSci('0')">0</button>
+            <button onclick="pressSci('.')">.</button>
+            <button onclick="calculateSci()">=</button>
+            <button onclick="pressSci('+')">+</button>
+
+            <button onclick="clearSci()" class="clear">C</button>
+        </div>
+    </div>
+</section>
+
+
+<!-- ━━━━━━━ Ads Area ━━━━━━━ -->
+<div class="ads-box">
+    <!-- Paste AdSense code -->
+    <p>Ads Placeholder</p>
+</div>
+
+
+<!-- ━━━━━━━ BMI Calculator ━━━━━━━ -->
+<section class="calc-section">
+    <h2>BMI Calculator</h2>
+    <input type="number" id="weight" placeholder="Weight (kg)">
+    <input type="number" id="height" placeholder="Height (cm)">
+    <button onclick="calculateBMI()">Calculate BMI</button>
+
+    <p id="bmiResult"></p>
+</section>
+
+
+<!-- ━━━━━━━ Ads Area ━━━━━━━ -->
+<div class="ads-box">
+    <p>Ads Placeholder</p>
+</div>
+
+
+<!-- ━━━━━━━ Graphical Calculator ━━━━━━━ -->
+<section class="calc-section">
+    <h2>Graphical Equation Calculator</h2>
+    <input type="text" id="equation" placeholder="Enter equation e.g. x*x + 2*x">
+    <button onclick="plotGraph()">Plot</button>
+
+    <canvas id="myChart"></canvas>
+</section>
+
+
+<!-- ━━━━━━━ Ads Area ━━━━━━━ -->
+<div class="ads-box">
+    <p>Ads Placeholder</p>
+</div>
+
+
+<script src="script.js"></script>
+</body>
+</html>
   </div>
 
   <script src="script.js"></script>
