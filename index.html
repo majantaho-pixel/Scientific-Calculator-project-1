@@ -1,240 +1,223 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="ur" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>MyCalc — Online Calculators</title>
-
-<style>
-/* ------------ GENERAL STYLES ------------ */
-body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    transition: 0.3s;
-    background: var(--bg);
-    color: var(--text);
-}
-:root {
-    --bg: #ffffff;
-    --text: #000;
-    --box: #f3f3f3;
-}
-.dark {
-    --bg: #121212;
-    --text: #fff;
-    --box: #1e1e1e;
-}
-.container {
-    width: 90%;
-    margin: auto;
-    text-align: center;
-}
-
-/* HEADER */
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    font-size: 22px;
-    font-weight: bold;
-    background: var(--box);
-    border-bottom: 2px solid #ddd;
-}
-.themeBtn {
-    background: #007bff;
-    color: white;
-    padding: 6px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-/* -------- CALCULATORS COMMON CSS -------- */
-.calc-box {
-    background: var(--box);
-    padding: 20px;
-    border-radius: 15px;
-    width: 320px;
-    margin: auto;
-    margin-top: 25px;
-}
-.display {
-    width: 100%;
-    height: 60px;
-    font-size: 26px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    text-align: right;
-    padding-right: 10px;
-}
-.btn-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-}
-button {
-    padding: 12px;
-    font-size: 18px;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-/* -------- GRAPHICAL CALCULATOR -------- */
-.graphical {
-    width: 380px;
-}
-.graphical .display {
-    height: 80px;
-    font-size: 34px;
-}
-
-/* -------- ADS BOX -------- */
-.ad-box {
-    width: 100%;
-    margin: 25px 0;
-    text-align: center;
-    padding: 10px;
-    background: #ececec;
-    border-radius: 10px;
-}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>mycalc — مفید کیلکولیٹر ٹولز</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
+  <header class="topbar">
+    <div class="site-title">mycalc</div>
 
-<header>
-    <div>MyCalc</div>
-    <button class="themeBtn" onclick="toggleTheme()">Dark / Light</button>
-</header>
-
-<div class="container">
-
-    <!-- ✅ ADS AREA -->
-    <div class="ad-box">
-        <!-- YOUR ADSENSE CODE HERE -->
-        Ad Space (728x90)
+    <div class="top-controls">
+      <button id="adSettingsBtn" class="btn small">Ad Settings</button>
+      <button id="themeToggle" class="btn small">Dark</button>
     </div>
+  </header>
 
-    <!-- ✅ CALCULATOR #1 — SIMPLE / SCIENTIFIC -->
-    <h2>Simple / Scientific Calculator</h2>
-    <button onclick="toggleSci()">Switch Scientific</button>
+  <!-- Ad placeholder top -->
+  <div class="ad-container" id="ad-top">
+    <!-- put your ad here by using Ad Settings -->
+    <div class="ad-placeholder">Ad Placeholder — اوپر</div>
+  </div>
 
-    <div class="calc-box">
-        <input id="display1" class="display" readonly />
+  <main class="container">
+    <!-- First calculator (Simple + Scientific toggle) -->
+    <section class="card">
+      <h2 class="section-title">Simple / Scientific Calculator</h2>
+      <div class="ad-row">
+        <div class="ad-slot" id="ad-slot-1"><div class="ad-placeholder">Ad</div></div>
+      </div>
 
-        <div id="simple" class="btn-grid">
-            <button onclick="press('1')">1</button>
-            <button onclick="press('2')">2</button>
-            <button onclick="press('3')">3</button>
-            <button onclick="press('+')">+</button>
-            <button onclick="press('4')">4</button>
-            <button onclick="press('5')">5</button>
-            <button onclick="press('6')">6</button>
-            <button onclick="press('-')">-</button>
-            <button onclick="press('7')">7</button>
-            <button onclick="press('8')">8</button>
-            <button onclick="press('9')">9</button>
-            <button onclick="press('*')">*</button>
-            <button onclick="press('0')">0</button>
-            <button onclick="press('.')">.</button>
-            <button onclick="calc()">=</button>
-            <button onclick="press('/')">/</button>
+      <div class="calc-wrap">
+        <div class="calc-display" id="calc-display-1">0</div>
+        <div class="calc-controls">
+          <div class="row">
+            <button class="btn wide" id="clear1">AC</button>
+            <button class="btn" id="back1">⌫</button>
+            <button class="btn" id="toggleSci">Scientific</button>
+          </div>
+
+          <div class="keys" id="keys-basic-1">
+            <!-- basic buttons -->
+            <div class="row">
+              <button class="btn num">7</button>
+              <button class="btn num">8</button>
+              <button class="btn num">9</button>
+              <button class="btn op">/</button>
+            </div>
+            <div class="row">
+              <button class="btn num">4</button>
+              <button class="btn num">5</button>
+              <button class="btn num">6</button>
+              <button class="btn op">*</button>
+            </div>
+            <div class="row">
+              <button class="btn num">1</button>
+              <button class="btn num">2</button>
+              <button class="btn num">3</button>
+              <button class="btn op">-</button>
+            </div>
+            <div class="row">
+              <button class="btn num">0</button>
+              <button class="btn">.</button>
+              <button class="btn" id="equals1">=</button>
+              <button class="btn op">+</button>
+            </div>
+          </div>
+
+          <div class="keys hidden" id="keys-sci-1">
+            <!-- scientific keys (appear when scientific on) -->
+            <div class="row">
+              <button class="btn fn">sin(</button>
+              <button class="btn fn">cos(</button>
+              <button class="btn fn">tan(</button>
+              <button class="btn fn">ln(</button>
+            </div>
+            <div class="row">
+              <button class="btn fn">log(</button>
+              <button class="btn fn">sqrt(</button>
+              <button class="btn fn">^</button>
+              <button class="btn fn">π</button>
+            </div>
+            <div class="row">
+              <button class="btn fn">(</button>
+              <button class="btn fn">)</button>
+              <button class="btn fn">e</button>
+              <button class="btn fn">!</button>
+            </div>
+          </div>
         </div>
+      </div>
+    </section>
 
-        <div id="scientific" class="btn-grid" style="display:none;">
-            <button onclick="press('sin(')">sin</button>
-            <button onclick="press('cos(')">cos</button>
-            <button onclick="press('tan(')">tan</button>
-            <button onclick="press('^')">^</button>
+    <!-- Ad -->
+    <div class="ad-row">
+      <div class="ad-slot" id="ad-slot-2"><div class="ad-placeholder">Ad</div></div>
+    </div>
+
+    <!-- BMI Calculator -->
+    <section class="card">
+      <h2 class="section-title">BMI کیلکولیٹر</h2>
+      <div class="ad-row">
+        <div class="ad-slot" id="ad-slot-3"><div class="ad-placeholder">Ad</div></div>
+      </div>
+
+      <div class="bmi-wrap">
+        <label>وزن (کلوگرام):
+          <input type="number" id="bmi-weight" placeholder="مثال: 70" />
+        </label>
+        <label>قد (سینٹی میٹر):
+          <input type="number" id="bmi-height" placeholder="مثال: 170" />
+        </label>
+        <div class="row">
+          <button class="btn" id="calc-bmi">BMI نکالیں</button>
         </div>
+        <div id="bmi-result" class="result-box">نتیجہ یہاں آئے گا</div>
+        <div id="bmi-tips" class="tips-box"></div>
+      </div>
+    </section>
+
+    <!-- Ad -->
+    <div class="ad-row">
+      <div class="ad-slot" id="ad-slot-4"><div class="ad-placeholder">Ad</div></div>
     </div>
 
-    <!-- ✅ ADS AREA -->
-    <div class="ad-box">
-        <!-- YOUR ADSENSE CODE HERE -->
-        Ad Space (300x250)
-    </div>
+    <!-- Third (big-display) Calculator -->
+    <section class="card">
+      <h2 class="section-title">بڑا ڈسپلے کیلکولیٹر</h2>
+      <div class="ad-row">
+        <div class="ad-slot" id="ad-slot-5"><div class="ad-placeholder">Ad</div></div>
+      </div>
 
-    <!-- ✅ CALCULATOR #2 — BMI -->
-    <h2>BMI Calculator</h2>
-    <div class="calc-box">
-        <input type="number" id="weight" placeholder="Weight (kg)">
-        <br><br>
-        <input type="number" id="height" placeholder="Height (cm)">
-        <br><br>
-        <button onclick="calcBMI()">Check BMI</button>
-        <p id="bmiOutput"></p>
-    </div>
-
-    <!-- ✅ ADS AREA -->
-    <div class="ad-box">
-        <!-- YOUR ADSENSE CODE HERE -->
-        Ad Space (300x600)
-    </div>
-
-    <!-- ✅ CALCULATOR #3 — GRAPHICAL -->
-    <h2>Graphical Calculator</h2>
-
-    <div class="calc-box graphical">
-        <input id="display3" class="display" readonly />
-        <div class="btn-grid">
-            <button onclick="pressG('7')">7</button>
-            <button onclick="pressG('8')">8</button>
-            <button onclick="pressG('9')">9</button>
-            <button onclick="pressG('+')">+</button>
-            
-            <button onclick="pressG('4')">4</button>
-            <button onclick="pressG('5')">5</button>
-            <button onclick="pressG('6')">6</button>
-            <button onclick="pressG('-')">-</button>
-
-            <button onclick="pressG('1')">1</button>
-            <button onclick="pressG('2')">2</button>
-            <button onclick="pressG('3')">3</button>
-            <button onclick="pressG('*')">*</button>
-
-            <button onclick="pressG('0')">0</button>
-            <button onclick="pressG('.')">.</button>
-            <button onclick="calcG()">=</button>
-            <button onclick="pressG('/')">/</button>
+      <div class="bigcalc-wrap">
+        <div class="big-display" id="big-display">0</div>
+        <div class="big-keys">
+          <div class="row">
+            <button class="btn" data-key="(">(</button>
+            <button class="btn" data-key=")">)</button>
+            <button class="btn" data-key="%">%</button>
+            <button class="btn" id="big-clear">AC</button>
+          </div>
+          <div class="row">
+            <button class="btn" data-key="7">7</button>
+            <button class="btn" data-key="8">8</button>
+            <button class="btn" data-key="9">9</button>
+            <button class="btn" data-key="/">/</button>
+          </div>
+          <div class="row">
+            <button class="btn" data-key="4">4</button>
+            <button class="btn" data-key="5">5</button>
+            <button class="btn" data-key="6">6</button>
+            <button class="btn" data-key="*">*</button>
+          </div>
+          <div class="row">
+            <button class="btn" data-key="1">1</button>
+            <button class="btn" data-key="2">2</button>
+            <button class="btn" data-key="3">3</button>
+            <button class="btn" data-key="-">-</button>
+          </div>
+          <div class="row">
+            <button class="btn" data-key="0">0</button>
+            <button class="btn" data-key=".">.</button>
+            <button class="btn" id="big-equals">=</button>
+            <button class="btn" data-key="+">+</button>
+          </div>
         </div>
+      </div>
+    </section>
+
+    <!-- bottom ads -->
+    <div class="ad-row">
+      <div class="ad-slot" id="ad-slot-6"><div class="ad-placeholder">Ad</div></div>
+      <div class="ad-slot" id="ad-slot-7"><div class="ad-placeholder">Ad</div></div>
     </div>
+  </main>
 
-</div>
+  <footer class="footer">
+    <div>© mycalc — Useful tools · صرف اشتہارات کے لیے تیار</div>
+  </footer>
 
-<script>
-/* DARK/LIGHT MODE */
-function toggleTheme(){
-    document.body.classList.toggle("dark");
-}
+  <!-- Ad Settings Modal (simple) -->
+  <div id="adSettingsModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Ad Settings</h3>
+      <p>اپنا Google AdSense <strong>Publisher ID</strong> ڈالیں (مثال: <code>ca-pub-1234567890123456</code>) اور پھر ہر ad-slot کا ID دیں۔</p>
+      <label>Publisher ID:
+        <input id="ads-publisher" placeholder="ca-pub-..." />
+      </label>
+      <label>Ad Slot — اوپر (ad-slot-1):
+        <input id="adslot-1" placeholder="مثال: 1234567890" />
+      </label>
+      <label>Ad Slot — درمیان (ad-slot-2):
+        <input id="adslot-2" placeholder="مثال: 1234567891" />
+      </label>
+      <label>Ad Slot — ad-slot-3:
+        <input id="adslot-3" />
+      </label>
+      <label>Ad Slot — ad-slot-4:
+        <input id="adslot-4" />
+      </label>
+      <label>Ad Slot — ad-slot-5:
+        <input id="adslot-5" />
+      </label>
+      <label>Ad Slot — ad-slot-6:
+        <input id="adslot-6" />
+      </label>
+      <label>Ad Slot — ad-slot-7:
+        <input id="adslot-7" />
+      </label>
 
-/* SIMPLE / SCIENTIFIC CALCULATOR */
-function press(v){ display1.value += v; }
-function calc(){ display1.value = eval(display1.value); }
-function toggleSci(){
-    document.getElementById("scientific").style.display =
-    document.getElementById("scientific").style.display == "none" ? "grid" : "none";
-}
+      <div class="row">
+        <button class="btn" id="saveAds">Save Ads</button>
+        <button class="btn" id="closeAds">Close</button>
+      </div>
 
-/* BMI */
-function calcBMI() {
-    let w = document.getElementById("weight").value;
-    let h = document.getElementById("height").value / 100;
-    let bmi = w / (h*h);
-    let msg = "";
+      <p class="small">نوٹ: AdSense code صحیح طریقے سے دکھنے کے لیے Google کی طرف سے approval ضروری ہے۔</p>
+    </div>
+  </div>
 
-    if(bmi < 18.5) msg = "Underweight — Diet improve!";
-    else if(bmi < 25) msg = "Normal — Great!";
-    else msg = "Overweight — Exercise required!";
-
-    document.getElementById("bmiOutput").innerHTML = "BMI: " + bmi.toFixed(2) + "<br>" + msg;
-}
-
-/* GRAPHICAL */
-function pressG(v){ display3.value += v; }
-function calcG(){ display3.value = eval(display3.value); }
-</script>
-
+  <script src="script.js"></script>
 </body>
 </html>
