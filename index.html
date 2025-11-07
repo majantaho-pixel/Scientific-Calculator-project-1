@@ -1,58 +1,240 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>MyCalc - Modern Multi Calculator</title>
+<title>MyCalc — Online Calculators</title>
+
 <style>
- /* ========== RESET & BASE ========== */
- * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
- body { background: #f5f5f5; transition: background 0.3s ease, color 0.3s ease; }
- header { width: 100%; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
- h1 { font-size: 22px; font-weight: bold; letter-spacing: 1px; }/* Dark / Light Toggle */ .theme-toggle { padding: 6px 12px; border-radius: 8px; cursor: pointer; background: #222; color: #fff; } body.dark { background: #121212; color: #fff; } body.dark header { background: #1e1e1e; } body.dark .theme-toggle { background: #fff; color: #000; }
+/* ------------ GENERAL STYLES ------------ */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    transition: 0.3s;
+    background: var(--bg);
+    color: var(--text);
+}
+:root {
+    --bg: #ffffff;
+    --text: #000;
+    --box: #f3f3f3;
+}
+.dark {
+    --bg: #121212;
+    --text: #fff;
+    --box: #1e1e1e;
+}
+.container {
+    width: 90%;
+    margin: auto;
+    text-align: center;
+}
 
-/* ------- Ad placeholder ------- */ .ad-box { width: 100%; height: 120px; background: #e9e9e9; margin: 20px 0; border-radius: 8px; text-align: center; display: flex; justify-content: center; align-items: center; border: 2px dashed #bbb; } body.dark .ad-box { background: #1b1b1b; border-color: #444; }
+/* HEADER */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    font-size: 22px;
+    font-weight: bold;
+    background: var(--box);
+    border-bottom: 2px solid #ddd;
+}
+.themeBtn {
+    background: #007bff;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+}
 
-/* ----- Calculator Container ----- */ .calc-wrapper { max-width: 390px; margin: auto; background: rgba(255,255,255,0.4); backdrop-filter: blur(12px); padding: 20px; border-radius: 16px; box-shadow: 0 0 18px rgba(0,0,0,0.08); transition: background 0.3s; } body.dark .calc-wrapper { background: rgba(40,40,40,0.6); }
+/* -------- CALCULATORS COMMON CSS -------- */
+.calc-box {
+    background: var(--box);
+    padding: 20px;
+    border-radius: 15px;
+    width: 320px;
+    margin: auto;
+    margin-top: 25px;
+}
+.display {
+    width: 100%;
+    height: 60px;
+    font-size: 26px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    text-align: right;
+    padding-right: 10px;
+}
+.btn-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+button {
+    padding: 12px;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+}
 
-/* Simple/Scientific switch */ #switchModeBtn { margin-bottom: 12px; width: 100%; padding: 10px; background: #0078ff; border: none; color: white; border-radius: 8px; cursor: pointer; font-size: 16px; }
+/* -------- GRAPHICAL CALCULATOR -------- */
+.graphical {
+    width: 380px;
+}
+.graphical .display {
+    height: 80px;
+    font-size: 34px;
+}
 
-/* Display */ #display { width: 100%; height: 50px; font-size: 20px; padding: 10px; border-radius: 8px; border: none; margin-bottom: 12px; text-align: right; background: #fff; } body.dark #display { background: #333; color: #fff; }
-
-/* Buttons */ .btn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; } button { padding: 16px; font-size: 18px; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; background: #ececec; } button:hover { background: #d6d6d6; } body.dark button { background: #444; color: #fff; } body.dark button:hover { background: #555; }
-
-/* BMI & Graphical Calc headings */ h2 { font-size: 20px; margin: 25px 0 10px; font-weight: bold; text-align: center; }
-
-.input-box { width: 100%; padding: 12px; margin: 6px 0; border-radius: 8px; border: none; background: #fff; } body.dark .input-box { background: #333; color: #fff; }
-
+/* -------- ADS BOX -------- */
+.ad-box {
+    width: 100%;
+    margin: 25px 0;
+    text-align: center;
+    padding: 10px;
+    background: #ececec;
+    border-radius: 10px;
+}
 </style>
 </head>
-<body><!-- HEADER --><header>
-  <h1>MyCalc</h1>
-  <div class="theme-toggle" onclick="toggleTheme()">Dark / Light</div>
-</header><!-- ✅ AD BLOCK (Adsense paste here) --><div class="ad-box">Your Google AdSense Code Here</div><!-- ========== CALCULATOR #1 (Simple + Scientific Switch) ========== --><div class="calc-wrapper"><button id="switchModeBtn" onclick="toggleSci()">Switch: Scientific Mode</button> <input type="text" id="display" readonly />
 
-  <!-- SIMPLE CALCULATOR KEYS -->  <div class="btn-grid" id="simpleCalc">
-    <button onclick="press('7')">7</button>
-    <button onclick="press('8')">8</button>
-    <button onclick="press('9')">9</button>
-    <button onclick="press('/')">÷</button><button onclick="press('4')">4</button>
-<button onclick="press('5')">5</button>
-<button onclick="press('6')">6</button>
-<button onclick="press('*')">×</button>
+<body>
 
-<button onclick="press('1')">1</button>
-<button onclick="press('2')">2</button>
-<button onclick="press('3')">3</button>
-<button onclick="press('-')">−</button>
+<header>
+    <div>MyCalc</div>
+    <button class="themeBtn" onclick="toggleTheme()">Dark / Light</button>
+</header>
 
-<button onclick="press('0')">0</button>
-<button onclick="press('.')">.</button>
-<button onclick="calculate()">=</button>
-<button onclick="press('+')">+</button>
+<div class="container">
 
-  </div>  <!-- SCIENTIFIC KEYS -->  <div class="btn-grid" id="sciCalc" style="display: none; margin-top: 12px;">
-    <button onclick="sci('sin')">sin</button>
-    <button onclick="sci('cos')">cos</button>
-    <button onclick="sci('tan')">tan</button>
-    <button onclick="press('^')">x^y</button><button onclick="sci('sqrt')">√</button>
-<button onclick="sci('log
+    <!-- ✅ ADS AREA -->
+    <div class="ad-box">
+        <!-- YOUR ADSENSE CODE HERE -->
+        Ad Space (728x90)
+    </div>
+
+    <!-- ✅ CALCULATOR #1 — SIMPLE / SCIENTIFIC -->
+    <h2>Simple / Scientific Calculator</h2>
+    <button onclick="toggleSci()">Switch Scientific</button>
+
+    <div class="calc-box">
+        <input id="display1" class="display" readonly />
+
+        <div id="simple" class="btn-grid">
+            <button onclick="press('1')">1</button>
+            <button onclick="press('2')">2</button>
+            <button onclick="press('3')">3</button>
+            <button onclick="press('+')">+</button>
+            <button onclick="press('4')">4</button>
+            <button onclick="press('5')">5</button>
+            <button onclick="press('6')">6</button>
+            <button onclick="press('-')">-</button>
+            <button onclick="press('7')">7</button>
+            <button onclick="press('8')">8</button>
+            <button onclick="press('9')">9</button>
+            <button onclick="press('*')">*</button>
+            <button onclick="press('0')">0</button>
+            <button onclick="press('.')">.</button>
+            <button onclick="calc()">=</button>
+            <button onclick="press('/')">/</button>
+        </div>
+
+        <div id="scientific" class="btn-grid" style="display:none;">
+            <button onclick="press('sin(')">sin</button>
+            <button onclick="press('cos(')">cos</button>
+            <button onclick="press('tan(')">tan</button>
+            <button onclick="press('^')">^</button>
+        </div>
+    </div>
+
+    <!-- ✅ ADS AREA -->
+    <div class="ad-box">
+        <!-- YOUR ADSENSE CODE HERE -->
+        Ad Space (300x250)
+    </div>
+
+    <!-- ✅ CALCULATOR #2 — BMI -->
+    <h2>BMI Calculator</h2>
+    <div class="calc-box">
+        <input type="number" id="weight" placeholder="Weight (kg)">
+        <br><br>
+        <input type="number" id="height" placeholder="Height (cm)">
+        <br><br>
+        <button onclick="calcBMI()">Check BMI</button>
+        <p id="bmiOutput"></p>
+    </div>
+
+    <!-- ✅ ADS AREA -->
+    <div class="ad-box">
+        <!-- YOUR ADSENSE CODE HERE -->
+        Ad Space (300x600)
+    </div>
+
+    <!-- ✅ CALCULATOR #3 — GRAPHICAL -->
+    <h2>Graphical Calculator</h2>
+
+    <div class="calc-box graphical">
+        <input id="display3" class="display" readonly />
+        <div class="btn-grid">
+            <button onclick="pressG('7')">7</button>
+            <button onclick="pressG('8')">8</button>
+            <button onclick="pressG('9')">9</button>
+            <button onclick="pressG('+')">+</button>
+            
+            <button onclick="pressG('4')">4</button>
+            <button onclick="pressG('5')">5</button>
+            <button onclick="pressG('6')">6</button>
+            <button onclick="pressG('-')">-</button>
+
+            <button onclick="pressG('1')">1</button>
+            <button onclick="pressG('2')">2</button>
+            <button onclick="pressG('3')">3</button>
+            <button onclick="pressG('*')">*</button>
+
+            <button onclick="pressG('0')">0</button>
+            <button onclick="pressG('.')">.</button>
+            <button onclick="calcG()">=</button>
+            <button onclick="pressG('/')">/</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+/* DARK/LIGHT MODE */
+function toggleTheme(){
+    document.body.classList.toggle("dark");
+}
+
+/* SIMPLE / SCIENTIFIC CALCULATOR */
+function press(v){ display1.value += v; }
+function calc(){ display1.value = eval(display1.value); }
+function toggleSci(){
+    document.getElementById("scientific").style.display =
+    document.getElementById("scientific").style.display == "none" ? "grid" : "none";
+}
+
+/* BMI */
+function calcBMI() {
+    let w = document.getElementById("weight").value;
+    let h = document.getElementById("height").value / 100;
+    let bmi = w / (h*h);
+    let msg = "";
+
+    if(bmi < 18.5) msg = "Underweight — Diet improve!";
+    else if(bmi < 25) msg = "Normal — Great!";
+    else msg = "Overweight — Exercise required!";
+
+    document.getElementById("bmiOutput").innerHTML = "BMI: " + bmi.toFixed(2) + "<br>" + msg;
+}
+
+/* GRAPHICAL */
+function pressG(v){ display3.value += v; }
+function calcG(){ display3.value = eval(display3.value); }
+</script>
+
+</body>
+</html>
