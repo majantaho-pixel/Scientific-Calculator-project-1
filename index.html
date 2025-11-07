@@ -1,203 +1,287 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EasyCalc Pro — Scientific + BMI</title>
-<style>
-:root{
-  --bg: linear-gradient(180deg,#f4f7fb,#e8eef8);
-  --panel: #fff;
-  --text:#0b1220;
-  --accent:#ff6b35;
-  --muted:#556;
-}
-body.dark{
-  --bg: linear-gradient(180deg,#061022,#07102a);
-  --panel: rgba(20,24,36,0.9);
-  --text: #e6eef8;
-  --accent:#60a5fa;
-  --muted:#9aa7bf;
-}
-*{box-sizing:border-box;}
-body{margin:0;font-family:sans-serif;background:var(--bg);color:var(--text);}
-.page{max-width:600px;margin:auto;padding:10px;}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-.brand{font-weight:800;font-size:22px;color:var(--accent);}
-button{padding:10px;border:none;border-radius:8px;cursor:pointer;font-weight:700;}
-button.small{padding:5px;font-size:14px;}
-.display-small, .display-big{width:100%;border-radius:10px;margin-bottom:8px;padding:8px;display:flex;justify-content:flex-end;align-items:center;}
-.display-small{height:40px;background:rgba(0,0,0,0.05);}
-.display-big{height:70px;background:rgba(0,0,0,0.08);font-size:26px;font-weight:700;}
-.keys{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:10px;}
-.key{background:var(--panel);color:var(--text);}
-.key.op{background:var(--accent);color:#fff;}
-.key.sc{background:#3b82f6;color:#fff;}
-.key.wide{grid-column:span 2;}
-.history{max-height:120px;overflow:auto;font-size:13px;color:var(--muted);}
-.bmi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
-input,select{width:100%;padding:8px;border-radius:6px;border:none;background:rgba(255,255,255,0.1);color:var(--text);}
-.bmi-bar{height:14px;background:rgba(0,0,0,0.06);border-radius:10px;overflow:hidden;margin-top:8px;}
-.bmi-fill{height:100%;width:0%;background:linear-gradient(90deg,#34d399,#f59e0b);transition:width 0.8s;}
-footer{text-align:center;font-size:13px;color:var(--muted);margin-top:15px;}
-@media(max-width:780px){.keys{grid-template-columns:repeat(4,1fr);}.display-big{font-size:22px;height:60px;}.bmi-grid{grid-template-columns:1fr;}}
-@media(max-width:480px){.keys{grid-template-columns:repeat(3,1fr);}.display-big{font-size:20px;height:50px;}}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="CalcLab — Powerful online calculators: Scientific, BMI and Graphical. Save history, export graphs, premium features coming soon." />
+  <meta name="keywords" content="online calculator, scientific calculator, BMI calculator, graph plotter, calculate online" />
+  <meta name="author" content="CalcLab" />
+
+  <!-- OpenGraph -->
+  <meta property="og:title" content="CalcLab — Advanced Online Calculators" />
+  <meta property="og:description" content="Scientific, BMI and Graphical calculators with save-history and export features." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://yourdomain.com/" />
+  <meta property="og:image" content="https://yourdomain.com/og-image.png" />
+
+  <title>CalcLab — Scientific · BMI · Graph</title>
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "CalcLab",
+    "url": "https://yourdomain.com",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://yourdomain.com/?s={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Basic styles (tailored, no external frameworks required) -->
+  <style>
+    :root{
+      --bg: #0f172a;           /* dark background base for gradient */
+      --surface: #ffffff;
+      --muted: #6b7280;
+      --primary: #2563eb;      /* royal blue */
+      --accent: #7c3aed;       /* purple */
+      --success: #16a34a;
+      --danger: #ef4444;
+      --card-radius: 14px;
+      --glass: rgba(255,255,255,0.06);
+      --max-w: 1100px;
+      --container-padding: 20px;
+      color-scheme: light dark;
+    }
+
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
+    body{background: linear-gradient(180deg,#f8fafc 0%, #eef2ff 100%); color:#0f172a; -webkit-font-smoothing:antialiased;}
+    .dark body{background: linear-gradient(180deg, #071025 0%, #071a2b 100%); color:#e6eef8;}
+
+    .container{max-width:var(--max-w);margin:0 auto;padding:var(--container-padding);}
+
+    header{display:flex;align-items:center;justify-content:space-between;padding:18px 0;}
+    .logo{display:flex;align-items:center;gap:12px;font-weight:700;font-size:1.15rem}
+    .logo .mark{width:38px;height:38px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--accent));display:inline-block;box-shadow:0 6px 20px rgba(37,99,235,0.15)}
+    nav{display:flex;gap:14px;align-items:center}
+    a.btn{background:var(--primary);color:#fff;padding:9px 14px;border-radius:10px;text-decoration:none;font-weight:600}
+    a.ghost{background: transparent;border:1px solid rgba(15,23,42,0.06);padding:8px 12px;border-radius:10px;color:inherit;text-decoration:none}
+
+    /* Hero */
+    .hero{display:flex;gap:28px;align-items:center;padding:40px 0}
+    .hero-left{flex:1}
+    .eyebrow{display:inline-block;background:linear-gradient(90deg,#eef2ff,#f3e8ff);color:var(--muted);padding:6px 10px;border-radius:999px;font-weight:600;font-size:13px;margin-bottom:12px}
+    h1{font-size:2.25rem;margin:0 0 12px;line-height:1.05}
+    .lead{color:var(--muted);margin-bottom:18px;max-width:48ch}
+    .hero-ctas{display:flex;gap:12px;margin-top:8px}
+    .hero-preview{flex:0.9;background:linear-gradient(180deg,#fff,#f8fafc);border-radius:16px;padding:16px;box-shadow:0 8px 30px rgba(2,6,23,0.06);min-height:220px;display:flex;align-items:center;justify-content:center}
+
+    /* Features grid */
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+    .card{background:var(--surface);border-radius:var(--card-radius);padding:18px;box-shadow:0 8px 24px rgba(2,6,23,0.04)}
+    .card h4{margin:0 0 8px}
+    .muted{color:var(--muted)}
+
+    /* Ad placeholders */
+    .ad-rect{background:#f1f5f9;border:1px dashed #cbd5e1;padding:14px;border-radius:10px;text-align:center;color:#475569}
+    .ad-rect.small{padding:10px;font-size:13px}
+
+    /* Footer */
+    footer{margin-top:40px;padding:28px 0;color:var(--muted);font-size:14px;text-align:center}
+
+    /* Responsive */
+    @media (max-width:980px){
+      .grid{grid-template-columns:1fr; }
+      .hero{flex-direction:column;align-items:stretch}
+      .hero-preview{order:-1}
+      nav{display:none}
+    }
+
+    /* Theme toggle */
+    .toggle{cursor:pointer;padding:8px;border-radius:8px;border:1px solid rgba(15,23,42,0.06);display:inline-flex;align-items:center;gap:8px}
+    .small{font-size:0.9rem;color:var(--muted)}
+    .feature-list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+    .pill{display:inline-block;background:linear-gradient(90deg,#eef2ff,#fff);padding:6px 10px;border-radius:999px;font-weight:600;font-size:13px}
+  </style>
+
+  <!-- NOTE: Replace this comment with your AdSense script when ready:
+       <script data-ad-client="ca-pub-XXXXXXXXXXXX" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  -->
+
 </head>
 <body>
-<div class="page">
-<header>
-  <div class="brand">EasyCalc Pro</div>
-  <div>
-    <button id="themeToggle" class="small">🌙</button>
+  <div class="container" id="page">
+    <header>
+      <div class="logo" aria-label="CalcLab - logo">
+        <span class="mark" aria-hidden="true"></span>
+        <span>CalcLab</span>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:center">
+        <nav aria-label="Primary navigation">
+          <a href="#scientific" class="ghost">Scientific</a>
+          <a href="#bmi" class="ghost">BMI</a>
+          <a href="#graph" class="ghost">Graph</a>
+        </nav>
+
+        <button id="themeToggle" class="toggle small" aria-pressed="false" title="Toggle theme">🌗 Theme</button>
+        <a href="#signup" class="btn" style="margin-left:8px">Get Started</a>
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero" role="region" aria-labelledby="hero-heading">
+      <div class="hero-left">
+        <div class="eyebrow">Online · Fast · Accurate</div>
+        <h1 id="hero-heading">Professional calculators for students, developers and fitness</h1>
+        <p class="lead">Scientific, BMI and Graph calculators — modern interface, save your history, export graphs and scale to premium features. Mobile-first, SEO friendly and ready for AdSense/monetization.</p>
+        <div class="hero-ctas">
+          <a class="btn" href="#scientific">Open Scientific</a>
+          <a class="ghost" href="#graph">Try Graph Plotter</a>
+          <a class="ghost" href="#features" style="margin-left:8px">See Features</a>
+        </div>
+
+        <div class="feature-list">
+          <span class="pill">Multi-equation Graphs</span>
+          <span class="pill">Login & Save History</span>
+          <span class="pill">Export PNG / PDF (Premium)</span>
+        </div>
+
+        <!-- small ad placeholder (desktop) -->
+        <div style="margin-top:16px;max-width:320px;">
+          <div class="ad-rect small" role="region" aria-label="Ad placeholder (top)">
+            Ad placeholder — Top banner
+            <!-- Replace this div with AdSense ad slot -->
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-preview" aria-hidden="true">
+        <!-- simple visual preview of calculators -->
+        <div style="width:240px;">
+          <div style="background:#0b1220;color:#fff;padding:12px;border-radius:10px;text-align:center;font-weight:700">Scientific</div>
+          <div style="margin-top:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+            <div style="background:#fff;padding:10px;border-radius:8px;text-align:center">sin</div>
+            <div style="background:#fff;padding:10px;border-radius:8px;text-align:center">cos</div>
+            <div style="background:#fff;padding:10px;border-radius:8px;text-align:center">tan</div>
+            <div style="background:#fff;padding:10px;border-radius:8px;text-align:center">log</div>
+            <div style="background:#fff;padding:10px;border-radius:8px;text-align:center">7</div>
+            <div style="background:#fff;padding:10px;border-radius:8px;text-align:center">8</div>
+            <div style="background:#fff;padding:10px;border-radius:8px;text-align:center">9</div>
+            <div style="background:#fff;padding:10px;border-radius:8px;text-align:center">/</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features / Cards -->
+    <section id="features" aria-label="Features" style="margin-top:20px;">
+      <div class="grid">
+        <article class="card" id="scientific">
+          <h4>Scientific Calculator</h4>
+          <p class="muted">Full keyboard support, trig/log functions, expression parser, history and cloud save for logged-in users.</p>
+          <ul class="muted" style="margin-top:10px">
+            <li>sin/cos/tan, ln, log, pow, sqrt</li>
+            <li>Parentheses, operator precedence</li>
+            <li>Keyboard shortcuts & history</li>
+          </ul>
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <a class="btn" href="/scientific">Open</a>
+            <a class="ghost" href="#signup">Sign up</a>
+          </div>
+        </article>
+
+        <article class="card" id="bmi">
+          <h4>BMI Calculator</h4>
+          <p class="muted">Metric / Imperial support, visual meter and health tips, save records to your account.</p>
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <a class="btn" href="/bmi">Open</a>
+            <a class="ghost" href="#signup">Save records</a>
+          </div>
+        </article>
+
+        <article class="card" id="graph">
+          <h4>Graphical Calculator</h4>
+          <p class="muted">Multi-equation plotting, zoom & pan, legend, export to PNG/SVG and advanced tracing (premium).</p>
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <a class="btn" href="/graph">Plot Now</a>
+            <a class="ghost" href="#pricing">Pricing</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Analytics / Ads / Signup strip -->
+    <section style="margin-top:28px;display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+        <div style="flex:1">
+          <h3 style="margin:0 0 6px">Monetization & Premium</h3>
+          <p class="muted" style="margin:0">Ad-free subscriptions, advanced graphing and export APIs. Integrate Stripe for billing and Firebase for account management.</p>
+        </div>
+        <div style="min-width:320px;">
+          <div class="ad-rect">
+            Sidebar / Content ad placeholder — (replace with AdSense slot)
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:center;justify-content:space-between">
+        <div>
+          <strong>Join our beta</strong>
+          <p class="muted" style="margin:4px 0 0">Get early access to premium features & API keys.</p>
+        </div>
+        <div>
+          <a id="signup" class="btn" href="/signup">Request Beta</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lightweight footer + small ad -->
+    <footer>
+      <div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;">
+        <div>© <span id="year"></span> CalcLab</div>
+        <div style="width:160px">
+          <div class="ad-rect small">Mobile sticky ad placeholder</div>
+        </div>
+      </div>
+      <div style="margin-top:10px" class="muted">Privacy · Terms · Contact</div>
+    </footer>
   </div>
-</header>
 
-<!-- Small & Big display -->
-<div class="display-small" id="smallInput"><span id="smallExpr">&nbsp;</span></div>
-<div class="display-big" id="bigOutput"><span id="bigVal">0</span></div>
+  <!-- Simple scripts: theme toggle + year -->
+  <script>
+    (function(){
+      const root = document.documentElement;
+      const page = document.getElementById('page');
+      const toggle = document.getElementById('themeToggle');
+      const yearEl = document.getElementById('year');
 
-<!-- Calculator keys -->
-<div class="keys">
-  <button class="key" data-key="MC">MC</button>
-  <button class="key" data-key="MR">MR</button>
-  <button class="key" data-key="M+">M+</button>
-  <button class="key" data-key="M-">M-</button>
-  <button class="key sc" data-key="sqrt">√</button>
-  <button class="key" data-key="(">(</button>
+      // init year
+      if(yearEl) yearEl.textContent = new Date().getFullYear();
 
-  <button class="key" data-key=")">)</button>
-  <button class="key sc" data-key="pi">π</button>
-  <button class="key sc" data-key="e">e</button>
-  <button class="key op" data-key="/">÷</button>
-  <button class="key" data-key="7">7</button>
-  <button class="key" data-key="8">8</button>
+      // load theme from localStorage
+      const stored = localStorage.getItem('calc-theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      if(stored === 'dark') document.documentElement.classList.add('dark');
 
-  <button class="key" data-key="9">9</button>
-  <button class="key op" data-key="*">×</button>
-  <button class="key sc" data-key="pow">xʸ</button>
-  <button class="key" data-key="4">4</button>
-  <button class="key" data-key="5">5</button>
-  <button class="key" data-key="6">6</button>
+      toggle.addEventListener('click', () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('calc-theme', isDark ? 'dark' : 'light');
+        toggle.setAttribute('aria-pressed', String(isDark));
+      });
 
-  <button class="key op" data-key="-">−</button>
-  <button class="key" data-key="1">1</button>
-  <button class="key" data-key="2">2</button>
-  <button class="key" data-key="3">3</button>
-  <button class="key sc" data-key="fact">n!</button>
-  <button class="key" data-key="0">0</button>
+      // Accessibility: focus outline only when keyboard used
+      function handleFirstTab(e) {
+        if (e.key === 'Tab') document.documentElement.classList.add('user-is-tabbing');
+        window.removeEventListener('keydown', handleFirstTab);
+      }
+      window.addEventListener('keydown', handleFirstTab);
+    })();
+  </script>
 
-  <button class="key" data-key=".">.</button>
-  <button class="key wide op" data-key="+">+</button>
-  <button class="key wide" data-key="=" style="background:linear-gradient(90deg,#10b981,#059669);color:#fff">=</button>
-  <button class="key" data-key="C">C</button>
-  <button class="key" data-key="DEL">⌫</button>
-  <button class="key sc" data-key="inv">1/x</button>
+  <!-- NOTES for developer (remove before production):
+       - Replace internal links (/scientific, /bmi, /graph, /signup) with your routes.
+       - Insert Google AdSense script in head and ad unit divs where placeholders exist.
+       - Add analytics script (GA4) and server-side SEO as required.
+       - For GitHub Pages, place this file at the repo root as index.html.
+       - For Next.js or other frameworks, convert hero / cards to components and reuse styles.
+  -->
 
-  <!-- Scientific extra -->
-  <button class="key sc" data-key="sin">sin</button>
-  <button class="key sc" data-key="cos">cos</button>
-  <button class="key sc" data-key="tan">tan</button>
-  <button class="key sc" data-key="ln">ln</button>
-  <button class="key sc" data-key="log">log</button>
-  <button class="key" data-key="%">%</button>
-</div>
-
-<div class="history" id="history"></div>
-
-<!-- BMI Calculator -->
-<section class="bmi-card">
-<h3>BMI Calculator</h3>
-<div class="bmi-grid">
-  <div><label>Age</label><input type="number" id="age" min="1"></div>
-  <div><label>Gender</label><select id="gender"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select></div>
-  <div><label id="wLabel">Weight (kg)</label><input type="number" id="weight" step="0.1"></div>
-  <div><label id="hLabel">Height (cm)</label><input type="number" id="height" step="0.1"></div>
-</div>
-<div style="margin-top:8px;">
-  <button id="calcBmiBtn">Check BMI</button>
-  <button id="copyBmi">Copy BMI</button>
-</div>
-<div class="bmi-bar"><div id="bmiFill" class="bmi-fill"></div></div>
-<div id="bmiResult" class="small-muted" style="margin-top:4px;">Your BMI will appear here</div>
-<div id="bmiAdvice" class="small-muted"></div>
-</section>
-
-<footer>EasyCalc Pro — Offline & Mobile-friendly.</footer>
-</div>
-
-<script>
-// state
-const state={expr:'',display:'0',mem:0,history:[],theme:'light'};
-
-// update displays
-function updateDisplays(){
-  document.getElementById('smallExpr').textContent=state.expr||' ';
-  document.getElementById('bigVal').textContent=state.display;
-  renderHistory();
-}
-function renderHistory(){
-  const h=document.getElementById('history');h.innerHTML='';
-  state.history.slice(0,50).forEach(it=>{const d=document.createElement('div');d.textContent=it;h.appendChild(d);});
-}
-
-// calculator evaluation
-function safeEval(s){
-  if(!s)return 0;
-  s=s.replace(/×/g,'*').replace(/÷/g,'/').replace(/–|−/g,'-').replace(/\^/g,'**');
-  s=s.replace(/\bpi\b/gi,Math.PI).replace(/\be\b/gi,Math.E);
-  s=s.replace(/(\d+(\.\d+)?)!/g,'fact($1)').replace(/(\d+(\.\d+)?)%/g,'($1/100)');
-  const func=`const fact=n=>{n=Math.floor(n);if(n<=1)return 1;let r=1;for(let i=2;i<=n;i++)r*=i;return r};return (${s});`;
-  try{return Function(func)();}catch{return 'Error';}
-}
-
-// key press
-function pressKey(k){
-  if(k==='C'){state.expr='';state.display='0';updateDisplays();return;}
-  if(k==='DEL'){state.expr=state.expr.slice(0,-1);updateDisplays();return;}
-  if(k==='MC'){state.mem=0;updateDisplays();return;}
-  if(k==='MR'){state.expr=state.mem;state.display=state.mem;updateDisplays();return;}
-  if(k==='M+'){state.mem+=Number(state.display||0);updateDisplays();return;}
-  if(k==='M-'){state.mem-=Number(state.display||0);updateDisplays();return;}
-  if(k==='='){try{const r=safeEval(state.expr);state.display=r;state.history.unshift(`${state.expr}=${r}`);state.expr=String(r);updateDisplays();}catch{state.display='Error';updateDisplays();}return;}
-  const funcs=['sin','cos','tan','ln','log','sqrt','pow','fact','inv','pi','e','%'];
-  if(funcs.includes(k)){if(k==='pow')state.expr+='^';else if(k==='fact')state.expr+='!';else if(k==='inv')state.expr+='1/(';else if(k==='pi'||k==='e')state.expr+=k;else state.expr+=k+'(';updateDisplays();return;}
-  state.expr+=k;updateDisplays();
-}
-
-// attach all keys
-document.querySelectorAll('.key').forEach(b=>b.addEventListener('click',()=>pressKey(b.dataset.key)));
-
-// theme toggle
-document.getElementById('themeToggle').addEventListener('click',()=>{
-  if(state.theme==='light'){state.theme='dark';document.body.classList.add('dark');}else{state.theme='light';document.body.classList.remove('dark');}
-});
-
-// keyboard support
-document.addEventListener('keydown',e=>{
-  if((e.key>='0'&&e.key<='9')||['+','-','*','/','.','(',')','%'].includes(e.key)){pressKey(e.key);e.preventDefault();}
-  if(e.key==='Enter')pressKey('=');
-  if(e.key==='Backspace')pressKey('DEL');
-});
-
-// BMI logic
-document.getElementById('calcBmiBtn').addEventListener('click',()=>{
-  let w=Number(document.getElementById('weight').value),h=Number(document.getElementById('height').value),age=Number(document.getElementById('age').value);
-  let gender=document.getElementById('gender').value;
-  if(!w||!h||!age||!gender)return alert('Fill all fields');
-  const bmi=w/(h/100)**2;const rounded=Math.round(bmi*10)/10;
-  let cat='',advice='';
-  if(bmi<18.5){cat='Underweight';advice='Increase calories & nutrients';}
-  else if(bmi<25){cat='Healthy';advice='Maintain diet & exercise';}
-  else if(bmi<30){cat='Overweight';advice='Reduce calories & exercise';}
-  else{cat='Obese';advice='Consult professional';}
-  document.getElementById('bmiResult').textContent=`BMI: ${rounded} — ${cat}`;
-  document.getElementById('bmiAdvice').textContent=advice;
-  document.getElementById('bmiFill').style.width=Math.min(100,Math.max(0,(bmi-12)/(40-12)*100))+'%';
-});
-
-// initial update
-updateDisplays();
-</script>
 </body>
 </html>
