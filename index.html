@@ -4,80 +4,100 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>EasyCalc — Scientific + BMI</title>
-<meta name="description" content="EasyCalc: scientific calculator + BMI checker. Dark/light mode, responsive, memory and history."/>
+<meta name="description" content="EasyCalc: futuristic scientific calculator with BMI checker, glass UI, dark/light mode and ads layout.">
 <style>
-  /* ---------- Theme variables ---------- */
+  /* ----------- Theme variables ----------- */
   :root {
-    --bg:#f3f4f6; --panel:#ffffff; --text:#111827; --muted:#6b7280;
-    --accent:#ff6b35; --btn:#e5e7eb; --btn-strong:#111827;
-    --shadow:0 6px 22px rgba(0,0,0,0.08); --radius:14px;
+    --bg:#e8ecf4;
+    --text:#111827;
+    --muted:#6b7280;
+    --accent:#3b82f6;
+    --panel:rgba(255,255,255,0.65);
+    --blur:14px;
+    --shadow:0 8px 25px rgba(0,0,0,0.1);
+    --radius:18px;
   }
   body.dark {
-    --bg:#0b1020; --panel:#161c2e; --text:#e6eef8; --muted:#94a3b8;
-    --accent:#4dabf7; --btn:#1f2937; --btn-strong:#f1f5f9;
-    --shadow:0 6px 26px rgba(0,0,0,0.6);
+    --bg:#060b1b;
+    --text:#e2e8f0;
+    --muted:#94a3b8;
+    --accent:#60a5fa;
+    --panel:rgba(20,25,40,0.6);
+    --shadow:0 8px 30px rgba(0,0,0,0.6);
   }
 
-  /* ---------- Base styles ---------- */
-  html,body{margin:0;padding:0;height:100%;font-family:Inter,system-ui,Arial,sans-serif;
-    background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}
-  .container{max-width:900px;margin:0 auto;padding:18px;}
-  header.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
-  .brand{font-size:22px;font-weight:800;color:var(--accent);}
-  .theme-btn{background:var(--btn);color:var(--btn-strong);border:none;
-    padding:8px 12px;border-radius:10px;cursor:pointer;font-size:18px;box-shadow:var(--shadow);}
-  .ad{background:var(--panel);border-radius:var(--radius);padding:18px;
-    margin:16px 0;text-align:center;color:var(--muted);box-shadow:var(--shadow);font-weight:600;}
+  /* ----------- Base styles ----------- */
+  html,body{margin:0;padding:0;height:100%;
+    font-family:"Poppins",system-ui,Arial,sans-serif;
+    background:var(--bg);color:var(--text);
+    transition:background 0.6s ease,color 0.6s ease;}
+  .container{max-width:900px;margin:0 auto;padding:20px;}
+  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+  .brand{font-size:24px;font-weight:800;color:var(--accent);}
+  .theme-btn{background:var(--panel);backdrop-filter:blur(var(--blur));
+    color:var(--text);border:none;padding:10px 16px;
+    border-radius:var(--radius);font-size:20px;cursor:pointer;
+    box-shadow:var(--shadow);transition:0.4s;}
+  .theme-btn:hover{transform:scale(1.1);}
 
-  /* ---------- Calculator panels ---------- */
-  .panel{background:var(--panel);padding:18px;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:24px;}
+  /* ----------- Glass panels ----------- */
+  .panel{background:var(--panel);backdrop-filter:blur(var(--blur));
+    padding:20px;border-radius:var(--radius);
+    box-shadow:var(--shadow);margin-bottom:24px;
+    transition:background 0.6s ease, box-shadow 0.6s ease;}
+  .panel:hover{box-shadow:0 8px 35px rgba(0,0,0,0.25);}
   .calc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
   .calc-title{font-weight:700;font-size:18px;}
   .mode{font-size:13px;color:var(--muted);}
-  .display{width:100%;height:68px;background:rgba(0,0,0,0.04);border-radius:10px;
-    padding:8px 12px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;}
+  .display{width:100%;height:70px;border-radius:12px;padding:10px 14px;
+    background:rgba(255,255,255,0.15);backdrop-filter:blur(6px);
+    display:flex;flex-direction:column;justify-content:center;align-items:flex-end;}
   .expr{font-size:14px;color:var(--muted);}
-  .value{font-size:24px;font-weight:700;color:var(--text);}
+  .value{font-size:26px;font-weight:700;}
   .keys{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px;}
-  .key{padding:14px;border:none;border-radius:10px;background:var(--btn);
-    color:var(--btn-strong);font-weight:600;cursor:pointer;}
-  .key.operator{background:linear-gradient(90deg,var(--accent),#e95b2b);color:#fff;}
-  .key.scientific{background:linear-gradient(90deg,#3b82f6,#2563eb);color:#fff;}
-  .key.equal{grid-column:span 2;background:linear-gradient(90deg,#10b981,#059669);color:#fff;}
+  .key{padding:14px;border:none;border-radius:10px;background:rgba(255,255,255,0.25);
+    color:var(--text);font-weight:600;cursor:pointer;transition:0.2s;}
+  .key:hover{background:rgba(255,255,255,0.4);}
+  .operator{background:linear-gradient(90deg,var(--accent),#2563eb);color:#fff;}
+  .scientific{background:linear-gradient(90deg,#10b981,#059669);color:#fff;}
+  .equal{grid-column:span 2;background:linear-gradient(90deg,#f97316,#ea580c);color:#fff;}
   .small-muted{font-size:13px;color:var(--muted);margin-top:6px;text-align:right;}
-  .history{max-height:100px;overflow-y:auto;font-size:13px;color:var(--muted);margin-top:10px;border-top:1px dashed rgba(255,255,255,0.05);padding-top:8px;}
+  .history{max-height:100px;overflow-y:auto;font-size:13px;color:var(--muted);margin-top:10px;}
 
-  /* ---------- BMI panel ---------- */
-  .bmi-panel label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px;}
+  /* ----------- BMI Panel ----------- */
   .bmi-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   @media(max-width:600px){.bmi-grid{grid-template-columns:1fr;}}
-  input[type="number"],select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);
-    background:transparent;color:var(--text);}
-  .calc-btn{width:100%;margin-top:10px;padding:12px;border-radius:10px;border:none;
-    background:var(--accent);color:#fff;font-weight:700;cursor:pointer;}
-  .result-line{margin-top:12px;padding:10px;border-radius:10px;background:rgba(0,0,0,0.05);}
+  label{font-size:13px;color:var(--muted);}
+  input[type="number"],select{width:100%;padding:10px;border-radius:8px;
+    border:none;background:rgba(255,255,255,0.25);color:var(--text);
+    backdrop-filter:blur(4px);}
+  .calc-btn{width:100%;margin-top:10px;padding:12px;border-radius:10px;
+    border:none;background:var(--accent);color:#fff;font-weight:700;cursor:pointer;}
+  .result-line{margin-top:12px;padding:10px;border-radius:10px;
+    background:rgba(255,255,255,0.15);}
   .muted{color:var(--muted);font-size:13px;}
+  .ad{background:var(--panel);backdrop-filter:blur(var(--blur));border-radius:var(--radius);
+    padding:18px;margin:16px 0;text-align:center;color:var(--muted);
+    box-shadow:var(--shadow);font-weight:600;}
 </style>
 </head>
 <body>
-
 <div class="container">
-  <header class="topbar">
+  <header>
     <div class="brand">EasyCalc</div>
     <button id="themeToggle" class="theme-btn">🌙</button>
   </header>
 
-  <!-- Ad 1 (top) -->
-  <div class="ad">🎬 Google AdSense (Top)</div>
+  <div class="ad">🎬 AdSense Top Banner</div>
 
-  <!-- Main Scientific Calculator -->
+  <!-- Scientific Calculator -->
   <div class="panel">
     <div class="calc-top">
       <div>
         <div class="calc-title">Scientific Calculator</div>
-        <div class="mode" id="angleModeLabel">Trig mode: <strong>Degrees</strong></div>
+        <div class="mode" id="angleModeLabel">Mode: <strong>Degrees</strong></div>
       </div>
-      <div class="muted">Memory: <span id="memLabel">0</span></div>
+      <div class="muted">Mem: <span id="memLabel">0</span></div>
     </div>
     <div class="display">
       <div id="expr" class="expr"></div>
@@ -126,18 +146,17 @@
       <button class="key scientific" onclick="press('ln')">ln</button>
       <button class="key scientific" onclick="press('log')">log₁₀</button>
     </div>
-    <div class="small-muted">Tip: Use 🌙 to switch theme. Keyboard supported (numbers, + - * / . Enter).</div>
+    <div class="small-muted">Keyboard supported — numbers, + - * / . Enter</div>
     <div class="history" id="history"></div>
   </div>
 
-  <!-- Ad 2 (between calculators) -->
-  <div class="ad">💰 Google AdSense (Between Calculators)</div>
+  <div class="ad">💰 AdSense Middle Banner</div>
 
-  <!-- BMI Panel -->
-  <div class="panel bmi-panel">
+  <!-- BMI -->
+  <div class="panel">
     <h3>BMI & Health Checker</h3>
     <div class="bmi-grid">
-      <div><label>Age (years)</label><input id="age" type="number" min="1"></div>
+      <div><label>Age</label><input id="age" type="number" min="1"></div>
       <div><label>Gender</label><select id="gender"><option value="">Select</option><option>Male</option><option>Female</option></select></div>
       <div><label>Weight (kg)</label><input id="weight" type="number" step="0.1"></div>
       <div><label>Height (cm)</label><input id="height" type="number" step="0.1"></div>
@@ -146,40 +165,46 @@
     <div class="result-line"><div id="bmiResult">Your BMI will appear here</div></div>
   </div>
 
-  <!-- 3 Ads bottom -->
   <div class="ad">🩺 Health Ad</div>
   <div class="ad">🏋️ Fitness Ad</div>
   <div class="ad">🥗 Nutrition Ad</div>
 </div>
 
 <script>
-let expr='', displayValue='0', mem=0, historyArr=[], angleMode='DEG';
+let expr='',displayValue='0',mem=0,historyArr=[];
 function updateDisplay(){expr=expr;document.getElementById('expr').textContent=expr;document.getElementById('value').textContent=displayValue;}
-function pushHistory(line){historyArr.unshift(line);document.getElementById('history').innerHTML=historyArr.slice(0,15).map(h=>`<div>${h}</div>`).join('');}
-function safeEvaluate(s){s=s.replace(/×/g,'*').replace(/÷/g,'/').replace(/\^/g,'**');
-s=s.replace(/\bsin\(/g,'Math.sin(').replace(/\bcos\(/g,'Math.cos(').replace(/\btan\(/g,'Math.tan(')
-.replace(/\blog\(/g,'Math.log10(').replace(/\bln\(/g,'Math.log(')
-.replace(/\bsqrt\(/g,'Math.sqrt(').replace(/\bpi\b/g,'('+Math.PI+')')
-.replace(/\be\b/g,'('+Math.E+')');if(angleMode==='DEG'){s=s.replace(/Math\.sin\(([^)]+)\)/g,'Math.sin(($1)*Math.PI/180)');s=s.replace(/Math\.cos\(([^)]+)\)/g,'Math.cos(($1)*Math.PI/180)');s=s.replace(/Math\.tan\(([^)]+)\)/g,'Math.tan(($1)*Math.PI/180)');}
-return Function('return '+s)();}
+function pushHistory(line){historyArr.unshift(line);document.getElementById('history').innerHTML=historyArr.slice(0,10).map(h=>`<div>${h}</div>`).join('');}
+function safeEvaluate(s){s=s.replace(/×/g,'*').replace(/÷/g,'/').replace(/\^/g,'**')
+ .replace(/\bsin\(/g,'Math.sin(').replace(/\bcos\(/g,'Math.cos(').replace(/\btan\(/g,'Math.tan(')
+ .replace(/\blog\(/g,'Math.log10(').replace(/\bln\(/g,'Math.log(')
+ .replace(/\bsqrt\(/g,'Math.sqrt(').replace(/\bpi\b/g,'('+Math.PI+')').replace(/\be\b/g,'('+Math.E+')');
+ return Function('return '+s)();}
 function press(k){if(k==='C'){expr='';displayValue='0';updateDisplay();return;}
 if(k==='DEL'){expr=expr.slice(0,-1);updateDisplay();return;}
-if(k==='='){try{let res=safeEvaluate(expr);displayValue=String(res);pushHistory(expr+' = '+res);expr=String(res);}catch(e){displayValue='Error';}updateDisplay();return;}
+if(k==='='){try{let r=safeEvaluate(expr);displayValue=String(r);pushHistory(expr+' = '+r);expr=String(r);}catch{displayValue='Error';}updateDisplay();return;}
 if(k==='M+'){mem+=Number(displayValue);document.getElementById('memLabel').textContent=mem;return;}
 if(k==='M-'){mem-=Number(displayValue);document.getElementById('memLabel').textContent=mem;return;}
 if(k==='MR'){expr=String(mem);displayValue=String(mem);updateDisplay();return;}
 if(k==='MC'){mem=0;document.getElementById('memLabel').textContent=mem;return;}
-if(k==='pi'||k==='e'){expr+=k;updateDisplay();return;}
+if(['pi','e'].includes(k)){expr+=k;updateDisplay();return;}
 if(['sin','cos','tan','ln','log','sqrt'].includes(k)){expr+=k+'(';updateDisplay();return;}
 if(k==='pow'){expr+='^';updateDisplay();return;}
 if(k==='fact'){expr+='!';updateDisplay();return;}
 if(k==='inv'){expr='1/('+expr+')';updateDisplay();return;}
 expr+=String(k);updateDisplay();}
 function runBMI(){const w=+weight.value,h=+height.value/100;
-if(!w||!h){bmiResult.textContent='Please fill all fields';return;}
-const bmi=(w/(h*h)).toFixed(1);bmiResult.textContent='BMI: '+bmi;}
-document.getElementById('themeToggle').onclick=()=>{document.body.classList.toggle('dark');localStorage.setItem('theme',document.body.classList.contains('dark')?'dark':'light');};
-if(localStorage.getItem('theme')==='dark')document.body.classList.add('dark');
+if(!w||!h){bmiResult.textContent='Fill all fields';return;}
+const bmi=(w/(h*h)).toFixed(1);
+let msg='';if(bmi<18.5)msg='Underweight 🥛 Eat more balanced foods!';
+else if(bmi<=24.9)msg='Perfect! Stay healthy 🌿';
+else if(bmi<=29.9)msg='Overweight ⚠️ Add more activity!';
+else msg='Obese 🚨 Consult nutrition expert!';
+bmiResult.textContent=`BMI: ${bmi} — ${msg}`;}
+const themeToggle=document.getElementById('themeToggle');
+themeToggle.onclick=()=>{document.body.classList.toggle('dark');
+themeToggle.textContent=document.body.classList.contains('dark')?'☀️':'🌙';
+localStorage.setItem('theme',document.body.classList.contains('dark')?'dark':'light');};
+if(localStorage.getItem('theme')==='dark'){document.body.classList.add('dark');themeToggle.textContent='☀️';}
 </script>
 </body>
 </html>
