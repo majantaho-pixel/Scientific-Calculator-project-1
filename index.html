@@ -101,29 +101,34 @@ function updateGraph(value) {
 // ============================
 // Speedtest Functions
 // ============================
-async function getPing() {
-  const start = performance.now();
-  await fetch("https://speed.hetzner.de/100MB.bin", { method: "HEAD", cache: "no-store" });
-  return Math.round(performance.now() - start);
-}
+async function startSpeedtest() {
+  const server = document.getElementById("serverSelect").value;
+  const downloadBox = document.getElementById("download");
+  const uploadBox = document.getElementById("upload");
+  const pingBox = document.getElementById("ping");
+  const jitterBox = document.getElementById("jitter");
 
-async function getDownloadSpeed() {
-  const start = performance.now();
-  await fetch("https://speed.hetzner.de/10MB.bin", { cache: "no-store" });
-  const end = performance.now();
-  const timeS = (end-start)/1000;
-  return ((10*8)/timeS).toFixed(2); // Mbps
-}
+  downloadBox.innerText = "0.00"; uploadBox.innerText = "0.00";
+  pingBox.innerText = "--"; jitterBox.innerText = "--";
 
-async function getUploadSpeed() {
-  const data = new Uint8Array(2*1024*1024);
-  const start = performance.now();
-  await fetch("https://httpbin.org/post",{ method:"POST", body:data });
-  const end = performance.now();
-  const timeS = (end-start)/1000;
-  return ((2*8)/timeS).toFixed(2); // Mbps
-}
+  // Backend GET: ping + download
+  const data = await fetch(`http://localhost:3000/api/speedtest?server=${server}`)
+    .then(r=>r.json());
+  downloadBox.innerText = data.download;
+  pingBox.innerText = data.ping;
+  updateGraph(data.download);
 
+  // Backend POST: upload
+  const uploadData = new Uint8Array(2*1024*1024);
+  const uploadResult = await fetch('http://localhost:3000/api/upload', {
+    method: 'POST',
+    body: uploadData
+  }).then(r => r.json());
+  uploadBox.innerText = uploadResult.upload;
+  updateGraph(uploadResult.upload);
+
+  speakResult(`Download ${data.download} Mbps, Upload ${uploadResult.upload} Mbps`);
+}
 async function startSpeedtest() {
   const downloadBox = document.getElementById("download");
   const uploadBox = document.getElementById("upload");
