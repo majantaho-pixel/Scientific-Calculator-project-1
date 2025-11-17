@@ -1,13 +1,28 @@
-<!-- FULL ADVANCED VELOCITY SPEEDTEST WEBSITE - ALL FEATURES INCLUDED --><!-- Node.js/PHP/Python backend APIs (placeholders), Graph Animation, Multi-Server, Share, Export, Neon Border, Voice Output, Auto-Retry --><!DOCTYPE html><html lang="en">
+<!-- FULL ADVANCED VELOCITY SPEEDTEST WEBSITE -->
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Velocity Speed Test – Advanced</title>  <script src="https://cdn.tailwindcss.com"></script>  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <style>
-    body { background: #070910; color: white; font-family: 'Inter', sans-serif; }
-    .card-bg { background: #0f1320; border-radius: 22px; padding: 24px; box-shadow: 0 0 25px rgba(0,255,255,0.25), inset 0 0 18px rgba(0,255,255,0.15); border: 2px solid rgba(0,255,255,0.4); }
-    .neon { box-shadow: 0 0 20px #00f6ff, inset 0 0 20px #00f6ff; border-color: #00f6ff; }
-  </style></head>
-<body class="p-4 flex justify-center items-center min-h-screen"><div class="w-full max-w-2xl card-bg neon">  <h2 class="text-center text-xl font-bold mb-5 tracking-wide text-cyan-300">VELOCITY ADVANCED SPEEDTEST</h2>  <!-- Server Selection -->  <div class="mb-4">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Velocity Speed Test – Advanced</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  body { background: #070910; color: white; font-family: 'Inter', sans-serif; }
+  .card-bg { background: #0f1320; border-radius: 22px; padding: 24px; box-shadow: 0 0 25px rgba(0,255,255,0.25), inset 0 0 18px rgba(0,255,255,0.15); border: 2px solid rgba(0,255,255,0.4); }
+  .neon { box-shadow: 0 0 20px #00f6ff, inset 0 0 20px #00f6ff; border-color: #00f6ff; }
+  button:hover { box-shadow: 0 0 12px #00f6ff, 0 0 24px #00f6ff inset; transition: 0.3s; }
+  select, button { transition: 0.2s; }
+</style>
+</head>
+<body class="p-4 flex justify-center items-center min-h-screen">
+
+<div class="w-full max-w-2xl card-bg neon">
+  <h2 class="text-center text-xl font-bold mb-5 tracking-wide text-cyan-300">VELOCITY ADVANCED SPEEDTEST</h2>
+
+  <!-- Server Selection -->
+  <div class="mb-4">
     <label class="text-sm text-gray-300">Choose Server:</label>
     <select id="serverSelect" class="w-full mt-1 p-2 bg-[#1a2035] rounded-lg">
       <option value="pk1">Pakistan – Lahore</option>
@@ -16,29 +31,76 @@
       <option value="de1">Germany – Frankfurt</option>
       <option value="us1">USA – New York</option>
     </select>
-  </div>  <!-- Graph Canvas --><canvas id="speedGraph" height="150" class="rounded-xl bg-[#101425]"></canvas>
+  </div>
 
-  <!-- Outputs -->  <div class="grid grid-cols-2 gap-4 mt-6">
-    <div class="p-4 bg-[#1d2035] rounded-xl text-center"><p class="text-sm text-gray-400">Download</p><p class="text-2xl font-bold" id="download">0.00</p></div>
-    <div class="p-4 bg-[#1d2035] rounded-xl text-center"><p class="text-sm text-gray-400">Upload</p><p class="text-2xl font-bold" id="upload">0.00</p></div>
-  </div>  <div class="grid grid-cols-2 gap-4 mt-6">
-    <div class="p-4 bg-[#1d2035] rounded-xl text-center"><p class="text-sm text-gray-400">Ping</p><p class="text-2xl font-bold" id="ping">--</p></div>
-    <div class="p-4 bg-[#1d2035] rounded-xl text-center"><p class="text-sm text-gray-400">Jitter</p><p class="text-2xl font-bold" id="jitter">--</p></div>
-  </div>  <!-- Buttons -->  <div class="flex justify-center gap-3 mt-6">
-    <button onclick="startTest()" class="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-xl text-lg font-semibold shadow-lg">Start Test</button>
+  <!-- Graph -->
+  <canvas id="speedGraph" height="150" class="rounded-xl bg-[#101425]"></canvas>
+
+  <!-- Outputs -->
+  <div class="grid grid-cols-2 gap-4 mt-6">
+    <div class="p-4 bg-[#1d2035] rounded-xl text-center">
+      <p class="text-sm text-gray-400">Download</p>
+      <p class="text-2xl font-bold" id="download">0.00</p>
+    </div>
+    <div class="p-4 bg-[#1d2035] rounded-xl text-center">
+      <p class="text-sm text-gray-400">Upload</p>
+      <p class="text-2xl font-bold" id="upload">0.00</p>
+    </div>
+  </div>
+  <div class="grid grid-cols-2 gap-4 mt-6">
+    <div class="p-4 bg-[#1d2035] rounded-xl text-center">
+      <p class="text-sm text-gray-400">Ping</p>
+      <p class="text-2xl font-bold" id="ping">--</p>
+    </div>
+    <div class="p-4 bg-[#1d2035] rounded-xl text-center">
+      <p class="text-sm text-gray-400">Jitter</p>
+      <p class="text-2xl font-bold" id="jitter">--</p>
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="flex justify-center gap-3 mt-6">
+    <button onclick="startSpeedtest()" class="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-xl text-lg font-semibold shadow-lg">Start Test</button>
     <button onclick="shareResult()" class="px-6 py-3 bg-cyan-600 hover:bg-cyan-700 rounded-xl text-lg font-semibold shadow-lg">Share</button>
-  </div>  <div class="flex justify-center gap-3 mt-4">
+  </div>
+  <div class="flex justify-center gap-3 mt-4">
     <button onclick="exportImage()" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-xl text-lg font-semibold shadow-lg">Export</button>
     <button onclick="toggleAuto()" class="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-xl text-lg font-semibold shadow-lg">Auto</button>
-  </div>  <!-- Footer -->  <footer class="text-center text-gray-400 mt-8">
+  </div>
+
+  <footer class="text-center text-gray-400 mt-8">
     <p class="text-sm">© 2025 Velocity Speed Test</p>
     <p class="text-sm cursor-pointer">Privacy Policy • Terms of Service</p>
   </footer>
-</div><script>
-// ============================================
-// REAL SPEEDTEST IMPLEMENTATION
-// ============================================
+</div>
 
+<script>
+let autoMode = false;
+
+// ============================
+// Chart.js Graph Setup
+// ============================
+const ctx = document.getElementById('speedGraph').getContext('2d');
+const speedChart = new Chart(ctx, {
+  type: 'line',
+  data: { labels: [], datasets: [{ label: 'Speed (Mbps)', data: [], borderColor: '#00f6ff', backgroundColor: 'rgba(0,246,255,0.2)', tension: 0.4 }] },
+  options: { responsive:true, animation: { duration: 500 }, scales: { y: { beginAtZero: true } } }
+});
+
+function updateGraph(value) {
+  const now = new Date().toLocaleTimeString();
+  speedChart.data.labels.push(now);
+  speedChart.data.datasets[0].data.push(value);
+  if(speedChart.data.labels.length > 20) {
+    speedChart.data.labels.shift();
+    speedChart.data.datasets[0].data.shift();
+  }
+  speedChart.update();
+}
+
+// ============================
+// Speedtest Functions
+// ============================
 async function getPing() {
   const start = performance.now();
   await fetch("https://speed.hetzner.de/100MB.bin", { method: "HEAD", cache: "no-store" });
@@ -46,62 +108,94 @@ async function getPing() {
 }
 
 async function getDownloadSpeed() {
-  const fileUrl = "https://speed.hetzner.de/10MB.bin";
   const start = performance.now();
-  const response = await fetch(fileUrl, { cache: "no-store" });
-  await response.arrayBuffer();
+  await fetch("https://speed.hetzner.de/10MB.bin", { cache: "no-store" });
   const end = performance.now();
-  const timeS = (end - start) / 1000;
-  const fileSizeMB = 10;
-  return ((fileSizeMB * 8) / timeS).toFixed(2);
+  const timeS = (end-start)/1000;
+  return ((10*8)/timeS).toFixed(2); // Mbps
 }
 
 async function getUploadSpeed() {
-  const data = new Uint8Array(2 * 1024 * 1024);
+  const data = new Uint8Array(2*1024*1024);
   const start = performance.now();
-  await fetch("https://httpbin.org/post", {
-    method: "POST",
-    body: data,
-  });
+  await fetch("https://httpbin.org/post",{ method:"POST", body:data });
   const end = performance.now();
-  const timeS = (end - start) / 1000;
-  const sizeMB = 2;
-  return ((sizeMB * 8) / timeS).toFixed(2);
+  const timeS = (end-start)/1000;
+  return ((2*8)/timeS).toFixed(2); // Mbps
 }
 
 async function startSpeedtest() {
-  let needle = document.getElementById("needle");
-  let speedNumber = document.getElementById("speedNumber");
-  let downloadBox = document.getElementById("downloadResult");
-  let uploadBox = document.getElementById("uploadResult");
-  let pingBox = document.getElementById("pingValue");
-  let jitterBox = document.getElementById("jitterValue");
+  const downloadBox = document.getElementById("download");
+  const uploadBox = document.getElementById("upload");
+  const pingBox = document.getElementById("ping");
+  const jitterBox = document.getElementById("jitter");
 
-  speedNumber.innerText = "0.00";
-  downloadBox.innerText = "0.00";
-  uploadBox.innerText = "0.00";
-  pingBox.innerText = "--";
-  jitterBox.innerText = "--";
+  downloadBox.innerText = "0.00"; uploadBox.innerText = "0.00";
+  pingBox.innerText = "--"; jitterBox.innerText = "--";
 
-  let pingValues = [];
-  for (let i = 0; i < 5; i++) pingValues.push(await getPing());
-
-  const ping = Math.round(pingValues.reduce((a,b)=>a+b)/pingValues.length);
+  // Parallel ping
+  const pings = await Promise.all([getPing(),getPing(),getPing(),getPing(),getPing()]);
+  const ping = Math.round(pings.reduce((a,b)=>a+b,0)/pings.length);
   pingBox.innerText = ping;
 
-  const jitterVals = [];
-  for (let i = 0; i < pingValues.length - 1; i++) jitterVals.push(Math.abs(pingValues[i] - pingValues[i+1]));
-  jitterBox.innerText = Math.round(jitterVals.reduce((a,b)=>a+b)/jitterVals.length);
+  const jitter = Math.round(pings.slice(1).reduce((a,b,i)=>a+Math.abs(b-pings[i]),0)/(pings.length-1));
+  jitterBox.innerText = jitter;
 
+  // Download & Upload
   const download = await getDownloadSpeed();
   downloadBox.innerText = download;
-  animateGauge(download);
+  updateGraph(download);
+  speakResult(`Download speed is ${download} Mbps`);
 
   const upload = await getUploadSpeed();
   uploadBox.innerText = upload;
-  animateGauge(upload);
-
-  setTimeout(()=>{ needle.style.transform = "rotate(0deg)"; speedNumber.innerText = "0.00"; }, 2000);
+  updateGraph(upload);
+  speakResult(`Upload speed is ${upload} Mbps`);
 }
-</script></body>
+
+// ============================
+// Voice Output
+// ============================
+function speakResult(text){
+  const synth = window.speechSynthesis;
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.rate = 1;
+  synth.speak(utter);
+}
+
+// ============================
+// Auto Mode
+// ============================
+function toggleAuto(){
+  autoMode = !autoMode;
+  if(autoMode) runAuto();
+}
+async function runAuto(){
+  while(autoMode){
+    await startSpeedtest();
+    await new Promise(r=>setTimeout(r,5000));
+  }
+}
+
+// ============================
+// Export Image
+// ============================
+function exportImage(){
+  html2canvas(document.querySelector('.card-bg')).then(canvas=>{
+    const link = document.createElement('a');
+    link.download = 'speedtest.png';
+    link.href = canvas.toDataURL();
+    link.click();
+  });
+}
+
+// ============================
+// Share Placeholder
+// ============================
+function shareResult(){
+  alert("Sharing feature placeholder. Implement with Web Share API or backend.");
+}
+</script>
+
+</body>
 </html>
