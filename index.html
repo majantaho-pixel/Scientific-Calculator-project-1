@@ -35,74 +35,73 @@
     <p class="text-sm cursor-pointer">Privacy Policy • Terms of Service</p>
   </footer>
 </div><script>
-// ===================================================
-// BACKEND API ENDPOINTS (Placeholder Only)
-// ===================================================
-const BACKEND = {
-  node: "https://yourserver.com/api/node/speedtest",
-  php: "https://yourserver.com/api/php/speedtest",
-  python: "https://yourserver.com/api/python/speedtest",
-};
+// ============================================
+// REAL SPEEDTEST IMPLEMENTATION
+// ============================================
 
-// ===================================================
-// GRAPH SYSTEM
-// ===================================================
-let ctx = document.getElementById("speedGraph").getContext("2d");
-let graph = new Chart(ctx, {
-  type: "line",
-  data: { labels: [], datasets: [{ label: "Speed Mbps", data: [], borderWidth: 2 }] },
-  options: { animation: false, scales: { y: { beginAtZero: true }} }
-});
+async function getPing() {
+  const start = performance.now();
+  await fetch("https://speed.hetzner.de/100MB.bin", { method: "HEAD", cache: "no-store" });
+  return Math.round(performance.now() - start);
+}
 
-function updateGraph(val){ graph.data.labels.push(""); graph.data.datasets[0].data.push(val); graph.update(); }
+async function getDownloadSpeed() {
+  const fileUrl = "https://speed.hetzner.de/10MB.bin";
+  const start = performance.now();
+  const response = await fetch(fileUrl, { cache: "no-store" });
+  await response.arrayBuffer();
+  const end = performance.now();
+  const timeS = (end - start) / 1000;
+  const fileSizeMB = 10;
+  return ((fileSizeMB * 8) / timeS).toFixed(2);
+}
 
-// ===================================================
-// VOICE OUTPUT
-// ===================================================
-function speak(text){ speechSynthesis.speak(new SpeechSynthesisUtterance(text)); }
+async function getUploadSpeed() {
+  const data = new Uint8Array(2 * 1024 * 1024);
+  const start = performance.now();
+  await fetch("https://httpbin.org/post", {
+    method: "POST",
+    body: data,
+  });
+  const end = performance.now();
+  const timeS = (end - start) / 1000;
+  const sizeMB = 2;
+  return ((sizeMB * 8) / timeS).toFixed(2);
+}
 
-// ===================================================
-// AUTO MODE
-// ===================================================
-let autoMode=false;
-function toggleAuto(){ autoMode=!autoMode; if(autoMode) startTest(); }
+async function startSpeedtest() {
+  let needle = document.getElementById("needle");
+  let speedNumber = document.getElementById("speedNumber");
+  let downloadBox = document.getElementById("downloadResult");
+  let uploadBox = document.getElementById("uploadResult");
+  let pingBox = document.getElementById("pingValue");
+  let jitterBox = document.getElementById("jitterValue");
 
-// ===================================================
-// SHARE & EXPORT
-// ===================================================
-function shareResult(){ navigator.share?.({ title:"Speed Test Result", text: `Download: ${download.innerText} Mbps` }); }
+  speedNumber.innerText = "0.00";
+  downloadBox.innerText = "0.00";
+  uploadBox.innerText = "0.00";
+  pingBox.innerText = "--";
+  jitterBox.innerText = "--";
 
-function exportImage(){ html2canvas(document.body).then(canvas=>{ let link=document.createElement("a"); link.download="result.png"; link.href=canvas.toDataURL(); link.click(); }); }
+  let pingValues = [];
+  for (let i = 0; i < 5; i++) pingValues.push(await getPing());
 
-// ===================================================
-// SPEEDTEST ENGINE (SIMULATION + BACKEND MODEL)
-// ===================================================
-function simulateSpeed(min, max){ return (Math.random()*(max-min)+min).toFixed(2); }
+  const ping = Math.round(pingValues.reduce((a,b)=>a+b)/pingValues.length);
+  pingBox.innerText = ping;
 
-async function startTest(){
+  const jitterVals = [];
+  for (let i = 0; i < pingValues.length - 1; i++) jitterVals.push(Math.abs(pingValues[i] - pingValues[i+1]));
+  jitterBox.innerText = Math.round(jitterVals.reduce((a,b)=>a+b)/jitterVals.length);
 
-  download.innerText = upload.innerText = ping.innerText = jitter.innerText = "0.00";
-  graph.data.labels=[]; graph.data.datasets[0].data=[]; graph.update();
+  const download = await getDownloadSpeed();
+  downloadBox.innerText = download;
+  animateGauge(download);
 
-  let server = document.getElementById("serverSelect").value;
+  const upload = await getUploadSpeed();
+  uploadBox.innerText = upload;
+  animateGauge(upload);
 
-  // Ping + Jitter
-  let p = simulateSpeed(10,60);
-  let j = simulateSpeed(2,10);
-  ping.innerText = p; jitter.innerText = j;
-  speak(`Ping ${p} ms`);
-
-  // Live Graphing Download
-  for(let i=0;i<15;i++){ let v=simulateSpeed(1,90); updateGraph(v); download.innerText=v; await new Promise(r=>setTimeout(r,120)); }
-
-  speak(`Download ${download.innerText} Mbps`);
-
-  // Upload
-  for(let i=0;i<15;i++){ let v=simulateSpeed(1,40); updateGraph(v); upload.innerText=v; await new Promise(r=>setTimeout(r,120)); }
-
-  speak(`Upload ${upload.innerText} Mbps`);
-
-  if(autoMode) setTimeout(startTest, 3000);
+  setTimeout(()=>{ needle.style.transform = "rotate(0deg)"; speedNumber.innerText = "0.00"; }, 2000);
 }
 </script></body>
 </html>
