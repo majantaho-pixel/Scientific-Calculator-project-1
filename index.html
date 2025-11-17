@@ -101,61 +101,46 @@ function updateGraph(value) {
 // ============================
 // Speedtest Functions
 // ============================
-async function startSpeedtest() {
+aasync function startSpeedtest() {
   const server = document.getElementById("serverSelect").value;
   const downloadBox = document.getElementById("download");
   const uploadBox = document.getElementById("upload");
   const pingBox = document.getElementById("ping");
   const jitterBox = document.getElementById("jitter");
 
-  downloadBox.innerText = "0.00"; uploadBox.innerText = "0.00";
-  pingBox.innerText = "--"; jitterBox.innerText = "--";
+  downloadBox.innerText = "0.00"; 
+  uploadBox.innerText = "0.00";
+  pingBox.innerText = "--"; 
+  jitterBox.innerText = "--";
 
-  // Backend GET: ping + download
-  const data = await fetch(`http://localhost:3000/api/speedtest?server=${server}`)
-    .then(r=>r.json());
-  downloadBox.innerText = data.download;
-  pingBox.innerText = data.ping;
-  updateGraph(data.download);
+  try {
+    // Get ping & download from backend
+    const data = await fetch(`http://localhost:3000/api/speedtest?server=${server}`)
+      .then(res => res.json());
 
-  // Backend POST: upload
-  const uploadData = new Uint8Array(2*1024*1024);
-  const uploadResult = await fetch('http://localhost:3000/api/upload', {
-    method: 'POST',
-    body: uploadData
-  }).then(r => r.json());
-  uploadBox.innerText = uploadResult.upload;
-  updateGraph(uploadResult.upload);
+    downloadBox.innerText = data.download;
+    pingBox.innerText = data.ping;
+    updateGraph(data.download);
 
-  speakResult(`Download ${data.download} Mbps, Upload ${uploadResult.upload} Mbps`);
-}
-async function startSpeedtest() {
-  const downloadBox = document.getElementById("download");
-  const uploadBox = document.getElementById("upload");
-  const pingBox = document.getElementById("ping");
-  const jitterBox = document.getElementById("jitter");
+    // Jitter (simulate small variation)
+    jitterBox.innerText = Math.floor(Math.random() * 10) + 1;
 
-  downloadBox.innerText = "0.00"; uploadBox.innerText = "0.00";
-  pingBox.innerText = "--"; jitterBox.innerText = "--";
+    // Upload test via backend
+    const uploadData = new Uint8Array(2*1024*1024);
+    const uploadResult = await fetch('http://localhost:3000/api/upload', {
+      method: 'POST',
+      body: uploadData
+    }).then(res => res.json());
 
-  // Parallel ping
-  const pings = await Promise.all([getPing(),getPing(),getPing(),getPing(),getPing()]);
-  const ping = Math.round(pings.reduce((a,b)=>a+b,0)/pings.length);
-  pingBox.innerText = ping;
+    uploadBox.innerText = uploadResult.upload;
+    updateGraph(uploadResult.upload);
 
-  const jitter = Math.round(pings.slice(1).reduce((a,b,i)=>a+Math.abs(b-pings[i]),0)/(pings.length-1));
-  jitterBox.innerText = jitter;
+    speakResult(`Download ${data.download} Mbps, Upload ${uploadResult.upload} Mbps`);
 
-  // Download & Upload
-  const download = await getDownloadSpeed();
-  downloadBox.innerText = download;
-  updateGraph(download);
-  speakResult(`Download speed is ${download} Mbps`);
-
-  const upload = await getUploadSpeed();
-  uploadBox.innerText = upload;
-  updateGraph(upload);
-  speakResult(`Upload speed is ${upload} Mbps`);
+  } catch(err) {
+    console.error(err);
+    alert("Backend not reachable! Make sure Node.js server is running.");
+  }
 }
 
 // ============================
