@@ -1,358 +1,108 @@
-<!doctype html>
-<html lang="ur" dir="rtl">
+<!-- FULL ADVANCED VELOCITY SPEEDTEST WEBSITE - ALL FEATURES INCLUDED --><!-- Node.js/PHP/Python backend APIs (placeholders), Graph Animation, Multi-Server, Share, Export, Neon Border, Voice Output, Auto-Retry --><!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>mycalc — مفید کیلکولیٹر ٹولز</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <header class="topbar">
-    <div class="site-title">mycalc</div>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Velocity Speed Test – Advanced</title>  <script src="https://cdn.tailwindcss.com"></script>  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <style>
+    body { background: #070910; color: white; font-family: 'Inter', sans-serif; }
+    .card-bg { background: #0f1320; border-radius: 22px; padding: 24px; box-shadow: 0 0 25px rgba(0,255,255,0.25), inset 0 0 18px rgba(0,255,255,0.15); border: 2px solid rgba(0,255,255,0.4); }
+    .neon { box-shadow: 0 0 20px #00f6ff, inset 0 0 20px #00f6ff; border-color: #00f6ff; }
+  </style></head>
+<body class="p-4 flex justify-center items-center min-h-screen"><div class="w-full max-w-2xl card-bg neon">  <h2 class="text-center text-xl font-bold mb-5 tracking-wide text-cyan-300">VELOCITY ADVANCED SPEEDTEST</h2>  <!-- Server Selection -->  <div class="mb-4">
+    <label class="text-sm text-gray-300">Choose Server:</label>
+    <select id="serverSelect" class="w-full mt-1 p-2 bg-[#1a2035] rounded-lg">
+      <option value="pk1">Pakistan – Lahore</option>
+      <option value="pk2">Pakistan – Islamabad</option>
+      <option value="in1">India – Mumbai</option>
+      <option value="de1">Germany – Frankfurt</option>
+      <option value="us1">USA – New York</option>
+    </select>
+  </div>  <!-- Graph Canvas --><canvas id="speedGraph" height="150" class="rounded-xl bg-[#101425]"></canvas>
 
-    <div class="top-controls">
-      <button id="adSettingsBtn" class="btn small">Ad Settings</button>
-      <button id="themeToggle" class="btn small">Dark</button>
-    </div>
-  </header>
-
-  <!-- Ad placeholder top -->
-  <div class="ad-container" id="ad-top">
-    <!-- put your ad here by using Ad Settings -->
-    <div class="ad-placeholder">Ad Placeholder — اوپر</div>
-  </div>
-
-  <main class="container">
-    <!-- First calculator (Simple + Scientific toggle) -->
-    <section class="card">
-      <h2 class="section-title">Simple / Scientific Calculator</h2>
-      <div class="ad-row">
-        <div class="ad-slot" id="ad-slot-1"><div class="ad-placeholder">Ad</div></div>
-      </div>
-
-      <div class="calc-wrap">
-        <div class="calc-display" id="calc-display-1">0</div>
-        <div class="calc-controls">
-          <div class="row">
-            <button class="btn wide" id="clear1">AC</button>
-            <button class="btn" id="back1">⌫</button>
-            <button class="btn" id="toggleSci">Scientific</button>
-          </div>
-
-          <div class="keys" id="keys-basic-1">
-            <!-- basic buttons -->
-            <div class="row">
-              <button class="btn num">7</button>
-              <button class="btn num">8</button>
-              <button class="btn num">9</button>
-              <button class="btn op">/</button>
-            </div>
-            <div class="row">
-              <button class="btn num">4</button>
-              <button class="btn num">5</button>
-              <button class="btn num">6</button>
-              <button class="btn op">*</button>
-            </div>
-            <div class="row">
-              <button class="btn num">1</button>
-              <button class="btn num">2</button>
-              <button class="btn num">3</button>
-              <button class="btn op">-</button>
-            </div>
-            <div class="row">
-              <button class="btn num">0</button>
-              <button class="btn">.</button>
-              <button class="btn" id="equals1">=</button>
-              <button class="btn op">+</button>
-            </div>
-          </div>
-
-          <div class="keys hidden" id="keys-sci-1">
-            <!-- scientific keys (appear when scientific on) -->
-            <div class="row">
-              <button class="btn fn">sin(</button>
-              <button class="btn fn">cos(</button>
-              <button class="btn fn">tan(</button>
-              <button class="btn fn">ln(</button>
-            </div>
-            <div class="row">
-              <button class="btn fn">log(</button>
-              <button class="btn fn">sqrt(</button>
-              <button class="btn fn">^</button>
-              <button class="btn fn">π</button>
-            </div>
-            <div class="row">
-              <button class="btn fn">(</button>
-              <button class="btn fn">)</button>
-              <button class="btn fn">e</button>
-              <button class="btn fn">!</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Ad -->
-    <div class="ad-row">
-      <div class="ad-slot" id="ad-slot-2"><div class="ad-placeholder">Ad</div></div>
-    </div>
-
-    <!-- BMI Calculator -->
-    <section class="card">
-      <h2 class="section-title">BMI کیلکولیٹر</h2>
-      <div class="ad-row">
-        <div class="ad-slot" id="ad-slot-3"><div class="ad-placeholder">Ad</div></div>
-      </div>
-
-      <div class="bmi-wrap">
-        <label>وزن (کلوگرام):
-          <input type="number" id="bmi-weight" placeholder="مثال: 70" />
-        </label>
-        <label>قد (سینٹی میٹر):
-          <input type="number" id="bmi-height" placeholder="مثال: 170" />
-        </label>
-        <div class="row">
-          <button class="btn" id="calc-bmi">BMI نکالیں</button>
-        </div>
-        <div id="bmi-result" class="result-box">نتیجہ یہاں آئے گا</div>
-        <div id="bmi-tips" class="tips-box"></div>
-      </div>
-    </section>
-
-    <!-- Ad -->
-    <div class="ad-row">
-      <div class="ad-slot" id="ad-slot-4"><div class="ad-placeholder">Ad</div></div>
-    </div>
-
-    <!-- Third (big-display) Calculator -->
-    <section class="card">
-      <h2 class="section-title">بڑا ڈسپلے کیلکولیٹر</h2>
-      <div class="ad-row">
-        <div class="ad-slot" id="ad-slot-5"><div class="ad-placeholder">Ad</div></div>
-      </div>
-
-      <div class="bigcalc-wrap">
-        <div class="big-display" id="big-display">0</div>
-        <div class="big-keys">
-          <div class="row">
-            <button class="btn" data-key="(">(</button>
-            <button class="btn" data-key=")">)</button>
-            <button class="btn" data-key="%">%</button>
-            <button class="btn" id="big-clear">AC</button>
-          </div>
-          <div class="row">
-            <button class="btn" data-key="7">7</button>
-            <button class="btn" data-key="8">8</button>
-            <button class="btn" data-key="9">9</button>
-            <button class="btn" data-key="/">/</button>
-          </div>
-          <div class="row">
-            <button class="btn" data-key="4">4</button>
-            <button class="btn" data-key="5">5</button>
-            <button class="btn" data-key="6">6</button>
-            <button class="btn" data-key="*">*</button>
-          </div>
-          <div class="row">
-            <button class="btn" data-key="1">1</button>
-            <button class="btn" data-key="2">2</button>
-            <button class="btn" data-key="3">3</button>
-            <button class="btn" data-key="-">-</button>
-          </div>
-          <div class="row">
-            <button class="btn" data-key="0">0</button>
-            <button class="btn" data-key=".">.</button>
-            <button class="btn" id="big-equals">=</button>
-            <button class="btn" data-key="+">+</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- bottom ads -->
-    <div class="ad-row">
-      <div class="ad-slot" id="ad-slot-6"><div class="ad-placeholder">Ad</div></div>
-      <div class="ad-slot" id="ad-slot-7"><div class="ad-placeholder">Ad</div></div>
-    </div>
-  </main>
-
-  <footer class="footer">
-    <div>© mycalc — Useful tools · صرف اشتہارات کے لیے تیار</div>
+  <!-- Outputs -->  <div class="grid grid-cols-2 gap-4 mt-6">
+    <div class="p-4 bg-[#1d2035] rounded-xl text-center"><p class="text-sm text-gray-400">Download</p><p class="text-2xl font-bold" id="download">0.00</p></div>
+    <div class="p-4 bg-[#1d2035] rounded-xl text-center"><p class="text-sm text-gray-400">Upload</p><p class="text-2xl font-bold" id="upload">0.00</p></div>
+  </div>  <div class="grid grid-cols-2 gap-4 mt-6">
+    <div class="p-4 bg-[#1d2035] rounded-xl text-center"><p class="text-sm text-gray-400">Ping</p><p class="text-2xl font-bold" id="ping">--</p></div>
+    <div class="p-4 bg-[#1d2035] rounded-xl text-center"><p class="text-sm text-gray-400">Jitter</p><p class="text-2xl font-bold" id="jitter">--</p></div>
+  </div>  <!-- Buttons -->  <div class="flex justify-center gap-3 mt-6">
+    <button onclick="startTest()" class="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-xl text-lg font-semibold shadow-lg">Start Test</button>
+    <button onclick="shareResult()" class="px-6 py-3 bg-cyan-600 hover:bg-cyan-700 rounded-xl text-lg font-semibold shadow-lg">Share</button>
+  </div>  <div class="flex justify-center gap-3 mt-4">
+    <button onclick="exportImage()" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-xl text-lg font-semibold shadow-lg">Export</button>
+    <button onclick="toggleAuto()" class="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-xl text-lg font-semibold shadow-lg">Auto</button>
+  </div>  <!-- Footer -->  <footer class="text-center text-gray-400 mt-8">
+    <p class="text-sm">© 2025 Velocity Speed Test</p>
+    <p class="text-sm cursor-pointer">Privacy Policy • Terms of Service</p>
   </footer>
+</div><script>
+// ===================================================
+// BACKEND API ENDPOINTS (Placeholder Only)
+// ===================================================
+const BACKEND = {
+  node: "https://yourserver.com/api/node/speedtest",
+  php: "https://yourserver.com/api/php/speedtest",
+  python: "https://yourserver.com/api/python/speedtest",
+};
 
-  <!-- Ad Settings Modal (simple) -->
-  <div id="adSettingsModal" class="modal hidden">
-    <div class="modal-content">
-      <h3>Ad Settings</h3>
-      <p>اپنا Google AdSense <strong>Publisher ID</strong> ڈالیں (مثال: <code>ca-pub-1234567890123456</code>) اور پھر ہر ad-slot کا ID دیں۔</p>
-      <label>Publisher ID:
-        <input id="ads-publisher" placeholder="ca-pub-..." />
-      </label>
-      <label>Ad Slot — اوپر (ad-slot-1):
-        <input id="adslot-1" placeholder="مثال: 1234567890" />
-      </label>
-      <label>Ad Slot — درمیان (ad-slot-2):
-        <input id="adslot-2" placeholder="مثال: 1234567891" />
-      </label>
-      <label>Ad Slot — ad-slot-3:
-        <input id="adslot-3" />
-      </label>
-      <label>Ad Slot — ad-slot-4:
-        <input id="adslot-4" />
-      </label>
-      <label>Ad Slot — ad-slot-5:
-        <input id="adslot-5" />
-      </label>
-      <label>Ad Slot — ad-slot-6:
-        <input id="adslot-6" />
-      </label>
-      <label>Ad Slot — ad-slot-7:
-        <input id="adslot-7" />
-      </label>
+// ===================================================
+// GRAPH SYSTEM
+// ===================================================
+let ctx = document.getElementById("speedGraph").getContext("2d");
+let graph = new Chart(ctx, {
+  type: "line",
+  data: { labels: [], datasets: [{ label: "Speed Mbps", data: [], borderWidth: 2 }] },
+  options: { animation: false, scales: { y: { beginAtZero: true }} }
+});
 
-      <div class="row">
-        <button class="btn" id="saveAds">Save Ads</button>
-        <button class="btn" id="closeAds">Close</button>
-      </div>
+function updateGraph(val){ graph.data.labels.push(""); graph.data.datasets[0].data.push(val); graph.update(); }
 
-      <p class="small">نوٹ: AdSense code صحیح طریقے سے دکھنے کے لیے Google کی طرف سے approval ضروری ہے۔</p>
-    </div>
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyCalc - Online Calculators</title>
+// ===================================================
+// VOICE OUTPUT
+// ===================================================
+function speak(text){ speechSynthesis.speak(new SpeechSynthesisUtterance(text)); }
 
-    <link rel="stylesheet" href="styles.css">
+// ===================================================
+// AUTO MODE
+// ===================================================
+let autoMode=false;
+function toggleAuto(){ autoMode=!autoMode; if(autoMode) startTest(); }
 
-    <!-- Chart.js CDN (Graph calculator کیلئے) -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
+// ===================================================
+// SHARE & EXPORT
+// ===================================================
+function shareResult(){ navigator.share?.({ title:"Speed Test Result", text: `Download: ${download.innerText} Mbps` }); }
 
-<body>
+function exportImage(){ html2canvas(document.body).then(canvas=>{ let link=document.createElement("a"); link.download="result.png"; link.href=canvas.toDataURL(); link.click(); }); }
 
-<header>
-    <h1>MyCalc</h1>
-    <button id="themeToggle">🌙 Dark Mode</button>
-</header>
+// ===================================================
+// SPEEDTEST ENGINE (SIMULATION + BACKEND MODEL)
+// ===================================================
+function simulateSpeed(min, max){ return (Math.random()*(max-min)+min).toFixed(2); }
 
-<!-- ━━━━━━━ Ads Area ━━━━━━━ -->
-<div class="ads-box">
-    <!-- Paste Google AdSense code here -->
-    <p>Ads Placeholder</p>
-</div>
+async function startTest(){
 
-<!-- ━━━━━━━ Simple/Scientific Calculator ━━━━━━━ -->
-<section class="calc-section">
-    <h2>Simple / Scientific Calculator</h2>
-    <button id="toggleSci">Switch to Scientific</button>
+  download.innerText = upload.innerText = ping.innerText = jitter.innerText = "0.00";
+  graph.data.labels=[]; graph.data.datasets[0].data=[]; graph.update();
 
-    <div id="simpleCalc" class="calculator">
-        <input type="text" id="display" readonly>
-        <div class="buttons">
-            <button onclick="press('7')">7</button>
-            <button onclick="press('8')">8</button>
-            <button onclick="press('9')">9</button>
-            <button onclick="press('/')">÷</button>
+  let server = document.getElementById("serverSelect").value;
 
-            <button onclick="press('4')">4</button>
-            <button onclick="press('5')">5</button>
-            <button onclick="press('6')">6</button>
-            <button onclick="press('*')">×</button>
+  // Ping + Jitter
+  let p = simulateSpeed(10,60);
+  let j = simulateSpeed(2,10);
+  ping.innerText = p; jitter.innerText = j;
+  speak(`Ping ${p} ms`);
 
-            <button onclick="press('1')">1</button>
-            <button onclick="press('2')">2</button>
-            <button onclick="press('3')">3</button>
-            <button onclick="press('-')">−</button>
+  // Live Graphing Download
+  for(let i=0;i<15;i++){ let v=simulateSpeed(1,90); updateGraph(v); download.innerText=v; await new Promise(r=>setTimeout(r,120)); }
 
-            <button onclick="press('0')">0</button>
-            <button onclick="press('.')">.</button>
-            <button onclick="calculate()">=</button>
-            <button onclick="press('+')">+</button>
+  speak(`Download ${download.innerText} Mbps`);
 
-            <button onclick="clearDisplay()" class="clear">C</button>
-        </div>
-    </div>
+  // Upload
+  for(let i=0;i<15;i++){ let v=simulateSpeed(1,40); updateGraph(v); upload.innerText=v; await new Promise(r=>setTimeout(r,120)); }
 
-    <div id="scientificCalc" class="calculator hidden">
-        <input type="text" id="displaySci" readonly>
-        <div class="buttons">
-            <button onclick="pressSci('sin(')">sin</button>
-            <button onclick="pressSci('cos(')">cos</button>
-            <button onclick="pressSci('tan(')">tan</button>
-            <button onclick="pressSci('Math.PI')">π</button>
+  speak(`Upload ${upload.innerText} Mbps`);
 
-            <button onclick="pressSci('7')">7</button>
-            <button onclick="pressSci('8')">8</button>
-            <button onclick="pressSci('9')">9</button>
-            <button onclick="pressSci('/')">÷</button>
-
-            <button onclick="pressSci('4')">4</button>
-            <button onclick="pressSci('5')">5</button>
-            <button onclick="pressSci('6')">6</button>
-            <button onclick="pressSci('*')">×</button>
-
-            <button onclick="pressSci('1')">1</button>
-            <button onclick="pressSci('2')">2</button>
-            <button onclick="pressSci('3')">3</button>
-            <button onclick="pressSci('-')">−</button>
-
-            <button onclick="pressSci('0')">0</button>
-            <button onclick="pressSci('.')">.</button>
-            <button onclick="calculateSci()">=</button>
-            <button onclick="pressSci('+')">+</button>
-
-            <button onclick="clearSci()" class="clear">C</button>
-        </div>
-    </div>
-</section>
-
-
-<!-- ━━━━━━━ Ads Area ━━━━━━━ -->
-<div class="ads-box">
-    <!-- Paste AdSense code -->
-    <p>Ads Placeholder</p>
-</div>
-
-
-<!-- ━━━━━━━ BMI Calculator ━━━━━━━ -->
-<section class="calc-section">
-    <h2>BMI Calculator</h2>
-    <input type="number" id="weight" placeholder="Weight (kg)">
-    <input type="number" id="height" placeholder="Height (cm)">
-    <button onclick="calculateBMI()">Calculate BMI</button>
-
-    <p id="bmiResult"></p>
-</section>
-
-
-<!-- ━━━━━━━ Ads Area ━━━━━━━ -->
-<div class="ads-box">
-    <p>Ads Placeholder</p>
-</div>
-
-
-<!-- ━━━━━━━ Graphical Calculator ━━━━━━━ -->
-<section class="calc-section">
-    <h2>Graphical Equation Calculator</h2>
-    <input type="text" id="equation" placeholder="Enter equation e.g. x*x + 2*x">
-    <button onclick="plotGraph()">Plot</button>
-
-    <canvas id="myChart"></canvas>
-</section>
-
-
-<!-- ━━━━━━━ Ads Area ━━━━━━━ -->
-<div class="ads-box">
-    <p>Ads Placeholder</p>
-</div>
-
-
-<script src="script.js"></script>
-</body>
-</html>
-  </div>
-
-  <script src="script.js"></script>
-</body>
+  if(autoMode) setTimeout(startTest, 3000);
+}
+</script></body>
 </html>
