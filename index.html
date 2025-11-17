@@ -101,7 +101,7 @@ function updateGraph(value) {
 // ============================
 // Speedtest Functions
 // ============================
-aasync function startSpeedtest() {
+async function startSpeedtest() {
   const server = document.getElementById("serverSelect").value;
   const downloadBox = document.getElementById("download");
   const uploadBox = document.getElementById("upload");
@@ -114,7 +114,7 @@ aasync function startSpeedtest() {
   jitterBox.innerText = "--";
 
   try {
-    // Get ping & download from backend
+    // Backend GET: ping + download
     const data = await fetch(`http://localhost:3000/api/speedtest?server=${server}`)
       .then(res => res.json());
 
@@ -125,7 +125,7 @@ aasync function startSpeedtest() {
     // Jitter (simulate small variation)
     jitterBox.innerText = Math.floor(Math.random() * 10) + 1;
 
-    // Upload test via backend
+    // Backend POST: upload
     const uploadData = new Uint8Array(2*1024*1024);
     const uploadResult = await fetch('http://localhost:3000/api/upload', {
       method: 'POST',
