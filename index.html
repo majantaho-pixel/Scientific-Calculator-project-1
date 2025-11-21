@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Velocity Gaming Speed Test</title>
+<title>Velocity Live Speed Test</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg-color: #0a0a0a;
   --accent-color: #00ffea;
   --text-color: #ffffff;
-  --card-bg: rgba(20,20,30,0.8);
+  --card-bg: rgba(20,20,30,0.85);
   --button-bg: linear-gradient(45deg,#00ffea,#0077ff);
   --button-hover: linear-gradient(45deg,#00ffaa,#00ccff);
 }
-[data-theme="light"] {
+[data-theme="light"]{
   --bg-color:#f5f5f5;
   --text-color:#0a0a0a;
   --card-bg:rgba(255,255,255,0.9);
@@ -34,20 +34,14 @@ body{
 }
 #bgCanvas{
   position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
+  top:0; left:0;
+  width:100%; height:100%;
   z-index:-1;
 }
 header{
-  width:100%;
-  padding:15px 20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  backdrop-filter:blur(10px);
-  background: rgba(0,0,0,0.4);
+  width:100%; padding:15px 20px;
+  display:flex; justify-content:space-between; align-items:center;
+  backdrop-filter:blur(10px); background: rgba(0,0,0,0.4);
   box-shadow:0 0 20px var(--accent-color);
   border-bottom:1px solid var(--accent-color);
 }
@@ -90,10 +84,11 @@ main{
   text-align:center;
   margin:15px;
   width:240px;
-  transition:0.3s;
+  transition:0.3s transform;
   position:relative;
 }
 .gauge-container:hover{
+  transform:translateY(-5px);
   box-shadow:0 0 40px var(--accent-color);
 }
 canvas{
@@ -121,10 +116,11 @@ canvas{
   min-width:140px;
   text-align:center;
   box-shadow:0 0 15px var(--accent-color);
-  transition:0.3s;
+  transition:0.3s transform, 0.3s box-shadow;
 }
 .info div:hover{
-  box-shadow:0 0 25px var(--accent-color);
+  transform:translateY(-5px);
+  box-shadow:0 0 35px var(--accent-color);
 }
 #serverSelect{
   padding:8px 12px;
@@ -144,10 +140,9 @@ canvas{
   color:#000;
   box-shadow:0 0 25px var(--accent-color);
   margin-bottom:20px;
-  transition:0.3s;
+  transition:0.3s transform, 0.3s box-shadow;
 }
 #startBtn:hover{
-  background: var(--button-hover);
   transform:scale(1.05);
   box-shadow:0 0 50px var(--accent-color);
 }
@@ -163,10 +158,10 @@ canvas{
   background: var(--button-bg);
   color:#000;
   box-shadow:0 0 25px var(--accent-color);
-  transition:0.3s;
+  transition:0.3s transform, 0.3s box-shadow;
 }
 #results button:hover{
-  background: var(--button-hover);
+  transform:scale(1.05);
   box-shadow:0 0 50px var(--accent-color);
 }
 footer{
@@ -210,7 +205,7 @@ footer{
 <canvas id="bgCanvas"></canvas>
 
 <header>
-  <h1>Velocity Test</h1>
+  <h1>Velocity Live Test</h1>
   <button id="themeToggle">Toggle Theme</button>
 </header>
 
@@ -256,11 +251,11 @@ document.getElementById('themeToggle').addEventListener('click',()=>{
   document.body.setAttribute('data-theme',current==='dark'?'light':'dark');
 });
 
-// Server List
+// Server List with sample ping ranges
 const servers=[
-  {name:"Pakistan Server"},
-  {name:"US Server"},
-  {name:"Germany Server"},
+  {name:"Pakistan Server", pingMin:10, pingMax:30},
+  {name:"US Server", pingMin:50, pingMax:100},
+  {name:"Germany Server", pingMin:60, pingMax:120},
 ];
 const serverSelect=document.getElementById('serverSelect');
 servers.forEach((s,i)=>{const o=document.createElement('option');o.value=i;o.textContent=s.name;serverSelect.appendChild(o);});
@@ -317,22 +312,30 @@ async function fetchIPInfo(){
   }catch(e){console.log(e);}
 }
 
-// Dummy Speed Test
+// Live Speed Test Simulation
 function runTest(){
   document.getElementById('startBtn').disabled=true;
-  const ping=(Math.random()*50+10).toFixed(0);
-  const jitter=(Math.random()*20+5).toFixed(0);
+  const server=servers[serverSelect.value];
+  let ping=(Math.random()*(server.pingMax-server.pingMin)+server.pingMin).toFixed(0);
+  let jitter=(Math.random()*20+5).toFixed(0);
   document.getElementById('ping').textContent=ping;
   document.getElementById('jitter').textContent=jitter;
-  const download=(Math.random()*90+10).toFixed(2);
-  const upload=(Math.random()*50+5).toFixed(2);
-  animateGauge(dctx,download,'downloadSpeed',getComputedStyle(document.body).getPropertyValue('--accent-color'));
-  animateGauge(uctx,upload,'uploadSpeed',getComputedStyle(document.body).getPropertyValue('--accent-color'));
+  // Simulate Download & Upload dynamically
+  let download=0, upload=0;
+  const dTarget=(Math.random()*90+10).toFixed(2);
+  const uTarget=(Math.random()*50+5).toFixed(2);
+  const interval=setInterval(()=>{
+    if(download>=dTarget && upload>=uTarget){clearInterval(interval);}
+    download=Math.min(download + Math.random()*5, dTarget);
+    upload=Math.min(upload + Math.random()*3, uTarget);
+    animateGauge(dctx,download,'downloadSpeed',getComputedStyle(document.body).getPropertyValue('--accent-color'));
+    animateGauge(uctx,upload,'uploadSpeed',getComputedStyle(document.body).getPropertyValue('--accent-color'));
+  },100);
   let h=JSON.parse(localStorage.getItem('speedHistory')||"[]");
-  h.unshift({date:new Date().toLocaleString(),download,upload,ping,jitter,ip:document.getElementById('ip').textContent,location:document.getElementById('location').textContent,isp:document.getElementById('isp').textContent});
+  h.unshift({date:new Date().toLocaleString(),download:dTarget,upload:uTarget,ping,jitter,ip:document.getElementById('ip').textContent,location:document.getElementById('location').textContent,isp:document.getElementById('isp').textContent});
   if(h.length>10) h.pop();
   localStorage.setItem('speedHistory',JSON.stringify(h));
-  document.getElementById('startBtn').disabled=false;
+  setTimeout(()=>{document.getElementById('startBtn').disabled=false;},3000);
 }
 document.getElementById('startBtn').addEventListener('click',()=>{fetchIPInfo();runTest();});
 
@@ -346,28 +349,28 @@ document.getElementById('shareBtn').addEventListener('click',()=>{
   });
 });
 
-// Neon Grid + Particles + Ping Lines
+// Neon Particle Background + Ping Lines
 const canvas=document.getElementById('bgCanvas');
 const ctx=canvas.getContext('2d');
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
+canvas.width=window.innerWidth; canvas.height=window.innerHeight;
 const particles=[];
-const gridSpacing=50;
-for(let i=0;i<150;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,dx:(Math.random()-0.5)*1,dy:(Math.random()-0.5)*1,color:`rgba(0,255,255,${Math.random()})`});}
+for(let i=0;i<200;i++){
+  particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,dx:(Math.random()-0.5)*1,dy:(Math.random()-0.5)*1,color:`rgba(0,255,255,${Math.random()})`});
+}
 let mouse={x:canvas.width/2,y:canvas.height/2};
-window.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;});
+window.addEventListener('mousemove',e=>{mouse.x=e.clientX; mouse.y=e.clientY;});
 function drawBackground(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.strokeStyle='rgba(0,255,255,0.05)';
-  ctx.lineWidth=1;
-  for(let x=0;x<canvas.width;x+=gridSpacing){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke();}
-  for(let y=0;y<canvas.height;y+=gridSpacing){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke();}
+  const grid=50;
+  ctx.strokeStyle='rgba(0,255,255,0.05)'; ctx.lineWidth=1;
+  for(let x=0;x<canvas.width;x+=grid){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke();}
+  for(let y=0;y<canvas.height;y+=grid){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke();}
   particles.forEach(p=>{
-    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,2*Math.PI);ctx.fillStyle=p.color;ctx.fill();
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,2*Math.PI); ctx.fillStyle=p.color; ctx.fill();
     p.x+=p.dx+(mouse.x-canvas.width/2)*0.0005;
     p.y+=p.dy+(mouse.y-canvas.height/2)*0.0005;
-    if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;
-    if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;
+    if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0;
+    if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0;
   });
   const dX=downloadCanvas.getBoundingClientRect().left+downloadCanvas.width/2;
   const dY=downloadCanvas.getBoundingClientRect().top+downloadCanvas.height/2;
@@ -375,16 +378,13 @@ function drawBackground(){
   const uY=uploadCanvas.getBoundingClientRect().top+uploadCanvas.height/2;
   const sX=serverSelect.getBoundingClientRect().left+serverSelect.offsetWidth/2;
   const sY=serverSelect.getBoundingClientRect().top+serverSelect.offsetHeight/2;
-  ctx.strokeStyle='rgba(0,255,255,0.3)';
-  ctx.lineWidth=2;
-  ctx.beginPath();
-  ctx.moveTo(dX,dY); ctx.lineTo(sX,sY); ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(uX,uY); ctx.lineTo(sX,sY); ctx.stroke();
+  ctx.strokeStyle='rgba(0,255,255,0.3)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(dX,dY); ctx.lineTo(sX,sY); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(uX,uY); ctx.lineTo(sX,sY); ctx.stroke();
   requestAnimationFrame(drawBackground);
 }
 drawBackground();
-window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
 </script>
 </body>
 </html>
