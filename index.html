@@ -13,8 +13,6 @@
 <style>
 body {
   font-family:'Orbitron',sans-serif;
-  background: radial-gradient(circle at center,#0b1120,#020617);
-  color:white;
   margin:0;
   transition: all 0.3s ease;
   overflow-x:hidden;
@@ -32,7 +30,7 @@ body.light-mode .futuristic-logo { color:#2563eb; text-shadow:none; }
 body.pink-mode .futuristic-logo { color:#e6007e; text-shadow:0 0 10px #ff66aa; }
 
 /* Theme Button */
-#themeToggle { position:absolute; top:10px; right:20px; }
+#themeToggle { position:absolute; top:10px; right:20px; padding:0.3rem 0.75rem; border-radius:0.5rem; border:2px solid; cursor:pointer; }
 
 /* Speedometer */
 .speedometer-container { position:relative; width:250px; height:250px; margin:40px auto; }
@@ -40,14 +38,11 @@ body.pink-mode .futuristic-logo { color:#e6007e; text-shadow:0 0 10px #ff66aa; }
 body.light-mode .speedometer-bg { border-color:#2563eb; background: radial-gradient(circle at center,#ffffff,#f0f4f8); }
 body.pink-mode .speedometer-bg { border-color:#e6007e; background: radial-gradient(circle at center,#ffe6f0,#ffd1e6); }
 
-canvas { position:absolute; top:0; left:0; }
-
-/* Needle */
+/* Needle & Speed */
 .needle { position:absolute; width:4px; height:110px; transform-origin:bottom center; transform:rotate(-90deg); border-radius:2px; z-index:10; background:#00ffff; }
 body.light-mode .needle { background:#2563eb; }
 body.pink-mode .needle { background:#e6007e; }
 
-/* Speed Text */
 .speed-text { position:absolute; font-size:1.5rem; font-weight:bold; text-align:center; z-index:11; color:#00d2ff; }
 body.light-mode .speed-text { color:#2563eb; }
 body.pink-mode .speed-text { color:#e6007e; }
@@ -73,6 +68,15 @@ body.pink-mode .progress-fill { background:linear-gradient(90deg,#e6007e,#ff66aa
 body.light-mode .network-box { background:rgba(255,255,255,0.9); border-color:rgba(37,99,235,0.5); color:#2563eb; box-shadow:0 0 8px rgba(37,99,235,0.2); }
 body.pink-mode .network-box { background:rgba(255,230,240,0.9); border-color:#e6007e; color:#4b0066; box-shadow:0 0 8px rgba(230,0,126,0.2); }
 
+/* Cute Pink Decorations */
+.pink-decor { position:absolute; pointer-events:none; z-index:5; }
+.pink-decor img { width:40px; opacity:0.6; animation:floatAnim 6s ease-in-out infinite; }
+@keyframes floatAnim {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(10deg); }
+}
+
+/* Buttons */
 button { cursor:pointer; transition:all 0.3s; }
 button:hover { transform:scale(1.05); }
 
@@ -81,16 +85,28 @@ button:hover { transform:scale(1.05); }
   .speedometer-container { width:200px; height:200px; }
   .speed-text { font-size:1.2rem; }
   .needle { height:90px; }
+  .pink-decor img { width:30px; }
 }
 </style>
 </head>
 <body class="dark-mode flex flex-col items-center min-h-screen relative">
 
+<!-- Logo -->
 <div class="futuristic-logo" onclick="location.reload();">Velocity</div>
+
+<!-- Theme Toggle -->
 <button id="themeToggle" class="px-3 py-1 bg-black/40 border border-cyan-400 rounded-lg text-cyan-300 hover:bg-cyan-400/10 transition">🌙 Dark</button>
 
 <h1 class="text-4xl md:text-5xl font-bold mb-4 text-center mt-20">🚀 <span class="text-cyan-400">Speed Test</span></h1>
 <div id="readingLine" class="text-lg text-cyan-300 mb-6 h-6 text-center" aria-live="polite"></div>
+
+<!-- Pink Decorations -->
+<div id="pinkDecorContainer" class="pink-decor hidden">
+  <img src="https://i.ibb.co/0jvFJXj/teddy.png" style="top:10%; left:15%; position:absolute;">
+  <img src="https://i.ibb.co/B3L4s8d/doll.png" style="top:30%; left:75%; position:absolute;">
+  <img src="https://i.ibb.co/TqkM5T1/star.png" style="top:70%; left:40%; position:absolute;">
+  <img src="https://i.ibb.co/9r4t7k0/heart.png" style="top:50%; left:20%; position:absolute;">
+</div>
 
 <!-- Speedometer -->
 <div class="speedometer-container glow">
@@ -127,8 +143,26 @@ button:hover { transform:scale(1.05); }
 <script src="https://public.librespeed.org/librespeed.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script>
+// Theme Handling
 const bodyEl=document.body;
 const themeToggle=document.getElementById('themeToggle');
+const pinkDecor=document.getElementById('pinkDecorContainer');
+let themes=['dark-mode','light-mode','pink-mode'];
+let themeIndex=themes.indexOf(localStorage.getItem('velocityTheme'))>=0?themes.indexOf(localStorage.getItem('velocityTheme')):0;
+bodyEl.className=themes[themeIndex]+' flex flex-col items-center min-h-screen relative';
+themeToggle.textContent=themeIndex===0?'🌙 Dark':themeIndex===1?'☀️ Light':'💖 Pink';
+pinkDecor.style.display=themeIndex===2?'block':'none';
+
+themeToggle.addEventListener('click',()=>{
+  bodyEl.classList.remove(themes[themeIndex]);
+  themeIndex=(themeIndex+1)%themes.length;
+  bodyEl.classList.add(themes[themeIndex]);
+  themeToggle.textContent=themeIndex===0?'🌙 Dark':themeIndex===1?'☀️ Light':'💖 Pink';
+  localStorage.setItem('velocityTheme',themes[themeIndex]);
+  pinkDecor.style.display=themeIndex===2?'block':'none';
+});
+
+// Speedometer Logic
 const startBtn=document.getElementById('startBtn');
 const needle=document.getElementById('needle');
 const speedText=document.getElementById('speedText');
@@ -144,27 +178,12 @@ const ctx=canvas.getContext('2d');
 let downloadPercent=0;
 let uploadPercent=0;
 
-// Theme cycle: Dark -> Light -> Pink
-let themes=['dark-mode','light-mode','pink-mode'];
-let themeIndex=themes.indexOf(localStorage.getItem('velocityTheme'))>=0?themes.indexOf(localStorage.getItem('velocityTheme')):0;
-bodyEl.className=themes[themeIndex]+' flex flex-col items-center min-h-screen relative';
-themeToggle.textContent=themeIndex===0?'🌙 Dark':themeIndex===1?'☀️ Light':'💖 Pink';
-
-themeToggle.addEventListener('click',()=>{
-  bodyEl.classList.remove(themes[themeIndex]);
-  themeIndex=(themeIndex+1)%themes.length;
-  bodyEl.classList.add(themes[themeIndex]);
-  themeToggle.textContent=themeIndex===0?'🌙 Dark':themeIndex===1?'☀️ Light':'💖 Pink';
-  localStorage.setItem('velocityTheme',themes[themeIndex]);
-});
-
-// Draw Neon Arcs
 function drawArcs(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   const center=canvas.width/2;
   const radius=100;
   const start=-Math.PI/2;
-  
+
   let downloadColor=bodyEl.classList.contains('light-mode')?'#2563eb':bodyEl.classList.contains('pink-mode')?'#e6007e':'#00d2ff';
   let uploadColor=bodyEl.classList.contains('light-mode')?'#3b82f6':bodyEl.classList.contains('pink-mode')?'#ff66aa':'#ff00ff';
 
@@ -186,7 +205,6 @@ function drawArcs(){
 }
 setInterval(drawArcs,50);
 
-// Animate Needle
 function setNeedle(speed){
   const deg=Math.min(speed*1.8,180)-90;
   gsap.to(needle,{rotation:deg,duration:0.5,ease:"power2.out"});
@@ -195,7 +213,7 @@ function setNeedle(speed){
   uploadPercent=Math.min(speed*1.5,100);
 }
 
-// Speed Test
+// Run Speed Test
 async function runSpeedTest(){
   startBtn.disabled=true;
   readingLine.textContent='Testing network…';
