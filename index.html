@@ -32,6 +32,17 @@ body{
   align-items:center;
   min-height:100vh;
   overflow-x:hidden;
+  position:relative;
+}
+
+/* Particle canvas */
+#particlesCanvas{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:-1;
 }
 
 header{
@@ -88,7 +99,7 @@ main{
   padding:20px;
   text-align:center;
   margin:15px;
-  width:220px;
+  width:240px;
   transition:0.3s;
 }
 .gauge-container:hover{
@@ -205,6 +216,8 @@ footer{
 </head>
 <body data-theme="dark">
 
+<canvas id="particlesCanvas"></canvas>
+
 <header>
   <h1>Velocity Test</h1>
   <button id="themeToggle">Toggle Theme</button>
@@ -267,7 +280,7 @@ servers.forEach((s,i)=>{
   serverSelect.appendChild(opt);
 });
 
-// Gauges
+// Gauges with needle animation
 const downloadCanvas = document.getElementById('downloadGauge');
 const uploadCanvas = document.getElementById('uploadGauge');
 const dctx = downloadCanvas.getContext('2d');
@@ -276,17 +289,32 @@ const uctx = uploadCanvas.getContext('2d');
 function drawGauge(ctx, percent, color){
   const radius = ctx.canvas.width/2 -10;
   ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+
+  // Background circle
   ctx.beginPath();
   ctx.arc(ctx.canvas.width/2, ctx.canvas.height/2, radius, 0, 2*Math.PI);
   ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--card-bg');
   ctx.fill();
 
+  // Neon arc
   ctx.beginPath();
   ctx.arc(ctx.canvas.width/2, ctx.canvas.height/2, radius, -Math.PI/2, -Math.PI/2 + 2*Math.PI*percent/100);
   ctx.strokeStyle = color;
   ctx.lineWidth = 12;
-  ctx.shadowBlur=15;
+  ctx.shadowBlur=20;
   ctx.shadowColor=color;
+  ctx.stroke();
+
+  // Needle
+  const angle = -Math.PI/2 + 2*Math.PI*percent/100;
+  const x = ctx.canvas.width/2 + radius*0.85*Math.cos(angle);
+  const y = ctx.canvas.height/2 + radius*0.85*Math.sin(angle);
+  ctx.beginPath();
+  ctx.moveTo(ctx.canvas.width/2, ctx.canvas.height/2);
+  ctx.lineTo(x,y);
+  ctx.strokeStyle="#ff0000";
+  ctx.lineWidth=3;
+  ctx.shadowBlur=15;
   ctx.stroke();
 }
 
@@ -314,18 +342,16 @@ async function fetchIPInfo(){
   }
 }
 
-// Dummy Free Speed Test (simulate)
+// Dummy Free Speed Test
 function runTest(){
   const server = servers[serverSelect.value];
   document.getElementById('startBtn').disabled = true;
 
-  // Ping & Jitter
   const ping = (Math.random()*50+10).toFixed(0);
   const jitter = (Math.random()*20+5).toFixed(0);
   document.getElementById('ping').textContent = ping;
   document.getElementById('jitter').textContent = jitter;
 
-  // Download & Upload
   const download = (Math.random()*90+10).toFixed(2);
   const upload = (Math.random()*50+5).toFixed(2);
   animateGauge(dctx, download, 'downloadSpeed', getComputedStyle(document.body).getPropertyValue('--accent-color'));
@@ -360,6 +386,42 @@ document.getElementById('shareBtn').addEventListener('click', ()=>{
     link.click();
   });
 });
+
+// Particles background
+const canvas = document.getElementById('particlesCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const particles = [];
+for(let i=0;i<100;i++){
+  particles.push({
+    x: Math.random()*canvas.width,
+    y: Math.random()*canvas.height,
+    r: Math.random()*2+1,
+    dx: (Math.random()-0.5)*1,
+    dy: (Math.random()-0.5)*1,
+    color: `rgba(0,255,255,${Math.random()})`
+  });
+}
+
+function drawParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,2*Math.PI);
+    ctx.fillStyle = p.color;
+    ctx.fill();
+    p.x+=p.dx;
+    p.y+=p.dy;
+    if(p.x<0) p.x=canvas.width;
+    if(p.x>canvas.width) p.x=0;
+    if(p.y<0) p.y=canvas.height;
+    if(p.y>canvas.height) p.y=0;
+  });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
 </script>
 </body>
 </html>
