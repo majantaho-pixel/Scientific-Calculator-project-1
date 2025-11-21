@@ -35,20 +35,15 @@ body.light-mode .futuristic-logo { color:#3a47d5; text-shadow:none; }
 .speedometer-bg { width:100%; height:100%; border-radius:50%; background: radial-gradient(circle at center,#111,#000); border:6px solid #00d2ff; display:flex; align-items:center; justify-content:center; position:relative; }
 body.light-mode .speedometer-bg { border-color:#3a47d5; background: radial-gradient(circle at center,#ffffff,#e2e8f0); }
 
-.needle { position:absolute; width:4px; height:110px; background:#00ffff; transform-origin:bottom center; transform:rotate(-90deg); border-radius:2px; }
+canvas { position:absolute; top:0; left:0; }
+
+/* Needle */
+.needle { position:absolute; width:4px; height:110px; background:#00ffff; transform-origin:bottom center; transform:rotate(-90deg); border-radius:2px; z-index:10; }
 body.light-mode .needle { background:#3a47d5; }
 
-.speed-text { position:absolute; font-size:1.5rem; font-weight:bold; color:#00d2ff; text-align:center; }
+/* Speed Text */
+.speed-text { position:absolute; font-size:1.5rem; font-weight:bold; color:#00d2ff; text-align:center; z-index:11; }
 body.light-mode .speed-text { color:#3a47d5; }
-
-.neon-ring {
-  position:absolute; width:100%; height:100%; border-radius:50%;
-  border:4px solid #00d2ff; opacity:0.5; box-shadow:0 0 20px #00d2ff;
-}
-.neon-ring.upload { border-color:#ff00ff; box-shadow:0 0 20px #ff00ff; }
-body.light-mode .neon-ring { opacity:0.5; }
-body.light-mode .neon-ring.download { border-color:#3a47d5; box-shadow:0 0 20px #3a47d5; }
-body.light-mode .neon-ring.upload { border-color:#ff00aa; box-shadow:0 0 20px #ff00aa; }
 
 /* Glow */
 .glow { box-shadow:0 0 40px 10px rgba(0,208,255,0.4); transition:all 0.3s; }
@@ -81,7 +76,6 @@ button:hover { transform:scale(1.05); }
 }
 </style>
 </head>
-
 <body class="flex flex-col items-center min-h-screen relative">
 
 <div class="futuristic-logo" onclick="location.reload();">Velocity</div>
@@ -91,10 +85,9 @@ button:hover { transform:scale(1.05); }
 <div id="readingLine" class="text-lg text-cyan-300 mb-6 h-6 text-center" aria-live="polite"></div>
 
 <!-- Speedometer -->
-<div class="speedometer-container">
-  <div class="speedometer-bg glow">
-    <div class="neon-ring download"></div>
-    <div class="neon-ring upload"></div>
+<div class="speedometer-container glow">
+  <canvas id="ringsCanvas" width="250" height="250"></canvas>
+  <div class="speedometer-bg">
     <div class="needle" id="needle"></div>
     <div class="speed-text" id="speedText">-- Mbps</div>
   </div>
@@ -123,98 +116,102 @@ button:hover { transform:scale(1.05); }
   🕒 ASN: <span id="asn">--</span> | Timezone: <span id="timezone">--</span>
 </div>
 
-<!-- History -->
-<button id="historyBtn" class="px-4 py-2 bg-cyan-400 text-black rounded-lg mt-4 hover:bg-cyan-500 transition">📊 View History</button>
-<div id="history" class="mt-4 hidden text-left text-gray-700 text-xs"></div>
-
-<!-- Footer -->
-<footer class="bg-gray-900 text-gray-400 text-sm py-6 mt-10 w-full text-center">
-  © <span id="footerYear"></span> Velocity Internet Speed Test. All rights reserved.
-</footer>
-
 <script src="https://public.librespeed.org/librespeed.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script>
-const bodyEl = document.body;
-const themeToggle = document.getElementById('themeToggle');
-const startBtn = document.getElementById('startBtn');
-const needle = document.getElementById('needle');
-const speedText = document.getElementById('speedText');
-const pingProgress = document.getElementById('pingProgress');
-const downloadProgress = document.getElementById('downloadProgress');
-const uploadProgress = document.getElementById('uploadProgress');
-const downloadBox = document.getElementById('downloadBox');
-const uploadBox = document.getElementById('uploadBox');
-const pingBox = document.getElementById('pingBox');
-const readingLine = document.getElementById('readingLine');
-const neonDownload = document.querySelector('.neon-ring.download');
-const neonUpload = document.querySelector('.neon-ring.upload');
+const bodyEl=document.body;
+const themeToggle=document.getElementById('themeToggle');
+const startBtn=document.getElementById('startBtn');
+const needle=document.getElementById('needle');
+const speedText=document.getElementById('speedText');
+const pingProgress=document.getElementById('pingProgress');
+const downloadProgress=document.getElementById('downloadProgress');
+const uploadProgress=document.getElementById('uploadProgress');
+const downloadBox=document.getElementById('downloadBox');
+const uploadBox=document.getElementById('uploadBox');
+const pingBox=document.getElementById('pingBox');
+const readingLine=document.getElementById('readingLine');
 
-let history = JSON.parse(localStorage.getItem('speedTestHistory')||'[]');
-const historyDiv = document.getElementById('history');
-document.getElementById("footerYear").textContent = new Date().getFullYear();
+const canvas=document.getElementById('ringsCanvas');
+const ctx=canvas.getContext('2d');
+let downloadPercent=0;
+let uploadPercent=0;
 
-// Theme Toggle
-const savedTheme = localStorage.getItem('velocityTheme') || 'dark';
-if(savedTheme==='light'){bodyEl.classList.add('light-mode'); themeToggle.textContent='☀️ Light';}
-else{themeToggle.textContent='🌙 Dark';}
-themeToggle.addEventListener('click', ()=>{
+// Theme
+const savedTheme=localStorage.getItem('velocityTheme')||'dark';
+if(savedTheme==='light'){bodyEl.classList.add('light-mode'); themeToggle.textContent='☀️ Light';} else{themeToggle.textContent='🌙 Dark';}
+themeToggle.addEventListener('click',()=>{
   bodyEl.classList.toggle('light-mode');
-  themeToggle.textContent = bodyEl.classList.contains('light-mode') ? '☀️ Light' : '🌙 Dark';
-  localStorage.setItem('velocityTheme', bodyEl.classList.contains('light-mode') ? 'light' : 'dark');
+  themeToggle.textContent=bodyEl.classList.contains('light-mode')?'☀️ Light':'🌙 Dark';
+  localStorage.setItem('velocityTheme',bodyEl.classList.contains('light-mode')?'light':'dark');
 });
 
-// History
-function saveHistory(res){ history.unshift(res); if(history.length>10) history.pop(); localStorage.setItem('speedTestHistory', JSON.stringify(history)); }
-function renderHistory(){ historyDiv.innerHTML = history.length===0 ? '<em>No history yet</em>' : history.map(r=>`<div>${r.time}: Ping ${r.ping} ms | Download ${r.download} Mbps | Upload ${r.upload} Mbps</div>`).join(''); }
-document.getElementById('historyBtn').addEventListener('click',()=>{ historyDiv.classList.toggle('hidden'); renderHistory(); });
+// Draw Neon Arcs
+function drawArcs(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const center=canvas.width/2;
+  const radius=100;
+  const start=-Math.PI/2;
+  
+  // Download Arc
+  ctx.beginPath();
+  ctx.lineWidth=8;
+  ctx.strokeStyle=bodyEl.classList.contains('light-mode')?'#3a47d5':'#00d2ff';
+  ctx.shadowBlur=15;
+  ctx.shadowColor=ctx.strokeStyle;
+  ctx.arc(center,center,radius,start,start+2*Math.PI*(downloadPercent/100));
+  ctx.stroke();
 
-// Animate Needle & Rings
+  // Upload Arc
+  ctx.beginPath();
+  ctx.lineWidth=8;
+  ctx.strokeStyle=bodyEl.classList.contains('light-mode')?'#ff00aa':'#ff00ff';
+  ctx.shadowBlur=15;
+  ctx.shadowColor=ctx.strokeStyle;
+  ctx.arc(center,center,radius-15,start,start+2*Math.PI*(uploadPercent/100));
+  ctx.stroke();
+}
+setInterval(drawArcs,50);
+
+// Animate Needle
 function setNeedle(speed){
-  const deg = Math.min(speed*1.8,180)-90;
+  const deg=Math.min(speed*1.8,180)-90;
   gsap.to(needle,{rotation:deg,duration:0.5,ease:"power2.out"});
   speedText.textContent=`${speed.toFixed(1)} Mbps`;
-  gsap.to(neonDownload,{rotation:"+="+speed*2,duration:0.8,repeat:0});
-  gsap.to(neonUpload,{rotation:"+="+speed*1.5,duration:0.8,repeat:0});
+  downloadPercent=Math.min(speed*2,100);
+  uploadPercent=Math.min(speed*1.5,100);
 }
 
-// Continuous ring rotation
-gsap.to(neonDownload,{rotation:"+=360",duration:12,repeat:-1,ease:"linear"});
-gsap.to(neonUpload,{rotation:"-=360",duration:15,repeat:-1,ease:"linear"});
-
-// Run Speed Test
+// Speed Test
 async function runSpeedTest(){
   startBtn.disabled=true;
-  startBtn.classList.add('glow');
   readingLine.textContent='Testing network…';
   try{
-    const test = new Librespeed({server:'https://test.librespeed.org', download:true, upload:true, ping:true});
-    test.on('download', val=>{
-      const mbps = val/125000;
+    const test=new Librespeed({server:'https://test.librespeed.org',download:true,upload:true,ping:true});
+    test.on('download',val=>{
+      const mbps=val/125000;
       downloadProgress.style.width=`${Math.min(val/1000000,100)}%`;
       downloadBox.textContent=`Download: ${mbps.toFixed(1)} Mbps`;
       setNeedle(mbps);
     });
-    test.on('upload', val=>{
-      const mbps = val/125000;
+    test.on('upload',val=>{
+      const mbps=val/125000;
       uploadProgress.style.width=`${Math.min(val/1000000,100)}%`;
       uploadBox.textContent=`Upload: ${mbps.toFixed(1)} Mbps`;
     });
-    test.on('ping', val=>{
+    test.on('ping',val=>{
       pingProgress.style.width=`${Math.min(val*2,100)}%`;
       pingBox.innerHTML=`Ping: ${val.toFixed(1)} ms<br>Jitter: ${(Math.random()*5).toFixed(1)} ms`;
     });
-    const result = await test.start();
+    await test.start();
     readingLine.textContent='Test completed ✅';
-    saveHistory({time:new Date().toLocaleString(), ping:result.ping.toFixed(1), download:(result.download/125000).toFixed(1), upload:(result.upload/125000).toFixed(1)});
   }catch(err){
     readingLine.textContent='Test failed ❌';
-    console.error('Speed test error:',err);
+    console.error(err);
   }
   startBtn.disabled=false;
-  startBtn.classList.remove('glow');
 }
-startBtn.addEventListener('click', runSpeedTest);
+startBtn.addEventListener('click',runSpeedTest);
 </script>
 </body>
 </html>
