@@ -15,31 +15,34 @@
   font-family: "Poppins", Arial, sans-serif;
 }
 
-/* ------------------ THEMES ------------------ */
-
-/* DEFAULT = LIGHT MODE (image background) */
+/* ------------------ LIGHT THEME ------------------ */
 body {
   background: url("background.jpg") no-repeat center/cover fixed;
   color: #000;
   transition: 0.3s ease-in-out;
 }
 
-/* Dark Mode */
+/* ------------------ DARK THEME ------------------ */
 body.dark {
   background: #020b1a;
   color: #d7e3ff;
 }
 
-/* Background overlay for readability */
+/* ------------------ OVERLAY ------------------ */
+
+/* Light Mode → Very transparent so image is visible */
 .overlay {
   position: fixed;
   inset: 0;
-  backdrop-filter: blur(4px);
-  background: rgba(255,255,255,0.45);
+  backdrop-filter: blur(1.5px);
+  background: rgba(255,255,255,0.10);
   transition: 0.3s;
 }
+
+/* Dark Mode → More opacity for clarity */
 body.dark .overlay {
   background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
 }
 
 /* ------------------ HEADER ------------------ */
@@ -51,16 +54,17 @@ body.dark .overlay {
   font-weight: bold;
   margin-top: 20px;
   backdrop-filter: blur(4px);
+  color: inherit;
 }
 
-/* ------------------ CARD / BOX ------------------ */
+/* ------------------ CARD ------------------ */
 .card {
   width: 90%;
   max-width: 420px;
   margin: 40px auto;
   padding: 25px;
   border-radius: 18px;
-  background: rgba(255,255,255,0.75);
+  background: rgba(255,255,255,0.65);
   backdrop-filter: blur(8px);
   box-shadow: 0 6px 20px rgba(0,0,0,0.2);
   text-align: center;
@@ -69,6 +73,7 @@ body.dark .overlay {
 body.dark .card {
   background: rgba(0,10,40,0.75);
   box-shadow: 0 0 25px rgba(0,148,255,0.35);
+  color: #d7e3ff;
 }
 
 /* ------------------ BUTTON ------------------ */
@@ -94,21 +99,6 @@ body.dark button:hover {
   background: #0088cc;
 }
 
-/* ------------------ RESULTS ------------------ */
-.result-box {
-  margin-top: 20px;
-  padding: 18px;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.85);
-  font-size: 20px;
-  font-weight: 600;
-  backdrop-filter: blur(3px);
-}
-body.dark .result-box {
-  background: rgba(0,0,0,0.35);
-  border: 1px solid #0094ff;
-}
-
 /* ------------------ THEME SWITCH ------------------ */
 .theme-toggle {
   position: fixed;
@@ -128,7 +118,23 @@ body.dark .theme-toggle {
   color: #00d0ff;
 }
 
-/* Loader */
+/* ------------------ RESULTS ------------------ */
+.result-box {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.85);
+  font-size: 20px;
+  font-weight: 600;
+  backdrop-filter: blur(3px);
+}
+body.dark .result-box {
+  background: rgba(0,0,0,0.35);
+  border: 1px solid #0094ff;
+  color: #d7e3ff;
+}
+
+/* ------------------ LOADER ------------------ */
 .loader {
   margin: 18px auto 0;
   width: 28px;
@@ -153,13 +159,13 @@ body.dark .loader {
 
 <div class="overlay"></div>
 
-<!-- ------------------ THEME SWITCH ------------------ -->
+<!-- THEME SWITCH -->
 <div class="theme-toggle" id="themeSwitch">Light / Dark</div>
 
-<!-- ------------------ HEADER ------------------ -->
+<!-- HEADER -->
 <div class="header">Velocity Speed Test</div>
 
-<!-- ------------------ MAIN CARD ------------------ -->
+<!-- CARD -->
 <div class="card">
   <h2>Check Your Internet Speed</h2>
   
@@ -173,25 +179,18 @@ body.dark .loader {
 </div>
 
 <script>
-/* -------------------------------------------
-   THEME SWITCH
-------------------------------------------- */
-const themeSwitch = document.getElementById("themeSwitch");
-themeSwitch.onclick = () => {
+/* THEME SWITCH */
+document.getElementById("themeSwitch").onclick = () => {
   document.body.classList.toggle("dark");
 };
 
-/* -------------------------------------------
-   SPEED TEST SIMULATION (FRONTEND SAMPLE)
-   Connect backend later at /server.js
-------------------------------------------- */
+/* SPEED TEST (frontend simulation) */
 function startTest() {
   document.getElementById("loader").style.display = "block";
 
   setTimeout(() => {
     document.getElementById("loader").style.display = "none";
 
-    // Simulated test values (real values come from backend API)
     let download = (20 + Math.random() * 60).toFixed(1);
     let upload = (5 + Math.random() * 25).toFixed(1);
     let ping = (5 + Math.random() * 50).toFixed(0);
