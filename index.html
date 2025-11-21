@@ -189,6 +189,15 @@ footer{
   background: rgba(255,255,255,0.05);
   border-radius:15px;
 }
+.shareGlow{
+  animation:glowPulse 1s infinite alternate;
+  border:4px solid var(--accent-color);
+  border-radius:15px;
+}
+@keyframes glowPulse{
+  from{box-shadow:0 0 20px var(--accent-color);}
+  to{box-shadow:0 0 50px var(--accent-color);}
+}
 @media(max-width:768px){
   .gauges{flex-direction:column; align-items:center;}
   .gauge-container{width:80%;}
@@ -205,7 +214,7 @@ footer{
   <button id="themeToggle">Toggle Theme</button>
 </header>
 
-<main>
+<main id="mainCard">
   <div class="gauges">
     <div class="gauge-container">
       <canvas id="downloadGauge" width="200" height="200"></canvas>
@@ -327,10 +336,13 @@ function runTest(){
 }
 document.getElementById('startBtn').addEventListener('click',()=>{fetchIPInfo();runTest();});
 
-// Share Result
+// Share Result with Animated Glow
 document.getElementById('shareBtn').addEventListener('click',()=>{
-  html2canvas(document.querySelector('main')).then(c=>{
+  const main=document.getElementById('mainCard');
+  main.classList.add('shareGlow');
+  html2canvas(main).then(c=>{
     const l=document.createElement('a');l.download='speed-test.png';l.href=c.toDataURL();l.click();
+    setTimeout(()=>{main.classList.remove('shareGlow');},1200);
   });
 });
 
@@ -357,7 +369,6 @@ function drawBackground(){
     if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;
     if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;
   });
-  // Draw dynamic ping lines
   const dX=downloadCanvas.getBoundingClientRect().left+downloadCanvas.width/2;
   const dY=downloadCanvas.getBoundingClientRect().top+downloadCanvas.height/2;
   const uX=uploadCanvas.getBoundingClientRect().left+uploadCanvas.width/2;
@@ -367,13 +378,9 @@ function drawBackground(){
   ctx.strokeStyle='rgba(0,255,255,0.3)';
   ctx.lineWidth=2;
   ctx.beginPath();
-  ctx.moveTo(dX,dY);
-  ctx.lineTo(sX,sY);
-  ctx.stroke();
+  ctx.moveTo(dX,dY); ctx.lineTo(sX,sY); ctx.stroke();
   ctx.beginPath();
-  ctx.moveTo(uX,uY);
-  ctx.lineTo(sX,sY);
-  ctx.stroke();
+  ctx.moveTo(uX,uY); ctx.lineTo(sX,sY); ctx.stroke();
   requestAnimationFrame(drawBackground);
 }
 drawBackground();
