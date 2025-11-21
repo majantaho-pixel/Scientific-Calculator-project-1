@@ -21,9 +21,7 @@
   --button-bg:linear-gradient(45deg,#0077ff,#00aaff);
   --button-hover:linear-gradient(45deg,#0055ff,#00ccff);
 }
-
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Orbitron',sans-serif;}
-
 body{
   background: var(--bg-color);
   color: var(--text-color);
@@ -34,8 +32,6 @@ body{
   overflow-x:hidden;
   position:relative;
 }
-
-/* Background Canvas */
 #bgCanvas{
   position:fixed;
   top:0;
@@ -44,8 +40,6 @@ body{
   height:100%;
   z-index:-1;
 }
-
-/* Header */
 header{
   width:100%;
   padding:15px 20px;
@@ -77,8 +71,6 @@ header h1{
   color:#000;
   box-shadow:0 0 20px var(--accent-color);
 }
-
-/* Main Layout */
 main{
   padding:30px 20px;
   width:100%;
@@ -99,6 +91,7 @@ main{
   margin:15px;
   width:240px;
   transition:0.3s;
+  position:relative;
 }
 .gauge-container:hover{
   box-shadow:0 0 40px var(--accent-color);
@@ -250,15 +243,15 @@ footer{
 <script>
 // Theme toggle
 document.getElementById('themeToggle').addEventListener('click',()=>{
-  const current = document.body.getAttribute('data-theme');
+  const current=document.body.getAttribute('data-theme');
   document.body.setAttribute('data-theme',current==='dark'?'light':'dark');
 });
 
 // Server List
-const servers = [
-  {name:"Pakistan Server", url:"https://speedtest.pk/speedtest/upload.php"},
-  {name:"US Server", url:"https://speedtest.tele2.net/upload.php"},
-  {name:"Germany Server", url:"https://speedtest.tele2.net/upload.php"},
+const servers=[
+  {name:"Pakistan Server"},
+  {name:"US Server"},
+  {name:"Germany Server"},
 ];
 const serverSelect=document.getElementById('serverSelect');
 servers.forEach((s,i)=>{const o=document.createElement('option');o.value=i;o.textContent=s.name;serverSelect.appendChild(o);});
@@ -268,16 +261,13 @@ const downloadCanvas=document.getElementById('downloadGauge');
 const uploadCanvas=document.getElementById('uploadGauge');
 const dctx=downloadCanvas.getContext('2d');
 const uctx=uploadCanvas.getContext('2d');
-
 function drawGauge(ctx,percent,color){
   const r=ctx.canvas.width/2-10;
   ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
-  // Background circle
   ctx.beginPath();
   ctx.arc(ctx.canvas.width/2,ctx.canvas.height/2,r,0,2*Math.PI);
   ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--card-bg');
   ctx.fill();
-  // Neon arc
   ctx.beginPath();
   ctx.arc(ctx.canvas.width/2,ctx.canvas.height/2,r,-Math.PI/2,-Math.PI/2+2*Math.PI*percent/100);
   ctx.strokeStyle=color;
@@ -285,7 +275,6 @@ function drawGauge(ctx,percent,color){
   ctx.shadowBlur=20;
   ctx.shadowColor=color;
   ctx.stroke();
-  // Needle
   const angle=-Math.PI/2+2*Math.PI*percent/100;
   const x=ctx.canvas.width/2+r*0.85*Math.cos(angle);
   const y=ctx.canvas.height/2+r*0.85*Math.sin(angle);
@@ -297,7 +286,6 @@ function drawGauge(ctx,percent,color){
   ctx.shadowBlur=15;
   ctx.stroke();
 }
-
 function animateGauge(ctx,target,id,color){
   let val=0;
   const step=target/50;
@@ -322,7 +310,6 @@ async function fetchIPInfo(){
 
 // Dummy Speed Test
 function runTest(){
-  const server=servers[serverSelect.value];
   document.getElementById('startBtn').disabled=true;
   const ping=(Math.random()*50+10).toFixed(0);
   const jitter=(Math.random()*20+5).toFixed(0);
@@ -332,7 +319,6 @@ function runTest(){
   const upload=(Math.random()*50+5).toFixed(2);
   animateGauge(dctx,download,'downloadSpeed',getComputedStyle(document.body).getPropertyValue('--accent-color'));
   animateGauge(uctx,upload,'uploadSpeed',getComputedStyle(document.body).getPropertyValue('--accent-color'));
-  // Save history
   let h=JSON.parse(localStorage.getItem('speedHistory')||"[]");
   h.unshift({date:new Date().toLocaleString(),download,upload,ping,jitter,ip:document.getElementById('ip').textContent,location:document.getElementById('location').textContent,isp:document.getElementById('isp').textContent});
   if(h.length>10) h.pop();
@@ -348,7 +334,7 @@ document.getElementById('shareBtn').addEventListener('click',()=>{
   });
 });
 
-// Neon Grid + Particles
+// Neon Grid + Particles + Ping Lines
 const canvas=document.getElementById('bgCanvas');
 const ctx=canvas.getContext('2d');
 canvas.width=window.innerWidth;
@@ -360,20 +346,34 @@ let mouse={x:canvas.width/2,y:canvas.height/2};
 window.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;});
 function drawBackground(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  // Grid
   ctx.strokeStyle='rgba(0,255,255,0.05)';
   ctx.lineWidth=1;
   for(let x=0;x<canvas.width;x+=gridSpacing){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke();}
   for(let y=0;y<canvas.height;y+=gridSpacing){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke();}
-  // Particles
   particles.forEach(p=>{
     ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,2*Math.PI);ctx.fillStyle=p.color;ctx.fill();
-    // Move slightly towards mouse
     p.x+=p.dx+(mouse.x-canvas.width/2)*0.0005;
     p.y+=p.dy+(mouse.y-canvas.height/2)*0.0005;
     if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;
     if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;
   });
+  // Draw dynamic ping lines
+  const dX=downloadCanvas.getBoundingClientRect().left+downloadCanvas.width/2;
+  const dY=downloadCanvas.getBoundingClientRect().top+downloadCanvas.height/2;
+  const uX=uploadCanvas.getBoundingClientRect().left+uploadCanvas.width/2;
+  const uY=uploadCanvas.getBoundingClientRect().top+uploadCanvas.height/2;
+  const sX=serverSelect.getBoundingClientRect().left+serverSelect.offsetWidth/2;
+  const sY=serverSelect.getBoundingClientRect().top+serverSelect.offsetHeight/2;
+  ctx.strokeStyle='rgba(0,255,255,0.3)';
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.moveTo(dX,dY);
+  ctx.lineTo(sX,sY);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(uX,uY);
+  ctx.lineTo(sX,sY);
+  ctx.stroke();
   requestAnimationFrame(drawBackground);
 }
 drawBackground();
