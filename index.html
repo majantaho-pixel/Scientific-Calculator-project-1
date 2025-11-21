@@ -6,74 +6,201 @@
 <title>Velocity Gaming Speed Test</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg-color: #0a0a0a;
-    --accent-color: #00ffea;
-    --text-color: #ffffff;
-    --gauge-bg: #111111;
-  }
-  [data-theme="light"] {
-    --bg-color: #f5f5f5;
-    --text-color: #0a0a0a;
-    --gauge-bg: #ddd;
-    --accent-color: #0077ff;
-  }
+:root {
+  --bg-color: #0a0a0a;
+  --accent-color: #00ffea;
+  --text-color: #ffffff;
+  --card-bg: rgba(20,20,30,0.8);
+  --button-bg: linear-gradient(45deg,#00ffea,#0077ff);
+  --button-hover: linear-gradient(45deg,#00ffaa,#00ccff);
+}
+[data-theme="light"] {
+  --bg-color:#f5f5f5;
+  --text-color:#0a0a0a;
+  --card-bg:rgba(255,255,255,0.9);
+  --button-bg:linear-gradient(45deg,#0077ff,#00aaff);
+  --button-hover:linear-gradient(45deg,#0055ff,#00ccff);
+}
 
-  body {
-    margin:0;
-    font-family: 'Orbitron', sans-serif;
-    background: var(--bg-color);
-    color: var(--text-color);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:flex-start;
-    min-height:100vh;
-  }
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Orbitron',sans-serif;}
 
-  header {
-    width:100%;
-    padding:15px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    background: rgba(0,0,0,0.6);
-    box-shadow:0 0 20px var(--accent-color);
-  }
-  header h1 { margin:0; font-size:1.5rem; }
-  button#themeToggle {
-    background:none; border:2px solid var(--accent-color); padding:5px 10px; color:var(--accent-color); cursor:pointer; border-radius:5px;
-  }
+body{
+  background: var(--bg-color);
+  color: var(--text-color);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  min-height:100vh;
+  overflow-x:hidden;
+}
 
-  main { padding:20px; width:100%; max-width:900px; }
-  .gauges { display:flex; flex-wrap:wrap; justify-content:space-around; margin-bottom:20px; }
-  .gauge-container { text-align:center; margin:20px; }
-  canvas { background: var(--gauge-bg); border-radius:50%; }
+header{
+  width:100%;
+  padding:15px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  backdrop-filter:blur(10px);
+  background: rgba(0,0,0,0.4);
+  box-shadow:0 0 20px var(--accent-color);
+  border-bottom:1px solid var(--accent-color);
+}
 
-  .info { display:flex; flex-wrap:wrap; justify-content:space-around; margin-bottom:20px; }
-  .info div { margin:10px; padding:10px 15px; background: rgba(0,0,0,0.3); border-radius:10px; min-width:120px; text-align:center; }
+header h1{
+  font-size:1.8rem;
+  color: var(--accent-color);
+  text-shadow:0 0 10px var(--accent-color);
+}
 
-  #serverSelect { padding:5px 10px; margin-bottom:20px; border-radius:5px; }
+#themeToggle{
+  padding:8px 14px;
+  border:2px solid var(--accent-color);
+  background:none;
+  color:var(--accent-color);
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:bold;
+  transition:0.3s;
+}
+#themeToggle:hover{
+  background: var(--accent-color);
+  color:#000;
+  box-shadow:0 0 20px var(--accent-color);
+}
 
-  #startBtn {
-    padding:10px 20px;
-    font-size:1.1rem;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    background: var(--accent-color);
-    color:#000;
-    box-shadow:0 0 20px var(--accent-color);
-    margin-bottom:20px;
-    transition:0.3s;
-  }
-  #startBtn:hover { box-shadow:0 0 40px var(--accent-color); transform:scale(1.05); }
+main{
+  padding:30px 20px;
+  width:100%;
+  max-width:1000px;
+}
 
-  #results { margin-top:20px; text-align:center; }
-  #results button { margin-top:10px; padding:8px 12px; cursor:pointer; border:none; border-radius:5px; background: var(--accent-color); color:#000; }
+.gauges{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-around;
+  margin-bottom:30px;
+}
 
-  footer { width:100%; padding:15px; text-align:center; margin-top:auto; background: rgba(0,0,0,0.6); box-shadow:0 -2px 20px var(--accent-color);}
-  footer #ads { margin-top:10px; height:60px; background: rgba(255,255,255,0.1); line-height:60px; color:var(--text-color); font-weight:bold; }
+.gauge-container{
+  background: var(--card-bg);
+  border-radius:20px;
+  box-shadow:0 0 20px var(--accent-color);
+  padding:20px;
+  text-align:center;
+  margin:15px;
+  width:220px;
+  transition:0.3s;
+}
+.gauge-container:hover{
+  box-shadow:0 0 40px var(--accent-color);
+}
+
+canvas{
+  background:#111;
+  border-radius:50%;
+  box-shadow:0 0 15px var(--accent-color);
+}
+
+.gauge-container p{
+  margin-top:15px;
+  font-size:1.1rem;
+  font-weight:bold;
+  color: var(--accent-color);
+  text-shadow:0 0 10px var(--accent-color);
+}
+
+.info{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-around;
+  margin-bottom:30px;
+}
+
+.info div{
+  background: var(--card-bg);
+  padding:12px 18px;
+  border-radius:15px;
+  min-width:140px;
+  text-align:center;
+  box-shadow:0 0 15px var(--accent-color);
+  transition:0.3s;
+}
+.info div:hover{
+  box-shadow:0 0 25px var(--accent-color);
+}
+
+#serverSelect{
+  padding:8px 12px;
+  border-radius:10px;
+  border:1px solid var(--accent-color);
+  margin-bottom:25px;
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+
+#startBtn{
+  padding:12px 25px;
+  font-size:1.2rem;
+  border:none;
+  border-radius:15px;
+  cursor:pointer;
+  background: var(--button-bg);
+  color:#000;
+  box-shadow:0 0 25px var(--accent-color);
+  margin-bottom:20px;
+  transition:0.3s;
+}
+#startBtn:hover{
+  background: var(--button-hover);
+  transform:scale(1.05);
+  box-shadow:0 0 50px var(--accent-color);
+}
+
+#results{
+  text-align:center;
+}
+#results button{
+  margin-top:12px;
+  padding:10px 16px;
+  cursor:pointer;
+  border:none;
+  border-radius:12px;
+  background: var(--button-bg);
+  color:#000;
+  box-shadow:0 0 25px var(--accent-color);
+  transition:0.3s;
+}
+#results button:hover{
+  background: var(--button-hover);
+  box-shadow:0 0 50px var(--accent-color);
+}
+
+footer{
+  width:100%;
+  padding:20px;
+  text-align:center;
+  margin-top:auto;
+  backdrop-filter:blur(10px);
+  background: rgba(0,0,0,0.3);
+  box-shadow:0 -2px 20px var(--accent-color);
+  border-top:1px solid var(--accent-color);
+}
+#ads{
+  margin-top:10px;
+  height:70px;
+  line-height:70px;
+  color:var(--accent-color);
+  font-weight:bold;
+  text-shadow:0 0 10px var(--accent-color);
+  background: rgba(255,255,255,0.05);
+  border-radius:15px;
+}
+
+@media(max-width:768px){
+  .gauges{flex-direction:column; align-items:center;}
+  .gauge-container{width:80%;}
+  .info div{width:80%; margin:10px auto;}
+}
 </style>
 </head>
 <body data-theme="dark">
@@ -119,6 +246,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
+// Theme toggle
 const themeBtn = document.getElementById('themeToggle');
 themeBtn.addEventListener('click', () => {
   const current = document.body.getAttribute('data-theme');
@@ -150,13 +278,15 @@ function drawGauge(ctx, percent, color){
   ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
   ctx.beginPath();
   ctx.arc(ctx.canvas.width/2, ctx.canvas.height/2, radius, 0, 2*Math.PI);
-  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--gauge-bg');
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--card-bg');
   ctx.fill();
 
   ctx.beginPath();
   ctx.arc(ctx.canvas.width/2, ctx.canvas.height/2, radius, -Math.PI/2, -Math.PI/2 + 2*Math.PI*percent/100);
   ctx.strokeStyle = color;
-  ctx.lineWidth = 10;
+  ctx.lineWidth = 12;
+  ctx.shadowBlur=15;
+  ctx.shadowColor=color;
   ctx.stroke();
 }
 
@@ -184,24 +314,24 @@ async function fetchIPInfo(){
   }
 }
 
-// Dummy Free Speed Test (basic)
+// Dummy Free Speed Test (simulate)
 function runTest(){
   const server = servers[serverSelect.value];
   document.getElementById('startBtn').disabled = true;
 
-  // Dummy Ping & Jitter
+  // Ping & Jitter
   const ping = (Math.random()*50+10).toFixed(0);
   const jitter = (Math.random()*20+5).toFixed(0);
   document.getElementById('ping').textContent = ping;
   document.getElementById('jitter').textContent = jitter;
 
-  // Dummy Download & Upload (simulate)
+  // Download & Upload
   const download = (Math.random()*90+10).toFixed(2);
   const upload = (Math.random()*50+5).toFixed(2);
   animateGauge(dctx, download, 'downloadSpeed', getComputedStyle(document.body).getPropertyValue('--accent-color'));
   animateGauge(uctx, upload, 'uploadSpeed', getComputedStyle(document.body).getPropertyValue('--accent-color'));
 
-  // Save to history
+  // Save history
   let history = JSON.parse(localStorage.getItem('speedHistory')||"[]");
   history.unshift({
     date: new Date().toLocaleString(),
