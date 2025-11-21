@@ -35,8 +35,8 @@ body{
   position:relative;
 }
 
-/* Particle canvas */
-#particlesCanvas{
+/* Background Canvas */
+#bgCanvas{
   position:fixed;
   top:0;
   left:0;
@@ -45,6 +45,7 @@ body{
   z-index:-1;
 }
 
+/* Header */
 header{
   width:100%;
   padding:15px 20px;
@@ -56,13 +57,11 @@ header{
   box-shadow:0 0 20px var(--accent-color);
   border-bottom:1px solid var(--accent-color);
 }
-
 header h1{
   font-size:1.8rem;
   color: var(--accent-color);
   text-shadow:0 0 10px var(--accent-color);
 }
-
 #themeToggle{
   padding:8px 14px;
   border:2px solid var(--accent-color);
@@ -79,19 +78,18 @@ header h1{
   box-shadow:0 0 20px var(--accent-color);
 }
 
+/* Main Layout */
 main{
   padding:30px 20px;
   width:100%;
   max-width:1000px;
 }
-
 .gauges{
   display:flex;
   flex-wrap:wrap;
   justify-content:space-around;
   margin-bottom:30px;
 }
-
 .gauge-container{
   background: var(--card-bg);
   border-radius:20px;
@@ -105,13 +103,11 @@ main{
 .gauge-container:hover{
   box-shadow:0 0 40px var(--accent-color);
 }
-
 canvas{
   background:#111;
   border-radius:50%;
   box-shadow:0 0 15px var(--accent-color);
 }
-
 .gauge-container p{
   margin-top:15px;
   font-size:1.1rem;
@@ -119,14 +115,12 @@ canvas{
   color: var(--accent-color);
   text-shadow:0 0 10px var(--accent-color);
 }
-
 .info{
   display:flex;
   flex-wrap:wrap;
   justify-content:space-around;
   margin-bottom:30px;
 }
-
 .info div{
   background: var(--card-bg);
   padding:12px 18px;
@@ -139,7 +133,6 @@ canvas{
 .info div:hover{
   box-shadow:0 0 25px var(--accent-color);
 }
-
 #serverSelect{
   padding:8px 12px;
   border-radius:10px;
@@ -148,7 +141,6 @@ canvas{
   background: var(--card-bg);
   color: var(--text-color);
 }
-
 #startBtn{
   padding:12px 25px;
   font-size:1.2rem;
@@ -166,7 +158,6 @@ canvas{
   transform:scale(1.05);
   box-shadow:0 0 50px var(--accent-color);
 }
-
 #results{
   text-align:center;
 }
@@ -185,7 +176,6 @@ canvas{
   background: var(--button-hover);
   box-shadow:0 0 50px var(--accent-color);
 }
-
 footer{
   width:100%;
   padding:20px;
@@ -206,7 +196,6 @@ footer{
   background: rgba(255,255,255,0.05);
   border-radius:15px;
 }
-
 @media(max-width:768px){
   .gauges{flex-direction:column; align-items:center;}
   .gauge-container{width:80%;}
@@ -216,7 +205,7 @@ footer{
 </head>
 <body data-theme="dark">
 
-<canvas id="particlesCanvas"></canvas>
+<canvas id="bgCanvas"></canvas>
 
 <header>
   <h1>Velocity Test</h1>
@@ -260,10 +249,9 @@ footer{
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
 // Theme toggle
-const themeBtn = document.getElementById('themeToggle');
-themeBtn.addEventListener('click', () => {
+document.getElementById('themeToggle').addEventListener('click',()=>{
   const current = document.body.getAttribute('data-theme');
-  document.body.setAttribute('data-theme', current==='dark'?'light':'dark');
+  document.body.setAttribute('data-theme',current==='dark'?'light':'dark');
 });
 
 // Server List
@@ -272,45 +260,37 @@ const servers = [
   {name:"US Server", url:"https://speedtest.tele2.net/upload.php"},
   {name:"Germany Server", url:"https://speedtest.tele2.net/upload.php"},
 ];
-const serverSelect = document.getElementById('serverSelect');
-servers.forEach((s,i)=>{
-  const opt = document.createElement('option');
-  opt.value=i;
-  opt.textContent=s.name;
-  serverSelect.appendChild(opt);
-});
+const serverSelect=document.getElementById('serverSelect');
+servers.forEach((s,i)=>{const o=document.createElement('option');o.value=i;o.textContent=s.name;serverSelect.appendChild(o);});
 
-// Gauges with needle animation
-const downloadCanvas = document.getElementById('downloadGauge');
-const uploadCanvas = document.getElementById('uploadGauge');
-const dctx = downloadCanvas.getContext('2d');
-const uctx = uploadCanvas.getContext('2d');
+// Gauges
+const downloadCanvas=document.getElementById('downloadGauge');
+const uploadCanvas=document.getElementById('uploadGauge');
+const dctx=downloadCanvas.getContext('2d');
+const uctx=uploadCanvas.getContext('2d');
 
-function drawGauge(ctx, percent, color){
-  const radius = ctx.canvas.width/2 -10;
+function drawGauge(ctx,percent,color){
+  const r=ctx.canvas.width/2-10;
   ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
-
   // Background circle
   ctx.beginPath();
-  ctx.arc(ctx.canvas.width/2, ctx.canvas.height/2, radius, 0, 2*Math.PI);
-  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--card-bg');
+  ctx.arc(ctx.canvas.width/2,ctx.canvas.height/2,r,0,2*Math.PI);
+  ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--card-bg');
   ctx.fill();
-
   // Neon arc
   ctx.beginPath();
-  ctx.arc(ctx.canvas.width/2, ctx.canvas.height/2, radius, -Math.PI/2, -Math.PI/2 + 2*Math.PI*percent/100);
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 12;
+  ctx.arc(ctx.canvas.width/2,ctx.canvas.height/2,r,-Math.PI/2,-Math.PI/2+2*Math.PI*percent/100);
+  ctx.strokeStyle=color;
+  ctx.lineWidth=12;
   ctx.shadowBlur=20;
   ctx.shadowColor=color;
   ctx.stroke();
-
   // Needle
-  const angle = -Math.PI/2 + 2*Math.PI*percent/100;
-  const x = ctx.canvas.width/2 + radius*0.85*Math.cos(angle);
-  const y = ctx.canvas.height/2 + radius*0.85*Math.sin(angle);
+  const angle=-Math.PI/2+2*Math.PI*percent/100;
+  const x=ctx.canvas.width/2+r*0.85*Math.cos(angle);
+  const y=ctx.canvas.height/2+r*0.85*Math.sin(angle);
   ctx.beginPath();
-  ctx.moveTo(ctx.canvas.width/2, ctx.canvas.height/2);
+  ctx.moveTo(ctx.canvas.width/2,ctx.canvas.height/2);
   ctx.lineTo(x,y);
   ctx.strokeStyle="#ff0000";
   ctx.lineWidth=3;
@@ -318,110 +298,86 @@ function drawGauge(ctx, percent, color){
   ctx.stroke();
 }
 
-function animateGauge(ctx, target, id, color){
-  let val = 0;
-  const step = target/50;
-  const interval = setInterval(()=>{
-    if(val >= target) { clearInterval(interval); val = target; }
-    drawGauge(ctx, val, color);
-    document.getElementById(id).textContent = val.toFixed(2);
-    val += step;
+function animateGauge(ctx,target,id,color){
+  let val=0;
+  const step=target/50;
+  const interval=setInterval(()=>{
+    if(val>=target){clearInterval(interval);val=target;}
+    drawGauge(ctx,val,color);
+    document.getElementById(id).textContent=val.toFixed(2);
+    val+=step;
   },20);
 }
 
 // IP + Location + ISP
 async function fetchIPInfo(){
   try{
-    const res = await fetch('https://ipapi.co/json/');
-    const data = await res.json();
-    document.getElementById('ip').textContent = data.ip;
-    document.getElementById('location').textContent = data.city + ", " + data.country_name;
-    document.getElementById('isp').textContent = data.org;
-  }catch(e){
-    console.log("IP info error",e);
-  }
+    const res=await fetch('https://ipapi.co/json/');
+    const data=await res.json();
+    document.getElementById('ip').textContent=data.ip;
+    document.getElementById('location').textContent=data.city+", "+data.country_name;
+    document.getElementById('isp').textContent=data.org;
+  }catch(e){console.log(e);}
 }
 
-// Dummy Free Speed Test
+// Dummy Speed Test
 function runTest(){
-  const server = servers[serverSelect.value];
-  document.getElementById('startBtn').disabled = true;
-
-  const ping = (Math.random()*50+10).toFixed(0);
-  const jitter = (Math.random()*20+5).toFixed(0);
-  document.getElementById('ping').textContent = ping;
-  document.getElementById('jitter').textContent = jitter;
-
-  const download = (Math.random()*90+10).toFixed(2);
-  const upload = (Math.random()*50+5).toFixed(2);
-  animateGauge(dctx, download, 'downloadSpeed', getComputedStyle(document.body).getPropertyValue('--accent-color'));
-  animateGauge(uctx, upload, 'uploadSpeed', getComputedStyle(document.body).getPropertyValue('--accent-color'));
-
+  const server=servers[serverSelect.value];
+  document.getElementById('startBtn').disabled=true;
+  const ping=(Math.random()*50+10).toFixed(0);
+  const jitter=(Math.random()*20+5).toFixed(0);
+  document.getElementById('ping').textContent=ping;
+  document.getElementById('jitter').textContent=jitter;
+  const download=(Math.random()*90+10).toFixed(2);
+  const upload=(Math.random()*50+5).toFixed(2);
+  animateGauge(dctx,download,'downloadSpeed',getComputedStyle(document.body).getPropertyValue('--accent-color'));
+  animateGauge(uctx,upload,'uploadSpeed',getComputedStyle(document.body).getPropertyValue('--accent-color'));
   // Save history
-  let history = JSON.parse(localStorage.getItem('speedHistory')||"[]");
-  history.unshift({
-    date: new Date().toLocaleString(),
-    download, upload, ping, jitter,
-    ip:document.getElementById('ip').textContent,
-    location:document.getElementById('location').textContent,
-    isp:document.getElementById('isp').textContent
-  });
-  if(history.length>10) history.pop();
-  localStorage.setItem('speedHistory', JSON.stringify(history));
-
-  document.getElementById('startBtn').disabled = false;
+  let h=JSON.parse(localStorage.getItem('speedHistory')||"[]");
+  h.unshift({date:new Date().toLocaleString(),download,upload,ping,jitter,ip:document.getElementById('ip').textContent,location:document.getElementById('location').textContent,isp:document.getElementById('isp').textContent});
+  if(h.length>10) h.pop();
+  localStorage.setItem('speedHistory',JSON.stringify(h));
+  document.getElementById('startBtn').disabled=false;
 }
+document.getElementById('startBtn').addEventListener('click',()=>{fetchIPInfo();runTest();});
 
-document.getElementById('startBtn').addEventListener('click', ()=>{
-  fetchIPInfo();
-  runTest();
-});
-
-// Share Result Image
-document.getElementById('shareBtn').addEventListener('click', ()=>{
-  html2canvas(document.querySelector('main')).then(canvas=>{
-    const link = document.createElement('a');
-    link.download = 'speed-test.png';
-    link.href = canvas.toDataURL();
-    link.click();
+// Share Result
+document.getElementById('shareBtn').addEventListener('click',()=>{
+  html2canvas(document.querySelector('main')).then(c=>{
+    const l=document.createElement('a');l.download='speed-test.png';l.href=c.toDataURL();l.click();
   });
 });
 
-// Particles background
-const canvas = document.getElementById('particlesCanvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-const particles = [];
-for(let i=0;i<100;i++){
-  particles.push({
-    x: Math.random()*canvas.width,
-    y: Math.random()*canvas.height,
-    r: Math.random()*2+1,
-    dx: (Math.random()-0.5)*1,
-    dy: (Math.random()-0.5)*1,
-    color: `rgba(0,255,255,${Math.random()})`
-  });
-}
-
-function drawParticles(){
+// Neon Grid + Particles
+const canvas=document.getElementById('bgCanvas');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+const particles=[];
+const gridSpacing=50;
+for(let i=0;i<150;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,dx:(Math.random()-0.5)*1,dy:(Math.random()-0.5)*1,color:`rgba(0,255,255,${Math.random()})`});}
+let mouse={x:canvas.width/2,y:canvas.height/2};
+window.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;});
+function drawBackground(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
+  // Grid
+  ctx.strokeStyle='rgba(0,255,255,0.05)';
+  ctx.lineWidth=1;
+  for(let x=0;x<canvas.width;x+=gridSpacing){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke();}
+  for(let y=0;y<canvas.height;y+=gridSpacing){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke();}
+  // Particles
   particles.forEach(p=>{
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,2*Math.PI);
-    ctx.fillStyle = p.color;
-    ctx.fill();
-    p.x+=p.dx;
-    p.y+=p.dy;
-    if(p.x<0) p.x=canvas.width;
-    if(p.x>canvas.width) p.x=0;
-    if(p.y<0) p.y=canvas.height;
-    if(p.y>canvas.height) p.y=0;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,2*Math.PI);ctx.fillStyle=p.color;ctx.fill();
+    // Move slightly towards mouse
+    p.x+=p.dx+(mouse.x-canvas.width/2)*0.0005;
+    p.y+=p.dy+(mouse.y-canvas.height/2)*0.0005;
+    if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;
+    if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;
   });
-  requestAnimationFrame(drawParticles);
+  requestAnimationFrame(drawBackground);
 }
-drawParticles();
-window.addEventListener('resize',()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
+drawBackground();
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
 </script>
 </body>
 </html>
