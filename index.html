@@ -1,207 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-<title>Velocity Speed Test</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Velocity Gaming Speed Test</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 <style>
-/* ------------------ RESET ------------------ */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", Arial, sans-serif;
-}
+  :root {
+    --bg-color: #0a0a0a;
+    --accent-color: #00ffea;
+    --text-color: #ffffff;
+    --gauge-bg: #111111;
+  }
+  [data-theme="light"] {
+    --bg-color: #f5f5f5;
+    --text-color: #0a0a0a;
+    --gauge-bg: #ddd;
+    --accent-color: #0077ff;
+  }
 
-/* ------------------ LIGHT THEME ------------------ */
-body {
-  background: url("background.jpg") no-repeat center/cover fixed;
-  color: #000;
-  transition: 0.3s ease-in-out;
-}
+  body {
+    margin:0;
+    font-family: 'Orbitron', sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    min-height:100vh;
+  }
 
-/* ------------------ DARK THEME ------------------ */
-body.dark {
-  background: #020b1a;
-  color: #d7e3ff;
-}
+  header {
+    width:100%;
+    padding:15px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background: rgba(0,0,0,0.6);
+    box-shadow:0 0 20px var(--accent-color);
+  }
+  header h1 { margin:0; font-size:1.5rem; }
+  button#themeToggle {
+    background:none; border:2px solid var(--accent-color); padding:5px 10px; color:var(--accent-color); cursor:pointer; border-radius:5px;
+  }
 
-/* ------------------ OVERLAY ------------------ */
+  main { padding:20px; width:100%; max-width:900px; }
+  .gauges { display:flex; flex-wrap:wrap; justify-content:space-around; margin-bottom:20px; }
+  .gauge-container { text-align:center; margin:20px; }
+  canvas { background: var(--gauge-bg); border-radius:50%; }
 
-/* Light Mode → Very transparent so image is visible */
-.overlay {
-  position: fixed;
-  inset: 0;
-  backdrop-filter: blur(1.5px);
-  background: rgba(255,255,255,0.10);
-  transition: 0.3s;
-}
+  .info { display:flex; flex-wrap:wrap; justify-content:space-around; margin-bottom:20px; }
+  .info div { margin:10px; padding:10px 15px; background: rgba(0,0,0,0.3); border-radius:10px; min-width:120px; text-align:center; }
 
-/* Dark Mode → More opacity for clarity */
-body.dark .overlay {
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(4px);
-}
+  #serverSelect { padding:5px 10px; margin-bottom:20px; border-radius:5px; }
 
-/* ------------------ HEADER ------------------ */
-.header {
-  width: 100%;
-  padding: 20px;
-  text-align: center;
-  font-size: 32px;
-  font-weight: bold;
-  margin-top: 20px;
-  backdrop-filter: blur(4px);
-  color: inherit;
-}
+  #startBtn {
+    padding:10px 20px;
+    font-size:1.1rem;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    background: var(--accent-color);
+    color:#000;
+    box-shadow:0 0 20px var(--accent-color);
+    margin-bottom:20px;
+    transition:0.3s;
+  }
+  #startBtn:hover { box-shadow:0 0 40px var(--accent-color); transform:scale(1.05); }
 
-/* ------------------ CARD ------------------ */
-.card {
-  width: 90%;
-  max-width: 420px;
-  margin: 40px auto;
-  padding: 25px;
-  border-radius: 18px;
-  background: rgba(255,255,255,0.65);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-  text-align: center;
-  transition: 0.3s;
-}
-body.dark .card {
-  background: rgba(0,10,40,0.75);
-  box-shadow: 0 0 25px rgba(0,148,255,0.35);
-  color: #d7e3ff;
-}
+  #results { margin-top:20px; text-align:center; }
+  #results button { margin-top:10px; padding:8px 12px; cursor:pointer; border:none; border-radius:5px; background: var(--accent-color); color:#000; }
 
-/* ------------------ BUTTON ------------------ */
-button {
-  width: 180px;
-  padding: 14px;
-  border-radius: 10px;
-  background: #0056ff;
-  color: white;
-  border: none;
-  font-size: 18px;
-  margin-top: 18px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-button:hover {
-  background: #003fcc;
-}
-body.dark button {
-  background: #00aaff;
-}
-body.dark button:hover {
-  background: #0088cc;
-}
-
-/* ------------------ THEME SWITCH ------------------ */
-.theme-toggle {
-  position: fixed;
-  top: 15px;
-  right: 20px;
-  cursor: pointer;
-  padding: 10px 16px;
-  border-radius: 50px;
-  font-size: 15px;
-  background: rgba(255,255,255,0.7);
-  backdrop-filter: blur(5px);
-  border: 1px solid #ccc;
-}
-body.dark .theme-toggle {
-  background: rgba(0,0,0,0.4);
-  border: 1px solid #00b7ff;
-  color: #00d0ff;
-}
-
-/* ------------------ RESULTS ------------------ */
-.result-box {
-  margin-top: 20px;
-  padding: 18px;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.85);
-  font-size: 20px;
-  font-weight: 600;
-  backdrop-filter: blur(3px);
-}
-body.dark .result-box {
-  background: rgba(0,0,0,0.35);
-  border: 1px solid #0094ff;
-  color: #d7e3ff;
-}
-
-/* ------------------ LOADER ------------------ */
-.loader {
-  margin: 18px auto 0;
-  width: 28px;
-  height: 28px;
-  border: 3px solid transparent;
-  border-top: 3px solid #0056ff;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  display: none;
-}
-body.dark .loader {
-  border-top-color: #00d0ff;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
+  footer { width:100%; padding:15px; text-align:center; margin-top:auto; background: rgba(0,0,0,0.6); box-shadow:0 -2px 20px var(--accent-color);}
+  footer #ads { margin-top:10px; height:60px; background: rgba(255,255,255,0.1); line-height:60px; color:var(--text-color); font-weight:bold; }
 </style>
 </head>
-<body>
+<body data-theme="dark">
 
-<div class="overlay"></div>
+<header>
+  <h1>Velocity Test</h1>
+  <button id="themeToggle">Toggle Theme</button>
+</header>
 
-<!-- THEME SWITCH -->
-<div class="theme-toggle" id="themeSwitch">Light / Dark</div>
+<main>
+  <div class="gauges">
+    <div class="gauge-container">
+      <canvas id="downloadGauge" width="200" height="200"></canvas>
+      <p>Download <span id="downloadSpeed">0</span> Mbps</p>
+    </div>
+    <div class="gauge-container">
+      <canvas id="uploadGauge" width="200" height="200"></canvas>
+      <p>Upload <span id="uploadSpeed">0</span> Mbps</p>
+    </div>
+  </div>
 
-<!-- HEADER -->
-<div class="header">Velocity Speed Test</div>
+  <div class="info">
+    <div>Ping: <span id="ping">0</span> ms</div>
+    <div>Jitter: <span id="jitter">0</span> ms</div>
+    <div>IP: <span id="ip">-</span></div>
+    <div>Location: <span id="location">-</span></div>
+    <div>ISP: <span id="isp">-</span></div>
+  </div>
 
-<!-- CARD -->
-<div class="card">
-  <h2>Check Your Internet Speed</h2>
-  
-  <button onclick="startTest()">Start Test</button>
-  
-  <div class="loader" id="loader"></div>
+  <select id="serverSelect"></select>
+  <br>
+  <button id="startBtn">Start Test</button>
 
-  <div class="result-box" id="download">Download: -- Mbps</div>
-  <div class="result-box" id="upload">Upload: -- Mbps</div>
-  <div class="result-box" id="ping">Ping: -- ms</div>
-</div>
+  <div id="results">
+    <button id="shareBtn">Share Result Image</button>
+  </div>
+</main>
 
+<footer>
+  <div>© 2025 Velocity Test</div>
+  <div id="ads">Ads Space</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
-/* THEME SWITCH */
-document.getElementById("themeSwitch").onclick = () => {
-  document.body.classList.toggle("dark");
-};
+const themeBtn = document.getElementById('themeToggle');
+themeBtn.addEventListener('click', () => {
+  const current = document.body.getAttribute('data-theme');
+  document.body.setAttribute('data-theme', current==='dark'?'light':'dark');
+});
 
-/* SPEED TEST (frontend simulation) */
-function startTest() {
-  document.getElementById("loader").style.display = "block";
+// Server List
+const servers = [
+  {name:"Pakistan Server", url:"https://speedtest.pk/speedtest/upload.php"},
+  {name:"US Server", url:"https://speedtest.tele2.net/upload.php"},
+  {name:"Germany Server", url:"https://speedtest.tele2.net/upload.php"},
+];
+const serverSelect = document.getElementById('serverSelect');
+servers.forEach((s,i)=>{
+  const opt = document.createElement('option');
+  opt.value=i;
+  opt.textContent=s.name;
+  serverSelect.appendChild(opt);
+});
 
-  setTimeout(() => {
-    document.getElementById("loader").style.display = "none";
+// Gauges
+const downloadCanvas = document.getElementById('downloadGauge');
+const uploadCanvas = document.getElementById('uploadGauge');
+const dctx = downloadCanvas.getContext('2d');
+const uctx = uploadCanvas.getContext('2d');
 
-    let download = (20 + Math.random() * 60).toFixed(1);
-    let upload = (5 + Math.random() * 25).toFixed(1);
-    let ping = (5 + Math.random() * 50).toFixed(0);
+function drawGauge(ctx, percent, color){
+  const radius = ctx.canvas.width/2 -10;
+  ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+  ctx.beginPath();
+  ctx.arc(ctx.canvas.width/2, ctx.canvas.height/2, radius, 0, 2*Math.PI);
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--gauge-bg');
+  ctx.fill();
 
-    document.getElementById("download").innerHTML = "Download: " + download + " Mbps";
-    document.getElementById("upload").innerHTML = "Upload: " + upload + " Mbps";
-    document.getElementById("ping").innerHTML = "Ping: " + ping + " ms";
-
-  }, 2000);
+  ctx.beginPath();
+  ctx.arc(ctx.canvas.width/2, ctx.canvas.height/2, radius, -Math.PI/2, -Math.PI/2 + 2*Math.PI*percent/100);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 10;
+  ctx.stroke();
 }
-</script>
 
+function animateGauge(ctx, target, id, color){
+  let val = 0;
+  const step = target/50;
+  const interval = setInterval(()=>{
+    if(val >= target) { clearInterval(interval); val = target; }
+    drawGauge(ctx, val, color);
+    document.getElementById(id).textContent = val.toFixed(2);
+    val += step;
+  },20);
+}
+
+// IP + Location + ISP
+async function fetchIPInfo(){
+  try{
+    const res = await fetch('https://ipapi.co/json/');
+    const data = await res.json();
+    document.getElementById('ip').textContent = data.ip;
+    document.getElementById('location').textContent = data.city + ", " + data.country_name;
+    document.getElementById('isp').textContent = data.org;
+  }catch(e){
+    console.log("IP info error",e);
+  }
+}
+
+// Dummy Free Speed Test (basic)
+function runTest(){
+  const server = servers[serverSelect.value];
+  document.getElementById('startBtn').disabled = true;
+
+  // Dummy Ping & Jitter
+  const ping = (Math.random()*50+10).toFixed(0);
+  const jitter = (Math.random()*20+5).toFixed(0);
+  document.getElementById('ping').textContent = ping;
+  document.getElementById('jitter').textContent = jitter;
+
+  // Dummy Download & Upload (simulate)
+  const download = (Math.random()*90+10).toFixed(2);
+  const upload = (Math.random()*50+5).toFixed(2);
+  animateGauge(dctx, download, 'downloadSpeed', getComputedStyle(document.body).getPropertyValue('--accent-color'));
+  animateGauge(uctx, upload, 'uploadSpeed', getComputedStyle(document.body).getPropertyValue('--accent-color'));
+
+  // Save to history
+  let history = JSON.parse(localStorage.getItem('speedHistory')||"[]");
+  history.unshift({
+    date: new Date().toLocaleString(),
+    download, upload, ping, jitter,
+    ip:document.getElementById('ip').textContent,
+    location:document.getElementById('location').textContent,
+    isp:document.getElementById('isp').textContent
+  });
+  if(history.length>10) history.pop();
+  localStorage.setItem('speedHistory', JSON.stringify(history));
+
+  document.getElementById('startBtn').disabled = false;
+}
+
+document.getElementById('startBtn').addEventListener('click', ()=>{
+  fetchIPInfo();
+  runTest();
+});
+
+// Share Result Image
+document.getElementById('shareBtn').addEventListener('click', ()=>{
+  html2canvas(document.querySelector('main')).then(canvas=>{
+    const link = document.createElement('a');
+    link.download = 'speed-test.png';
+    link.href = canvas.toDataURL();
+    link.click();
+  });
+});
+</script>
 </body>
 </html>
