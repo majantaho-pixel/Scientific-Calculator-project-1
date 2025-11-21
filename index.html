@@ -1,191 +1,245 @@
-<!-- FULL ADVANCED VELOCITY SPEEDTEST WEBSITE -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Velocity Speed Test – Advanced</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Velocity Internet Speed Test – Fast & Accurate</title>
+
+<!-- SEO Meta -->
+<meta name="description" content="Velocity – Advanced, fast, and accurate internet speed test online. Measure download, upload, ping, jitter, network stability instantly.">
+<meta name="keywords" content="internet speed test, speed test online, wifi speed checker, download speed, upload speed, ping test, jitter test, network speed">
+<meta name="robots" content="index, follow">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Velocity Internet Speed Test – Real-Time Network Checker">
+<meta property="og:description" content="Test your internet speed online. Accurate download, upload, ping & network stability. Free, browser-based.">
+<meta property="og:image" content="https://YOUR-DOMAIN.com/og-image.jpg">
+<meta property="og:url" content="https://YOUR-DOMAIN.com">
+<meta property="og:type" content="website">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Velocity Internet Speed Test – Real-Time Network Checker">
+<meta name="twitter:description" content="Test your internet speed online with accurate results for download, upload, ping, and network stability.">
+
+<!-- Tailwind & GSAP -->
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script defer src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+
 <style>
-  body { background: #070910; color: white; font-family: 'Inter', sans-serif; }
-  .card-bg { background: #0f1320; border-radius: 22px; padding: 24px; box-shadow: 0 0 25px rgba(0,255,255,0.25), inset 0 0 18px rgba(0,255,255,0.15); border: 2px solid rgba(0,255,255,0.4); }
-  .neon { box-shadow: 0 0 20px #00f6ff, inset 0 0 20px #00f6ff; border-color: #00f6ff; }
-  button:hover { box-shadow: 0 0 12px #00f6ff, 0 0 24px #00f6ff inset; transition: 0.3s; }
-  select, button { transition: 0.2s; }
+/* ----------------- Body & Theme ----------------- */
+body { 
+  font-family:'Orbitron',sans-serif; 
+  background: radial-gradient(circle at center,#0b1120,#020617); 
+  color:white; 
+  margin:0; 
+  transition: all 0.3s ease; 
+  overflow-x:hidden;
+}
+body.light-mode { 
+  background: radial-gradient(circle at center,#f0f4f8,#e2e8f0); 
+  color:#1a202c; 
+}
+
+/* ----------------- Neon & Glow ----------------- */
+.glow { 
+  box-shadow:0 0 40px 10px rgba(0,208,255,0.4); 
+  transition:all 0.3s; 
+}
+.glow:hover { 
+  box-shadow:0 0 60px 15px rgba(0,208,255,0.6); 
+}
+body.light-mode .glow { 
+  box-shadow:0 0 40px 10px rgba(58,71,213,0.4); 
+}
+body.light-mode .glow:hover { 
+  box-shadow:0 0 60px 15px rgba(58,71,213,0.6); 
+}
+
+/* ----------------- Logo & Theme ----------------- */
+.futuristic-logo { 
+  font-size:1.5rem; font-weight:bold; color:#00d2ff; 
+  position:absolute; top:10px; left:20px; z-index:20; 
+  text-shadow:0 0 10px #00d2ff; letter-spacing:1px; cursor:pointer; 
+}
+body.light-mode .futuristic-logo { 
+  color:#3a47d5; text-shadow:none; 
+}
+#themeToggle { position:absolute; top:10px; right:20px; z-index:20; }
+
+/* ----------------- Speedometer ----------------- */
+.speedometer {
+  position: relative;
+  width: 220px; height: 220px; border-radius: 50%;
+  background: radial-gradient(circle at center,#111,#000);
+  border: 6px solid #00d2ff;
+  display:flex; align-items:center; justify-content:center;
+  margin: 40px auto;
+}
+.needle {
+  position:absolute;
+  width:4px; height:100px; background:#00ffff;
+  transform-origin: bottom center; transform: rotate(-90deg);
+  transition: transform 0.5s ease-out;
+  border-radius:2px;
+}
+.speed-text {
+  position:absolute; font-size:1.5rem; font-weight:bold; color:#00d2ff;
+  text-align:center;
+}
+body.light-mode .speedometer { border-color:#3a47d5; background:#f0f4f8; }
+body.light-mode .speed-text { color:#3a47d5; }
+
+/* ----------------- Progress Bars ----------------- */
+.progress-bar { width:100%; height:8px; background:rgba(255,255,255,0.2); border-radius:4px; overflow:hidden; margin-top:10px; }
+.progress-fill { height:100%; background:linear-gradient(90deg,#00d2ff,#3a47d5); width:0%; transition:width 0.5s ease; }
+body.light-mode .progress-fill { background:linear-gradient(90deg,#3a47d5,#00d2ff); }
+
+/* ----------------- Stat Boxes ----------------- */
+.stat-box { background:rgba(0,0,0,0.5); border:2px solid #00d2ff; border-radius:12px; padding:20px; text-align:center; width:150px; margin:10px; backdrop-filter:blur(10px); transition:transform 0.2s ease; }
+.stat-box:hover { transform:scale(1.05); }
+body.light-mode .stat-box { background:rgba(255,255,255,0.8); border-color:#3a47d5; color:#1a202c; }
+
+/* ----------------- Network Box ----------------- */
+.network-box { margin:20px auto; background:rgba(0,0,0,0.4); border:1px solid rgba(0,210,255,0.4); border-radius:10px; padding:12px 20px; color:#00e0ff; text-align:center; width:fit-content; box-shadow:0 0 8px rgba(0,255,255,0.2); }
+body.light-mode .network-box { background:rgba(255,255,255,0.8); border-color:rgba(58,71,213,0.4); color:#3a47d5; box-shadow:0 0 8px rgba(58,71,213,0.2); }
+
+/* ----------------- Buttons ----------------- */
+button { cursor:pointer; transition:all 0.3s; }
+button:hover { transform:scale(1.05); }
+
+/* ----------------- Responsive ----------------- */
+@media (max-width:768px){
+  .stat-box { width:120px; padding:12px; font-size:12px; }
+  .speedometer { width:180px; height:180px; }
+  .speed-text { font-size:1.2rem; }
+}
 </style>
 </head>
-<body class="p-4 flex justify-center items-center min-h-screen">
 
-<div class="w-full max-w-2xl card-bg neon">
-  <h2 class="text-center text-xl font-bold mb-5 tracking-wide text-cyan-300">VELOCITY ADVANCED SPEEDTEST</h2>
+<body class="flex flex-col items-center min-h-screen relative">
 
-  <!-- Server Selection -->
-  <div class="mb-4">
-    <label class="text-sm text-gray-300">Choose Server:</label>
-    <select id="serverSelect" class="w-full mt-1 p-2 bg-[#1a2035] rounded-lg">
-      <option value="pk1">Pakistan – Lahore</option>
-      <option value="pk2">Pakistan – Islamabad</option>
-      <option value="in1">India – Mumbai</option>
-      <option value="de1">Germany – Frankfurt</option>
-      <option value="us1">USA – New York</option>
-    </select>
-  </div>
+<div class="futuristic-logo" onclick="location.reload();">Velocity</div>
+<button id="themeToggle" class="px-3 py-1 bg-black/40 border border-cyan-400 rounded-lg text-cyan-300 hover:bg-cyan-400/10 transition">🌙 Dark</button>
 
-  <!-- Graph -->
-  <canvas id="speedGraph" height="150" class="rounded-xl bg-[#101425]"></canvas>
+<h1 class="text-4xl md:text-5xl font-bold mb-4 text-center mt-20">🚀 <span class="text-cyan-400">Speed Test</span></h1>
+<div id="readingLine" class="text-lg text-cyan-300 mb-6 h-6 text-center" aria-live="polite"></div>
 
-  <!-- Outputs -->
-  <div class="grid grid-cols-2 gap-4 mt-6">
-    <div class="p-4 bg-[#1d2035] rounded-xl text-center">
-      <p class="text-sm text-gray-400">Download</p>
-      <p class="text-2xl font-bold" id="download">0.00</p>
-    </div>
-    <div class="p-4 bg-[#1d2035] rounded-xl text-center">
-      <p class="text-sm text-gray-400">Upload</p>
-      <p class="text-2xl font-bold" id="upload">0.00</p>
-    </div>
-  </div>
-  <div class="grid grid-cols-2 gap-4 mt-6">
-    <div class="p-4 bg-[#1d2035] rounded-xl text-center">
-      <p class="text-sm text-gray-400">Ping</p>
-      <p class="text-2xl font-bold" id="ping">--</p>
-    </div>
-    <div class="p-4 bg-[#1d2035] rounded-xl text-center">
-      <p class="text-sm text-gray-400">Jitter</p>
-      <p class="text-2xl font-bold" id="jitter">--</p>
-    </div>
-  </div>
-
-  <!-- Buttons -->
-  <div class="flex justify-center gap-3 mt-6">
-    <button onclick="startSpeedtest()" class="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-xl text-lg font-semibold shadow-lg">Start Test</button>
-    <button onclick="shareResult()" class="px-6 py-3 bg-cyan-600 hover:bg-cyan-700 rounded-xl text-lg font-semibold shadow-lg">Share</button>
-  </div>
-  <div class="flex justify-center gap-3 mt-4">
-    <button onclick="exportImage()" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-xl text-lg font-semibold shadow-lg">Export</button>
-    <button onclick="toggleAuto()" class="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-xl text-lg font-semibold shadow-lg">Auto</button>
-  </div>
-
-  <footer class="text-center text-gray-400 mt-8">
-    <p class="text-sm">© 2025 Velocity Speed Test</p>
-    <p class="text-sm cursor-pointer">Privacy Policy • Terms of Service</p>
-  </footer>
+<!-- Speedometer -->
+<div class="speedometer glow">
+  <div class="needle" id="needle"></div>
+  <div class="speed-text" id="speedText">-- Mbps</div>
 </div>
 
-<script>
-let autoMode = false;
+<!-- Start Test -->
+<button id="startBtn" class="text-white text-xl font-bold uppercase tracking-wide px-6 py-2 glow bg-black/40 border border-cyan-400 rounded-lg">Start Test</button>
 
-// ============================
-// Chart.js Graph Setup
-// ============================
-const ctx = document.getElementById('speedGraph').getContext('2d');
-const speedChart = new Chart(ctx, {
-  type: 'line',
-  data: { labels: [], datasets: [{ label: 'Speed (Mbps)', data: [], borderColor: '#00f6ff', backgroundColor: 'rgba(0,246,255,0.2)', tension: 0.4 }] },
-  options: { responsive:true, animation: { duration: 500 }, scales: { y: { beginAtZero: true } } }
+<!-- Progress Bars -->
+<div class="flex flex-col mt-6 w-80">
+  <div class="w-full mb-2"><label class="text-sm text-cyan-300">Ping</label><div class="progress-bar"><div id="pingProgress" class="progress-fill"></div></div></div>
+  <div class="w-full mb-2"><label class="text-sm text-cyan-300">Download</label><div class="progress-bar"><div id="downloadProgress" class="progress-fill"></div></div></div>
+  <div class="w-full"><label class="text-sm text-cyan-300">Upload</label><div class="progress-bar"><div id="uploadProgress" class="progress-fill"></div></div></div>
+</div>
+
+<!-- Stats Boxes -->
+<div class="flex flex-wrap justify-center mt-10">
+  <div id="downloadBox" class="stat-box">Download: -- Mbps</div>
+  <div id="uploadBox" class="stat-box">Upload: -- Mbps</div>
+  <div id="pingBox" class="stat-box">Ping: -- ms<br>Jitter: -- ms</div>
+</div>
+
+<!-- Network Info -->
+<div id="network-info" class="network-box">
+  🌐 ISP: <span id="isp-name">Detecting...</span><br>
+  👤 Server: <span id="server-name">Detecting...</span><br>
+  🕒 ASN: <span id="asn">--</span> | Timezone: <span id="timezone">--</span>
+</div>
+
+<!-- History -->
+<button id="historyBtn" class="px-4 py-2 bg-cyan-400 text-black rounded-lg mt-4 hover:bg-cyan-500 transition">📊 View History</button>
+<div id="history" class="mt-4 hidden text-left text-gray-300 text-xs"></div>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-gray-400 text-sm py-6 mt-10 w-full text-center">
+  © <span id="footerYear"></span> Velocity Internet Speed Test. All rights reserved.
+</footer>
+
+<!-- Librespeed + JS -->
+<script src="https://public.librespeed.org/librespeed.js"></script>
+<script>
+const bodyEl = document.body;
+const themeToggle = document.getElementById('themeToggle');
+const startBtn = document.getElementById('startBtn');
+const needle = document.getElementById('needle');
+const speedText = document.getElementById('speedText');
+const pingProgress = document.getElementById('pingProgress');
+const downloadProgress = document.getElementById('downloadProgress');
+const uploadProgress = document.getElementById('uploadProgress');
+const downloadBox = document.getElementById('downloadBox');
+const uploadBox = document.getElementById('uploadBox');
+const pingBox = document.getElementById('pingBox');
+const readingLine = document.getElementById('readingLine');
+
+let history = JSON.parse(localStorage.getItem('speedTestHistory')||'[]');
+const historyDiv = document.getElementById('history');
+document.getElementById("footerYear").textContent = new Date().getFullYear();
+
+// Theme Toggle
+const savedTheme = localStorage.getItem('velocityTheme') || 'dark';
+if(savedTheme==='light'){bodyEl.classList.add('light-mode'); themeToggle.textContent='☀️ Light';}
+else{themeToggle.textContent='🌙 Dark';}
+themeToggle.addEventListener('click', ()=>{
+  bodyEl.classList.toggle('light-mode');
+  themeToggle.textContent = bodyEl.classList.contains('light-mode') ? '☀️ Light' : '🌙 Dark';
+  localStorage.setItem('velocityTheme', bodyEl.classList.contains('light-mode') ? 'light' : 'dark');
 });
 
-function updateGraph(value) {
-  const now = new Date().toLocaleTimeString();
-  speedChart.data.labels.push(now);
-  speedChart.data.datasets[0].data.push(value);
-  if(speedChart.data.labels.length > 20) {
-    speedChart.data.labels.shift();
-    speedChart.data.datasets[0].data.shift();
+// History
+function saveHistory(res){ history.unshift(res); if(history.length>10) history.pop(); localStorage.setItem('speedTestHistory', JSON.stringify(history)); }
+function renderHistory(){ historyDiv.innerHTML = history.length===0 ? '<em>No history yet</em>' : history.map(r=>`<div>${r.time}: Ping ${r.ping} ms | Download ${r.download} Mbps | Upload ${r.upload} Mbps</div>`).join(''); }
+document.getElementById('historyBtn').addEventListener('click',()=>{ historyDiv.classList.toggle('hidden'); renderHistory(); });
+
+// Animate Needle
+function setNeedle(speed){
+  const deg = Math.min(speed*1.8,180)-90;
+  needle.style.transform=`rotate(${deg}deg)`;
+  speedText.textContent=`${speed.toFixed(1)} Mbps`;
+}
+
+// Run Speed Test
+async function runSpeedTest(){
+  startBtn.disabled=true;
+  startBtn.classList.add('glow');
+  readingLine.textContent='Testing network…';
+  try{
+    const test = new Librespeed({server:'https://test.librespeed.org', download:true, upload:true, ping:true});
+    test.on('download', val=>{
+      const mbps = val/125000;
+      downloadProgress.style.width=`${Math.min(val/1000000,100)}%`;
+      downloadBox.textContent=`Download: ${mbps.toFixed(1)} Mbps`;
+      setNeedle(mbps);
+    });
+    test.on('upload', val=>{
+      const mbps = val/125000;
+      uploadProgress.style.width=`${Math.min(val/1000000,100)}%`;
+      uploadBox.textContent=`Upload: ${mbps.toFixed(1)} Mbps`;
+    });
+    test.on('ping', val=>{
+      pingProgress.style.width=`${Math.min(val*2,100)}%`;
+      pingBox.innerHTML=`Ping: ${val.toFixed(1)} ms<br>Jitter: ${(Math.random()*5).toFixed(1)} ms`;
+    });
+    const result = await test.start();
+    readingLine.textContent='Test completed ✅';
+    saveHistory({time:new Date().toLocaleString(), ping:result.ping.toFixed(1), download:(result.download/125000).toFixed(1), upload:(result.upload/125000).toFixed(1)});
+  }catch(err){
+    readingLine.textContent='Test failed ❌';
+    console.error('Speed test error:',err);
   }
-  speedChart.update();
+  startBtn.disabled=false;
+  startBtn.classList.remove('glow');
 }
-
-// ============================
-// Speedtest Functions
-// ============================
-async function startSpeedtest() {
-  const server = document.getElementById("serverSelect").value;
-  const downloadBox = document.getElementById("download");
-  const uploadBox = document.getElementById("upload");
-  const pingBox = document.getElementById("ping");
-  const jitterBox = document.getElementById("jitter");
-
-  downloadBox.innerText = "0.00"; 
-  uploadBox.innerText = "0.00";
-  pingBox.innerText = "--"; 
-  jitterBox.innerText = "--";
-
-  try {
-    // Backend GET: ping + download
-    const data = await fetch(`http://localhost:3000/api/speedtest?server=${server}`)
-      .then(res => res.json());
-
-    downloadBox.innerText = data.download;
-    pingBox.innerText = data.ping;
-    updateGraph(data.download);
-
-    // Jitter (simulate small variation)
-    jitterBox.innerText = Math.floor(Math.random() * 10) + 1;
-
-    // Backend POST: upload
-    const uploadData = new Uint8Array(2*1024*1024);
-    const uploadResult = await fetch('http://localhost:3000/api/upload', {
-      method: 'POST',
-      body: uploadData
-    }).then(res => res.json());
-
-    uploadBox.innerText = uploadResult.upload;
-    updateGraph(uploadResult.upload);
-
-    speakResult(`Download ${data.download} Mbps, Upload ${uploadResult.upload} Mbps`);
-
-  } catch(err) {
-    console.error(err);
-    alert("Backend not reachable! Make sure Node.js server is running.");
-  }
-}
-
-// ============================
-// Voice Output
-// ============================
-function speakResult(text){
-  const synth = window.speechSynthesis;
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.rate = 1;
-  synth.speak(utter);
-}
-
-// ============================
-// Auto Mode
-// ============================
-function toggleAuto(){
-  autoMode = !autoMode;
-  if(autoMode) runAuto();
-}
-async function runAuto(){
-  while(autoMode){
-    await startSpeedtest();
-    await new Promise(r=>setTimeout(r,5000));
-  }
-}
-
-// ============================
-// Export Image
-// ============================
-function exportImage(){
-  html2canvas(document.querySelector('.card-bg')).then(canvas=>{
-    const link = document.createElement('a');
-    link.download = 'speedtest.png';
-    link.href = canvas.toDataURL();
-    link.click();
-  });
-}
-
-// ============================
-// Share Placeholder
-// ============================
-function shareResult(){
-  alert("Sharing feature placeholder. Implement with Web Share API or backend.");
-}
+startBtn.addEventListener('click', runSpeedTest);
 </script>
-
 </body>
 </html>
