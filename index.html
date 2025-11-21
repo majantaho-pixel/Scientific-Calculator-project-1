@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Velocity Internet Speed Test – Tri-Theme Dashboard</title>
+<title>Velocity Internet Speed Test – Multi Theme</title>
 
 <!-- Tailwind & GSAP -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -11,81 +11,78 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
-body {
-  font-family:'Orbitron',sans-serif;
-  margin:0;
-  transition: all 0.3s ease;
-  overflow-x:hidden;
-}
+body{font-family:'Orbitron',sans-serif;margin:0;transition:all 0.3s ease;overflow-x:hidden;}
 
 /* Themes */
-body.dark-mode { background: radial-gradient(circle at center,#0b1120,#020617); color:white; }
-body.light-mode { background: radial-gradient(circle at center,#f8fafc,#e2e8f0); color:#1a202c; }
-body.pink-mode { background: radial-gradient(circle at center,#ffe6f0,#ffd1e6); color:#4b0066; }
+body.dark-mode{background:radial-gradient(circle at center,#0b1120,#020617);color:white;}
+body.moon-mode{background:url('https://i.ibb.co/6b9XvQJ/moon-texture.jpg') center/cover no-repeat; color:#e0f0ff;}
+body.pink-mode{background:radial-gradient(circle at center,#ffe6f0,#ffd1e6);color:#4b0066;}
 
 /* Logo & Theme */
-.futuristic-logo { font-size:1.5rem; font-weight:bold; position:absolute; top:10px; left:20px; z-index:20; letter-spacing:1px; cursor:pointer; }
-body.dark-mode .futuristic-logo { color:#00d2ff; text-shadow:0 0 10px #00d2ff; }
-body.light-mode .futuristic-logo { color:#2563eb; text-shadow:none; }
-body.pink-mode .futuristic-logo { color:#e6007e; text-shadow:0 0 10px #ff66aa; }
+.futuristic-logo{font-size:1.5rem;font-weight:bold;position:absolute;top:10px;left:20px;z-index:20;letter-spacing:1px;cursor:pointer;}
+body.dark-mode .futuristic-logo{color:#00d2ff;text-shadow:0 0 10px #00d2ff;}
+body.moon-mode .futuristic-logo{color:#a3d1ff;text-shadow:0 0 10px #a3d1ff;}
+body.pink-mode .futuristic-logo{color:#e6007e;text-shadow:0 0 10px #ff66aa;}
 
-/* Theme Button */
-#themeToggle { position:absolute; top:10px; right:20px; padding:0.3rem 0.75rem; border-radius:0.5rem; border:2px solid; cursor:pointer; }
+/* Theme Toggle Button */
+#themeToggle{position:absolute;top:10px;right:20px;padding:0.3rem 0.75rem;border-radius:0.5rem;border:2px solid;cursor:pointer;}
+
+/* Rocket */
+#rocket{position:absolute;width:60px;bottom:0;left:50%;transform:translateX(-50%) scale(0.8);z-index:15;display:none;}
+#rocket img{width:100%;}
 
 /* Speedometer */
-.speedometer-container { position:relative; width:250px; height:250px; margin:40px auto; }
-.speedometer-bg { width:100%; height:100%; border-radius:50%; display:flex; align-items:center; justify-content:center; position:relative; border:6px solid #00d2ff; background: radial-gradient(circle at center,#111,#000);}
-body.light-mode .speedometer-bg { border-color:#2563eb; background: radial-gradient(circle at center,#ffffff,#f0f4f8); }
-body.pink-mode .speedometer-bg { border-color:#e6007e; background: radial-gradient(circle at center,#ffe6f0,#ffd1e6); }
+.speedometer-container{position:relative;width:250px;height:250px;margin:40px auto;}
+.speedometer-bg{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;border:6px solid #00d2ff;background:radial-gradient(circle at center,#111,#000);}
+body.moon-mode .speedometer-bg{border-color:#a3d1ff;background:rgba(0,0,0,0.3);}
+body.pink-mode .speedometer-bg{border-color:#e6007e;background:rgba(255,230,240,0.9);}
 
 /* Needle & Speed */
-.needle { position:absolute; width:4px; height:110px; transform-origin:bottom center; transform:rotate(-90deg); border-radius:2px; z-index:10; background:#00ffff; }
-body.light-mode .needle { background:#2563eb; }
-body.pink-mode .needle { background:#e6007e; }
+.needle{position:absolute;width:4px;height:110px;transform-origin:bottom center;transform:rotate(-90deg);border-radius:2px;z-index:10;background:#00ffff;}
+body.moon-mode .needle{background:#a3d1ff;}
+body.pink-mode .needle{background:#e6007e;}
 
-.speed-text { position:absolute; font-size:1.5rem; font-weight:bold; text-align:center; z-index:11; color:#00d2ff; }
-body.light-mode .speed-text { color:#2563eb; }
-body.pink-mode .speed-text { color:#e6007e; }
+.speed-text{position:absolute;font-size:1.5rem;font-weight:bold;text-align:center;z-index:11;color:#00d2ff;}
+body.moon-mode .speed-text{color:#a3d1ff;}
+body.pink-mode .speed-text{color:#e6007e;}
 
 /* Glow */
-.glow { box-shadow:0 0 40px 10px rgba(0,208,255,0.4); transition:all 0.3s; }
-body.light-mode .glow { box-shadow:0 0 30px 10px rgba(37,99,235,0.4); }
-body.pink-mode .glow { box-shadow:0 0 40px 10px rgba(230,0,126,0.5); }
+.glow{box-shadow:0 0 40px 10px rgba(0,208,255,0.4);transition:all 0.3s;}
+body.moon-mode .glow{box-shadow:0 0 40px 15px rgba(163,209,255,0.5);}
+body.pink-mode .glow{box-shadow:0 0 40px 10px rgba(230,0,126,0.5);}
 
 /* Stats Boxes */
-.stat-box { background:rgba(0,0,0,0.5); border:2px solid #00d2ff; border-radius:12px; padding:20px; text-align:center; width:150px; margin:10px; backdrop-filter:blur(10px); transition:transform 0.2s ease; }
-body.light-mode .stat-box { background:rgba(255,255,255,0.9); border-color:#2563eb; color:#1a202c; }
-body.pink-mode .stat-box { background:rgba(255,230,240,0.9); border-color:#e6007e; color:#4b0066; }
+.stat-box{background:rgba(0,0,0,0.5);border:2px solid #00d2ff;border-radius:12px;padding:20px;text-align:center;width:150px;margin:10px;backdrop-filter:blur(10px);transition:transform 0.2s ease;}
+body.moon-mode .stat-box{background:rgba(0,0,50,0.6);border-color:#a3d1ff;color:#e0f0ff;}
+body.pink-mode .stat-box{background:rgba(255,230,240,0.9);border-color:#e6007e;color:#4b0066;}
 
 /* Progress Bars */
-.progress-bar { width:100%; height:8px; background:rgba(255,255,255,0.2); border-radius:4px; overflow:hidden; margin-top:10px; }
-.progress-fill { height:100%; background:linear-gradient(90deg,#00d2ff,#3a47d5); width:0%; transition:width 0.5s ease; }
-body.light-mode .progress-fill { background:linear-gradient(90deg,#2563eb,#3b82f6); }
-body.pink-mode .progress-fill { background:linear-gradient(90deg,#e6007e,#ff66aa); }
+.progress-bar{width:100%;height:8px;background:rgba(255,255,255,0.2);border-radius:4px;overflow:hidden;margin-top:10px;}
+.progress-fill{height:100%;background:linear-gradient(90deg,#00d2ff,#3a47d5);width:0%;transition:width 0.5s ease;}
+body.moon-mode .progress-fill{background:linear-gradient(90deg,#a3d1ff,#77bfff);}
+body.pink-mode .progress-fill{background:linear-gradient(90deg,#e6007e,#ff66aa);}
 
 /* Network Info */
-.network-box { margin:20px auto; background:rgba(0,0,0,0.4); border:1px solid rgba(0,210,255,0.4); border-radius:10px; padding:12px 20px; text-align:center; color:#00e0ff; box-shadow:0 0 8px rgba(0,255,255,0.2); }
-body.light-mode .network-box { background:rgba(255,255,255,0.9); border-color:rgba(37,99,235,0.5); color:#2563eb; box-shadow:0 0 8px rgba(37,99,235,0.2); }
-body.pink-mode .network-box { background:rgba(255,230,240,0.9); border-color:#e6007e; color:#4b0066; box-shadow:0 0 8px rgba(230,0,126,0.2); }
+.network-box{margin:20px auto;background:rgba(0,0,0,0.4);border:1px solid rgba(0,210,255,0.4);border-radius:10px;padding:12px 20px;text-align:center;color:#00e0ff;box-shadow:0 0 8px rgba(0,255,255,0.2);}
+body.moon-mode .network-box{background:rgba(0,0,50,0.5);border-color:#a3d1ff;color:#e0f0ff;box-shadow:0 0 8px rgba(163,209,255,0.2);}
+body.pink-mode .network-box{background:rgba(255,230,240,0.9);border-color:#e6007e;color:#4b0066;box-shadow:0 0 8px rgba(230,0,126,0.2);}
 
-/* Cute Pink Decorations */
-.pink-decor { position:absolute; pointer-events:none; z-index:5; }
-.pink-decor img { width:40px; opacity:0.6; animation:floatAnim 6s ease-in-out infinite; }
-@keyframes floatAnim {
-  0%,100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-15px) rotate(10deg); }
-}
+/* Pink Decorations */
+.pink-decor{position:absolute;pointer-events:none;z-index:5;}
+.pink-decor img{width:40px;opacity:0.6;animation:floatAnim 6s ease-in-out infinite;}
+@keyframes floatAnim{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-15px) rotate(10deg);}}
 
 /* Buttons */
-button { cursor:pointer; transition:all 0.3s; }
-button:hover { transform:scale(1.05); }
+button{cursor:pointer;transition:all 0.3s;}
+button:hover{transform:scale(1.05);}
 
 @media (max-width:768px){
-  .stat-box { width:120px; padding:12px; font-size:12px; }
-  .speedometer-container { width:200px; height:200px; }
-  .speed-text { font-size:1.2rem; }
-  .needle { height:90px; }
-  .pink-decor img { width:30px; }
+.stat-box{width:120px;padding:12px;font-size:12px;}
+.speedometer-container{width:200px;height:200px;}
+.speed-text{font-size:1.2rem;}
+.needle{height:90px;}
+.pink-decor img{width:30px;}
+#rocket{width:40px;}
 }
 </style>
 </head>
@@ -106,6 +103,11 @@ button:hover { transform:scale(1.05); }
   <img src="https://i.ibb.co/B3L4s8d/doll.png" style="top:30%; left:75%; position:absolute;">
   <img src="https://i.ibb.co/TqkM5T1/star.png" style="top:70%; left:40%; position:absolute;">
   <img src="https://i.ibb.co/9r4t7k0/heart.png" style="top:50%; left:20%; position:absolute;">
+</div>
+
+<!-- Rocket for Moon Mode -->
+<div id="rocket">
+  <img src="https://i.ibb.co/7vMYdZP/rocket.png" alt="Rocket">
 </div>
 
 <!-- Speedometer -->
@@ -140,6 +142,9 @@ button:hover { transform:scale(1.05); }
   🕒 ASN: <span id="asn">--</span> | Timezone: <span id="timezone">--</span>
 </div>
 
+<!-- Creators / Credits -->
+<div id="creators" class="text-center mt-6 mb-6 text-sm hidden">Created by Velocity Team 🚀</div>
+
 <script src="https://public.librespeed.org/librespeed.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script>
@@ -147,20 +152,32 @@ button:hover { transform:scale(1.05); }
 const bodyEl=document.body;
 const themeToggle=document.getElementById('themeToggle');
 const pinkDecor=document.getElementById('pinkDecorContainer');
-let themes=['dark-mode','light-mode','pink-mode'];
+const rocket=document.getElementById('rocket');
+const creators=document.getElementById('creators');
+let themes=['dark-mode','moon-mode','pink-mode'];
 let themeIndex=themes.indexOf(localStorage.getItem('velocityTheme'))>=0?themes.indexOf(localStorage.getItem('velocityTheme')):0;
 bodyEl.className=themes[themeIndex]+' flex flex-col items-center min-h-screen relative';
-themeToggle.textContent=themeIndex===0?'🌙 Dark':themeIndex===1?'☀️ Light':'💖 Pink';
+themeToggle.textContent=themeIndex===0?'🌙 Dark':themeIndex===1?'🌕 Moon':'💖 Pink';
 pinkDecor.style.display=themeIndex===2?'block':'none';
+rocket.style.display=themeIndex===1?'block':'none';
+creators.style.display=(themeIndex===1 || themeIndex===2)?'block':'none';
 
 themeToggle.addEventListener('click',()=>{
   bodyEl.classList.remove(themes[themeIndex]);
   themeIndex=(themeIndex+1)%themes.length;
   bodyEl.classList.add(themes[themeIndex]);
-  themeToggle.textContent=themeIndex===0?'🌙 Dark':themeIndex===1?'☀️ Light':'💖 Pink';
+  themeToggle.textContent=themeIndex===0?'🌙 Dark':themeIndex===1?'🌕 Moon':'💖 Pink';
   localStorage.setItem('velocityTheme',themes[themeIndex]);
   pinkDecor.style.display=themeIndex===2?'block':'none';
+  rocket.style.display=themeIndex===1?'block':'none';
+  creators.style.display=(themeIndex===1 || themeIndex===2)?'block':'none';
 });
+
+// Rocket Launch Animation
+function launchRocket(){
+  if(!rocket) return;
+  gsap.fromTo(rocket,{y:0,opacity:1,scale:0.8},{y:-400,rotation:15,duration:3,ease:"power2.out",onComplete:()=>{rocket.style.opacity=0;gsap.set(rocket,{y:0,opacity:1});}});
+}
 
 // Speedometer Logic
 const startBtn=document.getElementById('startBtn');
@@ -184,8 +201,8 @@ function drawArcs(){
   const radius=100;
   const start=-Math.PI/2;
 
-  let downloadColor=bodyEl.classList.contains('light-mode')?'#2563eb':bodyEl.classList.contains('pink-mode')?'#e6007e':'#00d2ff';
-  let uploadColor=bodyEl.classList.contains('light-mode')?'#3b82f6':bodyEl.classList.contains('pink-mode')?'#ff66aa':'#ff00ff';
+  let downloadColor=bodyEl.classList.contains('moon-mode')?'#a3d1ff':bodyEl.classList.contains('pink-mode')?'#e6007e':'#00d2ff';
+  let uploadColor=bodyEl.classList.contains('moon-mode')?'#77bfff':bodyEl.classList.contains('pink-mode')?'#ff66aa':'#ff00ff';
 
   ctx.beginPath();
   ctx.lineWidth=8;
@@ -217,6 +234,7 @@ function setNeedle(speed){
 async function runSpeedTest(){
   startBtn.disabled=true;
   readingLine.textContent='Testing network…';
+  if(bodyEl.classList.contains('moon-mode')) launchRocket();
   try{
     const test=new Librespeed({server:'https://test.librespeed.org',download:true,upload:true,ping:true});
     test.on('download',val=>{
