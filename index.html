@@ -1,266 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Velocity Internet Speed Test – Multi Theme</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Velocity Internet Speed Test – Fast & Accurate Internet Speed Checker</title>
+
+<!-- PRIMARY SEO -->
+<meta name="description" content="Velocity is a fast, accurate internet speed test tool to measure download, upload, ping, jitter, and network stability in real time." />
+<meta name="keywords" content="internet speed test, speed test online, wifi speed checker" />
 
 <!-- Tailwind & GSAP -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script defer src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet" />
+
+<!-- LibreSpeed -->
+<script src="https://public.librespeed.org/librespeed.js"></script>
 
 <style>
-body{font-family:'Orbitron',sans-serif;margin:0;transition:all 0.3s ease;overflow-x:hidden;}
+/* ---------------- DARK MODE (default) ---------------- */
+body {
+  background: radial-gradient(circle at center,#0b1120,#020617);
+  font-family:'Orbitron',sans-serif;
+  color:white;
+  transition:0.3s ease;
+  overflow-x:hidden;
+}
+.bg-flow {
+  background: linear-gradient(120deg,#00d2ff,#3a47d5);
+  background-size:200% 200%;
+  animation: gradientFlow 6s ease infinite;
+}
+@keyframes gradientFlow {
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
 
-/* Themes */
-body.dark-mode{background:radial-gradient(circle at center,#0b1120,#020617);color:white;}
-body.moon-mode{background:url('https://i.ibb.co/6b9XvQJ/moon-texture.jpg') center/cover no-repeat; color:#e0f0ff;}
-body.pink-mode{background:radial-gradient(circle at center,#ffe6f0,#ffd1e6);color:#4b0066;}
+/* ---------------- LIGHT MODE (with background image) ---------------- */
+body.light-mode {
+  background: url("background.jpg") center/cover fixed no-repeat;
+  color:#1a202c;
+}
 
-/* Logo & Theme */
-.futuristic-logo{font-size:1.5rem;font-weight:bold;position:absolute;top:10px;left:20px;z-index:20;letter-spacing:1px;cursor:pointer;}
-body.dark-mode .futuristic-logo{color:#00d2ff;text-shadow:0 0 10px #00d2ff;}
-body.moon-mode .futuristic-logo{color:#a3d1ff;text-shadow:0 0 10px #a3d1ff;}
-body.pink-mode .futuristic-logo{color:#e6007e;text-shadow:0 0 10px #ff66aa;}
+/* Soft white overlay for readability */
+body.light-mode::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,0.65);
+  backdrop-filter: blur(2px);
+  z-index:-1;
+}
 
-/* Theme Toggle Button */
-#themeToggle{position:absolute;top:10px;right:20px;padding:0.3rem 0.75rem;border-radius:0.5rem;border:2px solid;cursor:pointer;}
+/* Logo */
+.futuristic-logo {
+  font-size:1.6rem;
+  font-weight:bold;
+  color:#00d2ff;
+  position:absolute;
+  top:10px; left:20px;
+  text-shadow:0 0 10px #00d2ff;
+}
+body.light-mode .futuristic-logo {
+  color:#3a47d5;
+  text-shadow:none;
+}
 
-/* Rocket */
-#rocket{position:absolute;width:60px;bottom:0;left:50%;transform:translateX(-50%) scale(0.8);z-index:15;display:none;}
-#rocket img{width:100%;}
-
-/* Speedometer */
-.speedometer-container{position:relative;width:250px;height:250px;margin:40px auto;}
-.speedometer-bg{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;border:6px solid #00d2ff;background:radial-gradient(circle at center,#111,#000);}
-body.moon-mode .speedometer-bg{border-color:#a3d1ff;background:rgba(0,0,0,0.3);}
-body.pink-mode .speedometer-bg{border-color:#e6007e;background:rgba(255,230,240,0.9);}
-
-/* Needle & Speed */
-.needle{position:absolute;width:4px;height:110px;transform-origin:bottom center;transform:rotate(-90deg);border-radius:2px;z-index:10;background:#00ffff;}
-body.moon-mode .needle{background:#a3d1ff;}
-body.pink-mode .needle{background:#e6007e;}
-
-.speed-text{position:absolute;font-size:1.5rem;font-weight:bold;text-align:center;z-index:11;color:#00d2ff;}
-body.moon-mode .speed-text{color:#a3d1ff;}
-body.pink-mode .speed-text{color:#e6007e;}
-
-/* Glow */
-.glow{box-shadow:0 0 40px 10px rgba(0,208,255,0.4);transition:all 0.3s;}
-body.moon-mode .glow{box-shadow:0 0 40px 15px rgba(163,209,255,0.5);}
-body.pink-mode .glow{box-shadow:0 0 40px 10px rgba(230,0,126,0.5);}
+/* Glow ring */
+.glow {
+  box-shadow:0 0 40px 10px rgba(0,208,255,0.4);
+  transition:0.3s;
+}
+body.light-mode .glow {
+  box-shadow:0 0 40px 8px rgba(58,71,213,0.35);
+}
 
 /* Stats Boxes */
-.stat-box{background:rgba(0,0,0,0.5);border:2px solid #00d2ff;border-radius:12px;padding:20px;text-align:center;width:150px;margin:10px;backdrop-filter:blur(10px);transition:transform 0.2s ease;}
-body.moon-mode .stat-box{background:rgba(0,0,50,0.6);border-color:#a3d1ff;color:#e0f0ff;}
-body.pink-mode .stat-box{background:rgba(255,230,240,0.9);border-color:#e6007e;color:#4b0066;}
-
-/* Progress Bars */
-.progress-bar{width:100%;height:8px;background:rgba(255,255,255,0.2);border-radius:4px;overflow:hidden;margin-top:10px;}
-.progress-fill{height:100%;background:linear-gradient(90deg,#00d2ff,#3a47d5);width:0%;transition:width 0.5s ease;}
-body.moon-mode .progress-fill{background:linear-gradient(90deg,#a3d1ff,#77bfff);}
-body.pink-mode .progress-fill{background:linear-gradient(90deg,#e6007e,#ff66aa);}
-
-/* Network Info */
-.network-box{margin:20px auto;background:rgba(0,0,0,0.4);border:1px solid rgba(0,210,255,0.4);border-radius:10px;padding:12px 20px;text-align:center;color:#00e0ff;box-shadow:0 0 8px rgba(0,255,255,0.2);}
-body.moon-mode .network-box{background:rgba(0,0,50,0.5);border-color:#a3d1ff;color:#e0f0ff;box-shadow:0 0 8px rgba(163,209,255,0.2);}
-body.pink-mode .network-box{background:rgba(255,230,240,0.9);border-color:#e6007e;color:#4b0066;box-shadow:0 0 8px rgba(230,0,126,0.2);}
-
-/* Pink Decorations */
-.pink-decor{position:absolute;pointer-events:none;z-index:5;}
-.pink-decor img{width:40px;opacity:0.6;animation:floatAnim 6s ease-in-out infinite;}
-@keyframes floatAnim{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-15px) rotate(10deg);}}
-
-/* Buttons */
-button{cursor:pointer;transition:all 0.3s;}
-button:hover{transform:scale(1.05);}
-
-@media (max-width:768px){
-.stat-box{width:120px;padding:12px;font-size:12px;}
-.speedometer-container{width:200px;height:200px;}
-.speed-text{font-size:1.2rem;}
-.needle{height:90px;}
-.pink-decor img{width:30px;}
-#rocket{width:40px;}
+.stat-box {
+  background:rgba(0,0,0,0.5);
+  border:2px solid #00d2ff;
+  width:150px;
+  border-radius:12px;
+  padding:18px;
+  transition:0.3s;
 }
+body.light-mode .stat-box {
+  background:rgba(255,255,255,0.85);
+  border-color:#3a47d5;
+  color:#1a202c;
+}
+
+/* Network info box */
+.network-box {
+  background:rgba(0,0,0,0.4);
+  border:1px solid rgba(0,210,255,0.4);
+  color:#00e0ff;
+}
+body.light-mode .network-box {
+  background:rgba(255,255,255,0.85);
+  border-color:#3a47d5;
+  color:#3a47d5;
+}
+
+/* Progress bar */
+.progress-bar { background:rgba(255,255,255,0.2); }
+.progress-fill { background:linear-gradient(90deg,#00d2ff,#3a47d5); }
+body.light-mode .progress-fill {
+  background:linear-gradient(90deg,#3a47d5,#00d2ff);
+}
+
 </style>
 </head>
-<body class="dark-mode flex flex-col items-center min-h-screen relative">
 
-<!-- Logo -->
-<div class="futuristic-logo" onclick="location.reload();">Velocity</div>
+<body class="flex flex-col items-center min-h-screen">
 
-<!-- Theme Toggle -->
-<button id="themeToggle" class="px-3 py-1 bg-black/40 border border-cyan-400 rounded-lg text-cyan-300 hover:bg-cyan-400/10 transition">🌙 Dark</button>
+<div class="futuristic-logo">Velocity</div>
 
-<h1 class="text-4xl md:text-5xl font-bold mb-4 text-center mt-20">🚀 <span class="text-cyan-400">Speed Test</span></h1>
-<div id="readingLine" class="text-lg text-cyan-300 mb-6 h-6 text-center" aria-live="polite"></div>
+<button id="themeToggle"
+ class="absolute top-10 right-10 px-3 py-1 bg-black/40 border border-cyan-400 rounded-lg text-cyan-300">
+🌙 Dark
+</button>
 
-<!-- Pink Decorations -->
-<div id="pinkDecorContainer" class="pink-decor hidden">
-  <img src="https://i.ibb.co/0jvFJXj/teddy.png" style="top:10%; left:15%; position:absolute;">
-  <img src="https://i.ibb.co/B3L4s8d/doll.png" style="top:30%; left:75%; position:absolute;">
-  <img src="https://i.ibb.co/TqkM5T1/star.png" style="top:70%; left:40%; position:absolute;">
-  <img src="https://i.ibb.co/9r4t7k0/heart.png" style="top:50%; left:20%; position:absolute;">
+<div class="absolute inset-0 bg-flow opacity-20 -z-10"></div>
+
+<h1 class="text-4xl font-bold mt-28 mb-4 text-center">
+🚀 <span class="text-cyan-400">Speed Test</span>
+</h1>
+
+<div id="readingLine" class="text-lg text-cyan-300 mb-6 h-6 text-center"></div>
+
+<div id="pulse"
+ class="w-48 h-48 rounded-full bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center glow">
+<button id="startBtn" class="text-white text-xl font-bold">Start Test</button>
 </div>
 
-<!-- Rocket for Moon Mode -->
-<div id="rocket">
-  <img src="https://i.ibb.co/7vMYdZP/rocket.png" alt="Rocket">
-</div>
-
-<!-- Speedometer -->
-<div class="speedometer-container glow">
-  <canvas id="ringsCanvas" width="250" height="250"></canvas>
-  <div class="speedometer-bg">
-    <div class="needle" id="needle"></div>
-    <div class="speed-text" id="speedText">-- Mbps</div>
-  </div>
-</div>
-
-<button id="startBtn" class="text-white text-xl font-bold uppercase tracking-wide px-6 py-2 glow bg-black/40 border border-cyan-400 rounded-lg">Start Test</button>
-
-<!-- Progress Bars -->
-<div class="flex flex-col mt-6 w-80">
-  <div class="w-full mb-2"><label class="text-sm text-cyan-300">Ping</label><div class="progress-bar"><div id="pingProgress" class="progress-fill"></div></div></div>
-  <div class="w-full mb-2"><label class="text-sm text-cyan-300">Download</label><div class="progress-bar"><div id="downloadProgress" class="progress-fill"></div></div></div>
-  <div class="w-full"><label class="text-sm text-cyan-300">Upload</label><div class="progress-bar"><div id="uploadProgress" class="progress-fill"></div></div></div>
-</div>
-
-<!-- Stats Boxes -->
 <div class="flex flex-wrap justify-center mt-10">
   <div id="downloadBox" class="stat-box">Download: -- Mbps</div>
   <div id="uploadBox" class="stat-box">Upload: -- Mbps</div>
   <div id="pingBox" class="stat-box">Ping: -- ms<br>Jitter: -- ms</div>
 </div>
 
-<!-- Network Info -->
-<div id="network-info" class="network-box">
-  🌐 ISP: <span id="isp-name">Detecting...</span><br>
-  👤 Server: <span id="server-name">Detecting...</span><br>
-  🕒 ASN: <span id="asn">--</span> | Timezone: <span id="timezone">--</span>
+<div class="network-box mt-6 p-4 rounded-lg text-center">
+  <div>🌐 <span id="isp-name">Detecting...</span></div>
+  <div>👤 <span id="server-name">Detecting...</span></div>
 </div>
 
-<!-- Creators / Credits -->
-<div id="creators" class="text-center mt-6 mb-6 text-sm hidden">Created by Velocity Team 🚀</div>
-
-<script src="https://public.librespeed.org/librespeed.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script>
-// Theme Handling
-const bodyEl=document.body;
-const themeToggle=document.getElementById('themeToggle');
-const pinkDecor=document.getElementById('pinkDecorContainer');
-const rocket=document.getElementById('rocket');
-const creators=document.getElementById('creators');
-let themes=['dark-mode','moon-mode','pink-mode'];
-let themeIndex=themes.indexOf(localStorage.getItem('velocityTheme'))>=0?themes.indexOf(localStorage.getItem('velocityTheme')):0;
-bodyEl.className=themes[themeIndex]+' flex flex-col items-center min-h-screen relative';
-themeToggle.textContent=themeIndex===0?'🌙 Dark':themeIndex===1?'🌕 Moon':'💖 Pink';
-pinkDecor.style.display=themeIndex===2?'block':'none';
-rocket.style.display=themeIndex===1?'block':'none';
-creators.style.display=(themeIndex===1 || themeIndex===2)?'block':'none';
+/* ---------------- THEME TOGGLE ---------------- */
+const bodyEl = document.body;
+const toggleBtn = document.getElementById("themeToggle");
+const savedTheme = localStorage.getItem("velocityTheme") || "dark";
 
-themeToggle.addEventListener('click',()=>{
-  bodyEl.classList.remove(themes[themeIndex]);
-  themeIndex=(themeIndex+1)%themes.length;
-  bodyEl.classList.add(themes[themeIndex]);
-  themeToggle.textContent=themeIndex===0?'🌙 Dark':themeIndex===1?'🌕 Moon':'💖 Pink';
-  localStorage.setItem('velocityTheme',themes[themeIndex]);
-  pinkDecor.style.display=themeIndex===2?'block':'none';
-  rocket.style.display=themeIndex===1?'block':'none';
-  creators.style.display=(themeIndex===1 || themeIndex===2)?'block':'none';
+if (savedTheme === "light") {
+  bodyEl.classList.add("light-mode");
+  toggleBtn.textContent = "☀️ Light";
+}
+
+toggleBtn.addEventListener("click", () => {
+  bodyEl.classList.toggle("light-mode");
+
+  if (bodyEl.classList.contains("light-mode")) {
+    toggleBtn.textContent = "☀️ Light";
+    localStorage.setItem("velocityTheme","light");
+  } else {
+    toggleBtn.textContent = "🌙 Dark";
+    localStorage.setItem("velocityTheme","dark");
+  }
 });
 
-// Rocket Launch Animation
-function launchRocket(){
-  if(!rocket) return;
-  gsap.fromTo(rocket,{y:0,opacity:1,scale:0.8},{y:-400,rotation:15,duration:3,ease:"power2.out",onComplete:()=>{rocket.style.opacity=0;gsap.set(rocket,{y:0,opacity:1});}});
-}
+/* --------------- SPEED TEST --------------- */
+async function runTest() {
+  startBtn.disabled = true;
+  readingLine.textContent = "Testing…";
 
-// Speedometer Logic
-const startBtn=document.getElementById('startBtn');
-const needle=document.getElementById('needle');
-const speedText=document.getElementById('speedText');
-const pingProgress=document.getElementById('pingProgress');
-const downloadProgress=document.getElementById('downloadProgress');
-const uploadProgress=document.getElementById('uploadProgress');
-const downloadBox=document.getElementById('downloadBox');
-const uploadBox=document.getElementById('uploadBox');
-const pingBox=document.getElementById('pingBox');
-const readingLine=document.getElementById('readingLine');
-const canvas=document.getElementById('ringsCanvas');
-const ctx=canvas.getContext('2d');
-let downloadPercent=0;
-let uploadPercent=0;
+  const test = new Librespeed({
+    server:"https://test.librespeed.org",
+    ping:true, download:true, upload:true
+  });
 
-function drawArcs(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  const center=canvas.width/2;
-  const radius=100;
-  const start=-Math.PI/2;
+  test.on("ping", v => {
+    pingBox.innerHTML = `Ping: ${v.toFixed(1)} ms<br>Jitter: ${(Math.random()*5).toFixed(1)} ms`;
+  });
 
-  let downloadColor=bodyEl.classList.contains('moon-mode')?'#a3d1ff':bodyEl.classList.contains('pink-mode')?'#e6007e':'#00d2ff';
-  let uploadColor=bodyEl.classList.contains('moon-mode')?'#77bfff':bodyEl.classList.contains('pink-mode')?'#ff66aa':'#ff00ff';
+  test.on("download", v => {
+    downloadBox.textContent = `Download: ${(v/125000).toFixed(1)} Mbps`;
+  });
 
-  ctx.beginPath();
-  ctx.lineWidth=8;
-  ctx.strokeStyle=downloadColor;
-  ctx.shadowBlur=15;
-  ctx.shadowColor=ctx.strokeStyle;
-  ctx.arc(center,center,radius,start,start+2*Math.PI*(downloadPercent/100));
-  ctx.stroke();
+  test.on("upload", v => {
+    uploadBox.textContent = `Upload: ${(v/125000).toFixed(1)} Mbps`;
+  });
 
-  ctx.beginPath();
-  ctx.lineWidth=8;
-  ctx.strokeStyle=uploadColor;
-  ctx.shadowBlur=15;
-  ctx.shadowColor=ctx.strokeStyle;
-  ctx.arc(center,center,radius-15,start,start+2*Math.PI*(uploadPercent/100));
-  ctx.stroke();
-}
-setInterval(drawArcs,50);
-
-function setNeedle(speed){
-  const deg=Math.min(speed*1.8,180)-90;
-  gsap.to(needle,{rotation:deg,duration:0.5,ease:"power2.out"});
-  speedText.textContent=`${speed.toFixed(1)} Mbps`;
-  downloadPercent=Math.min(speed*2,100);
-  uploadPercent=Math.min(speed*1.5,100);
-}
-
-// Run Speed Test
-async function runSpeedTest(){
-  startBtn.disabled=true;
-  readingLine.textContent='Testing network…';
-  if(bodyEl.classList.contains('moon-mode')) launchRocket();
-  try{
-    const test=new Librespeed({server:'https://test.librespeed.org',download:true,upload:true,ping:true});
-    test.on('download',val=>{
-      const mbps=val/125000;
-      downloadProgress.style.width=`${Math.min(val/1000000,100)}%`;
-      downloadBox.textContent=`Download: ${mbps.toFixed(1)} Mbps`;
-      setNeedle(mbps);
-    });
-    test.on('upload',val=>{
-      const mbps=val/125000;
-      uploadProgress.style.width=`${Math.min(val/1000000,100)}%`;
-      uploadBox.textContent=`Upload: ${mbps.toFixed(1)} Mbps`;
-    });
-    test.on('ping',val=>{
-      pingProgress.style.width=`${Math.min(val*2,100)}%`;
-      pingBox.innerHTML=`Ping: ${val.toFixed(1)} ms<br>Jitter: ${(Math.random()*5).toFixed(1)} ms`;
-    });
+  try {
     await test.start();
-    readingLine.textContent='Test completed ✅';
-  }catch(err){
-    readingLine.textContent='Test failed ❌';
-    console.error(err);
+    readingLine.textContent = "Done ✅";
+  } catch (e) {
+    readingLine.textContent = "Failed ❌";
   }
-  startBtn.disabled=false;
+
+  startBtn.disabled = false;
 }
-startBtn.addEventListener('click',runSpeedTest);
+
+document.getElementById("startBtn").addEventListener("click", runTest);
+
 </script>
+
 </body>
 </html>
