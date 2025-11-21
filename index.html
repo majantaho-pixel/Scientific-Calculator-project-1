@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Velocity Internet Speed Test – Futuristic Dashboard</title>
+<title>Velocity Internet Speed Test – Tri-Theme Dashboard</title>
 
 <!-- Tailwind & GSAP -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -19,51 +19,56 @@ body {
   transition: all 0.3s ease;
   overflow-x:hidden;
 }
-body.light-mode {
-  background: radial-gradient(circle at center,#e2e8f0,#f0f4f8);
-  color:#1a202c;
-}
+body.light-mode { background: radial-gradient(circle at center,#e2e8f0,#f0f4f8); color:#1a202c; }
+body.pink-mode { background: radial-gradient(circle at center,#ffe4f0,#ffb8e8); color:#4b0066; }
 
 /* Logo & Theme */
-.futuristic-logo { font-size:1.5rem; font-weight:bold; color:#00d2ff; position:absolute; top:10px; left:20px; z-index:20; text-shadow:0 0 10px #00d2ff; letter-spacing:1px; cursor:pointer; }
+.futuristic-logo { font-size:1.5rem; font-weight:bold; position:absolute; top:10px; left:20px; z-index:20; letter-spacing:1px; cursor:pointer; }
+body.dark-mode .futuristic-logo { color:#00d2ff; text-shadow:0 0 10px #00d2ff; }
 body.light-mode .futuristic-logo { color:#3a47d5; text-shadow:none; }
+body.pink-mode .futuristic-logo { color:#ff0088; text-shadow:0 0 10px #ff77bb; }
 
+/* Theme Button */
 #themeToggle { position:absolute; top:10px; right:20px; z-index:20; }
 
 /* Speedometer */
 .speedometer-container { position:relative; width:250px; height:250px; margin:40px auto; }
-.speedometer-bg { width:100%; height:100%; border-radius:50%; background: radial-gradient(circle at center,#111,#000); border:6px solid #00d2ff; display:flex; align-items:center; justify-content:center; position:relative; }
+.speedometer-bg { width:100%; height:100%; border-radius:50%; display:flex; align-items:center; justify-content:center; position:relative; border:6px solid #00d2ff; background: radial-gradient(circle at center,#111,#000);}
 body.light-mode .speedometer-bg { border-color:#3a47d5; background: radial-gradient(circle at center,#ffffff,#e2e8f0); }
+body.pink-mode .speedometer-bg { border-color:#ff77bb; background: radial-gradient(circle at center,#ffe4f0,#ffb8e8); }
 
 canvas { position:absolute; top:0; left:0; }
 
 /* Needle */
-.needle { position:absolute; width:4px; height:110px; background:#00ffff; transform-origin:bottom center; transform:rotate(-90deg); border-radius:2px; z-index:10; }
+.needle { position:absolute; width:4px; height:110px; transform-origin:bottom center; transform:rotate(-90deg); border-radius:2px; z-index:10; background:#00ffff; }
 body.light-mode .needle { background:#3a47d5; }
+body.pink-mode .needle { background:#ff0088; }
 
 /* Speed Text */
-.speed-text { position:absolute; font-size:1.5rem; font-weight:bold; color:#00d2ff; text-align:center; z-index:11; }
+.speed-text { position:absolute; font-size:1.5rem; font-weight:bold; text-align:center; z-index:11; color:#00d2ff; }
 body.light-mode .speed-text { color:#3a47d5; }
+body.pink-mode .speed-text { color:#ff0088; }
 
 /* Glow */
 .glow { box-shadow:0 0 40px 10px rgba(0,208,255,0.4); transition:all 0.3s; }
-.glow:hover { box-shadow:0 0 60px 15px rgba(0,208,255,0.6); }
 body.light-mode .glow { box-shadow:0 0 30px 10px rgba(58,71,213,0.4); }
-body.light-mode .glow:hover { box-shadow:0 0 50px 15px rgba(58,71,213,0.6); }
+body.pink-mode .glow { box-shadow:0 0 40px 10px rgba(255,0,136,0.5); }
 
 /* Stats Boxes */
 .stat-box { background:rgba(0,0,0,0.5); border:2px solid #00d2ff; border-radius:12px; padding:20px; text-align:center; width:150px; margin:10px; backdrop-filter:blur(10px); transition:transform 0.2s ease; }
-.stat-box:hover { transform:scale(1.05); }
 body.light-mode .stat-box { background:rgba(255,255,255,0.85); border-color:#3a47d5; color:#1a202c; }
+body.pink-mode .stat-box { background:rgba(255,230,240,0.85); border-color:#ff77bb; color:#4b0066; }
 
 /* Progress Bars */
 .progress-bar { width:100%; height:8px; background:rgba(255,255,255,0.2); border-radius:4px; overflow:hidden; margin-top:10px; }
 .progress-fill { height:100%; background:linear-gradient(90deg,#00d2ff,#3a47d5); width:0%; transition:width 0.5s ease; }
 body.light-mode .progress-fill { background:linear-gradient(90deg,#3a47d5,#00d2ff); }
+body.pink-mode .progress-fill { background:linear-gradient(90deg,#ff0088,#ff77bb); }
 
 /* Network Info */
-.network-box { margin:20px auto; background:rgba(0,0,0,0.4); border:1px solid rgba(0,210,255,0.4); border-radius:10px; padding:12px 20px; color:#00e0ff; text-align:center; width:fit-content; box-shadow:0 0 8px rgba(0,255,255,0.2); }
+.network-box { margin:20px auto; background:rgba(0,0,0,0.4); border:1px solid rgba(0,210,255,0.4); border-radius:10px; padding:12px 20px; text-align:center; color:#00e0ff; box-shadow:0 0 8px rgba(0,255,255,0.2); }
 body.light-mode .network-box { background:rgba(255,255,255,0.85); border-color:rgba(58,71,213,0.5); color:#3a47d5; box-shadow:0 0 8px rgba(58,71,213,0.2); }
+body.pink-mode .network-box { background:rgba(255,230,240,0.85); border-color:#ff77bb; color:#4b0066; box-shadow:0 0 8px rgba(255,0,136,0.2); }
 
 button { cursor:pointer; transition:all 0.3s; }
 button:hover { transform:scale(1.05); }
@@ -76,7 +81,7 @@ button:hover { transform:scale(1.05); }
 }
 </style>
 </head>
-<body class="flex flex-col items-center min-h-screen relative">
+<body class="dark-mode flex flex-col items-center min-h-screen relative">
 
 <div class="futuristic-logo" onclick="location.reload();">Velocity</div>
 <button id="themeToggle" class="px-3 py-1 bg-black/40 border border-cyan-400 rounded-lg text-cyan-300 hover:bg-cyan-400/10 transition">🌙 Dark</button>
@@ -131,19 +136,23 @@ const downloadBox=document.getElementById('downloadBox');
 const uploadBox=document.getElementById('uploadBox');
 const pingBox=document.getElementById('pingBox');
 const readingLine=document.getElementById('readingLine');
-
 const canvas=document.getElementById('ringsCanvas');
 const ctx=canvas.getContext('2d');
 let downloadPercent=0;
 let uploadPercent=0;
 
-// Theme
-const savedTheme=localStorage.getItem('velocityTheme')||'dark';
-if(savedTheme==='light'){bodyEl.classList.add('light-mode'); themeToggle.textContent='☀️ Light';} else{themeToggle.textContent='🌙 Dark';}
+// Theme cycle: Dark -> Light -> Pink
+let themes=['dark-mode','light-mode','pink-mode'];
+let themeIndex=themes.indexOf(localStorage.getItem('velocityTheme'))>=0?themes.indexOf(localStorage.getItem('velocityTheme')):0;
+bodyEl.className=themes[themeIndex]+' flex flex-col items-center min-h-screen relative';
+themeToggle.textContent=themeIndex===0?'🌙 Dark':themeIndex===1?'☀️ Light':'💖 Pink';
+
 themeToggle.addEventListener('click',()=>{
-  bodyEl.classList.toggle('light-mode');
-  themeToggle.textContent=bodyEl.classList.contains('light-mode')?'☀️ Light':'🌙 Dark';
-  localStorage.setItem('velocityTheme',bodyEl.classList.contains('light-mode')?'light':'dark');
+  bodyEl.classList.remove(themes[themeIndex]);
+  themeIndex=(themeIndex+1)%themes.length;
+  bodyEl.classList.add(themes[themeIndex]);
+  themeToggle.textContent=themeIndex===0?'🌙 Dark':themeIndex===1?'☀️ Light':'💖 Pink';
+  localStorage.setItem('velocityTheme',themes[themeIndex]);
 });
 
 // Draw Neon Arcs
@@ -153,19 +162,20 @@ function drawArcs(){
   const radius=100;
   const start=-Math.PI/2;
   
-  // Download Arc
+  let downloadColor=bodyEl.classList.contains('light-mode')?'#3a47d5':bodyEl.classList.contains('pink-mode')?'#ff0088':'#00d2ff';
+  let uploadColor=bodyEl.classList.contains('light-mode')?'#ff5500':bodyEl.classList.contains('pink-mode')?'#ff77bb':'#ff00ff';
+
   ctx.beginPath();
   ctx.lineWidth=8;
-  ctx.strokeStyle=bodyEl.classList.contains('light-mode')?'#3a47d5':'#00d2ff';
+  ctx.strokeStyle=downloadColor;
   ctx.shadowBlur=15;
   ctx.shadowColor=ctx.strokeStyle;
   ctx.arc(center,center,radius,start,start+2*Math.PI*(downloadPercent/100));
   ctx.stroke();
 
-  // Upload Arc
   ctx.beginPath();
   ctx.lineWidth=8;
-  ctx.strokeStyle=bodyEl.classList.contains('light-mode')?'#ff00aa':'#ff00ff';
+  ctx.strokeStyle=uploadColor;
   ctx.shadowBlur=15;
   ctx.shadowColor=ctx.strokeStyle;
   ctx.arc(center,center,radius-15,start,start+2*Math.PI*(uploadPercent/100));
